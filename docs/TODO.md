@@ -2,73 +2,127 @@
 
 Current development tasks and roadmap for NERO.
 
+## P0 Definition of Done
+
+- [ ] BA can create a workflow with at least 3 nodes (Regs → Requirements → Tests)
+- [ ] BA can attach documents at project and node scope
+- [ ] System validates the workflow before running
+- [ ] Run produces versioned artifacts
+- [ ] Approval gate blocks downstream steps until approved
+- [ ] Publish step can export a requirements pack
+
+---
+
 ## Current Sprint
 
 ### In Progress
 
-- [ ] Initial project setup and scaffolding
+- [ ] Define core TypeScript types for orchestration
 
 ### Up Next
 
-- [ ] Implement agent type definitions
-- [ ] Create shared agent interface
-- [ ] Set up agent context/state management
+- [ ] Create Workflow Builder canvas component
+- [ ] Implement Node palette (agent + control nodes)
+- [ ] Build Node Inspector panel
+- [ ] Set up Run Console (timeline, logs, outputs)
 
-## Backlog
+---
+
+## Orchestration Layer (P0)
+
+### Workflow Builder
+
+- [ ] Canvas graph (nodes + edges) with drag/drop
+- [ ] Node palette (RegsBot, RequirementsBot, FigmaBot, TestingBot)
+- [ ] Control nodes (Start, End, Approval Gate, Router, Transform)
+- [ ] Node Inspector (inputs, context scope, outputs, policies)
+- [ ] Workflow validation before run
+- **Feature Doc**: `docs/features/orchestration.md`
+
+### Run Engine
+
+- [ ] Execute nodes in order (including branching)
+- [ ] Maintain shared run state with controlled patches
+- [ ] Pause/resume at Approval Gates
+- [ ] Record run timeline for console view
+- [ ] Persist versioned artifacts and trace links
+
+### Artifact Registry
+
+- [ ] Store typed artifacts (RequirementSet, TestPlan, WireframeSpec, etc.)
+- [ ] Version artifacts on change (immutable approved versions)
+- [ ] Maintain trace links (Requirement→Evidence, Test→Requirement)
+
+---
+
+## Agent Nodes (P0)
 
 ### RegsBot
 
-- [ ] Define regulatory document types
-- [ ] Create document ingestion interface
-- [ ] Design RAG pipeline architecture
-- [ ] Implement vector database integration
-- [ ] Build citation extraction system
-- [ ] Create regulatory query interface
-- **Feature Doc**: `docs/features/regsbot.md` (to be created)
+- [ ] Evidence Library builder (eCFR, EPA docs, permits)
+- [ ] Citation extraction with location anchors
+- [ ] OCR ingestion with confidence tracking
+- [ ] Evidence scoping (project-wide vs node-scoped)
+- **Feature Doc**: `docs/features/regsbot.md`
 
 ### RequirementsBot
 
-- [ ] Define requirements output schemas
-- [ ] Create persona template system
-- [ ] Build workflow diagram generator
-- [ ] Implement user journey mapper
-- [ ] Design traceability matrix
-- [ ] Create requirements export formats
-- **Feature Doc**: `docs/features/requirementsbot.md` (to be created)
+- [ ] Generate Requirement Sets from evidence
+- [ ] User persona and workflow generation
+- [ ] DAHS solution mapping (tags, calcs, alarms)
+- [ ] Trace link generation to evidence
+- **Feature Doc**: `docs/features/requirementsbot.md`
 
 ### FigmaBot
 
-- [ ] Research Figma API integration
-- [ ] Define component library structure
-- [ ] Create wireframe generation system
-- [ ] Implement accessibility checker
-- [ ] Build design-to-code pipeline
-- **Feature Doc**: `docs/features/figmabot.md` (to be created)
+- [ ] Screen inventory from requirements
+- [ ] Wireframe spec generation
+- [ ] Component mapping
+- [ ] Requirement ID linking in frames
+- **Feature Doc**: `docs/features/figmabot.md`
 
 ### TestingBot
 
-- [ ] Define test specification format
-- [ ] Create acceptance criteria generator
-- [ ] Build test scaffold generator
-- [ ] Implement coverage requirement system
-- [ ] Design TDD workflow automation
-- **Feature Doc**: `docs/features/testingbot.md` (to be created)
+- [ ] Test Plan generation from requirements
+- [ ] Acceptance criteria with trace links
+- [ ] Verification spec for DAHS proposals
+- [ ] Coverage requirement tracking
+- **Feature Doc**: `docs/features/testingbot.md`
 
-### Orchestration Layer
+---
 
-- [ ] Define agent communication protocol
-- [ ] Create task routing system
-- [ ] Implement context sharing mechanism
-- [ ] Build human-approval gates
-- [ ] Design feedback loop system
+## Control Nodes (P0)
 
-### Infrastructure
+- [ ] **Start / End**: Entry and exit points
+- [ ] **Approval Gate**: Pause run, capture approver + timestamp + comment
+- [ ] **Router**: Branch by rule or classifier
+- [ ] **Transform/Validate**: Schema validation, merge/split
+- [ ] **Output/Publish**: Export to ADO/wiki/Figma, generate files
 
-- [ ] Set up CI/CD pipeline
-- [ ] Configure environment variables
-- [ ] Add authentication system
-- [ ] Implement logging and monitoring
-- [ ] Create deployment configuration
+---
+
+## P1 Features
+
+### Integrations
+
+- [ ] Azure DevOps (work items + wiki)
+- [ ] Figma API (frame creation/updates)
+- [ ] Source code references (read-only context)
+- [ ] Permit OCR import with confidence UI
+
+### Additional Nodes
+
+- [ ] Comparer/Diff (artifact/evidence versions)
+- [ ] Critic/Reviewer (maker-checker loop)
+- [ ] Selector (pick best of N drafts)
+
+### Workflow Templates
+
+- [ ] Template A: Reg-to-Dev Requirements
+- [ ] Template B: Permit OCR → DAHS Solution Proposal
+- [ ] Template C: UX Scaffold
+
+---
 
 ## Completed
 
@@ -78,15 +132,13 @@ Current development tasks and roadmap for NERO.
 - [x] Dashboard with agent cards
 - [x] Agent placeholder pages
 - [x] Strict linting configuration
-- [x] Core documentation structure
+- [x] GitHub repo + CI pipeline
+- [x] Core documentation (VISION, CHANGELOG, TODO)
 
 ---
 
-## Notes
+## Open Questions
 
-When starting a new feature:
-
-1. Create feature doc in `docs/features/[feature-name].md`
-2. Reference it from this TODO
-3. Write tests first (TDD)
-4. Update CHANGELOG when complete
+- What are the minimum evidence types for P0 (text paste, PDF upload, URL)?
+- What is the initial DAHS "baseline profile" format?
+- Which publish targets are highest priority: ADO work items, ADO wiki, or file exports?
