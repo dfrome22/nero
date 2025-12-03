@@ -1,10 +1,10 @@
 import js from '@eslint/js'
-import globals from 'globals'
+import prettier from 'eslint-config-prettier'
+import react from 'eslint-plugin-react'
 import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
+import globals from 'globals'
 import tseslint from 'typescript-eslint'
-import react from 'eslint-plugin-react'
-import prettier from 'eslint-config-prettier'
 
 export default tseslint.config(
   { ignores: ['dist', 'coverage', 'playwright-report', '.husky', 'e2e', '*.config.*'] },
@@ -38,10 +38,7 @@ export default tseslint.config(
       ...react.configs.recommended.rules,
       ...react.configs['jsx-runtime'].rules,
       ...reactHooks.configs.recommended.rules,
-      'react-refresh/only-export-components': [
-        'warn',
-        { allowConstantExport: true },
-      ],
+      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
 
       // TypeScript strict rules for TDD
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
@@ -60,14 +57,17 @@ export default tseslint.config(
       'prefer-const': 'error',
       'no-var': 'error',
       eqeqeq: ['error', 'always'],
-      
+
       // Disable rules that conflict with CSS modules
       '@typescript-eslint/dot-notation': 'off',
-      '@typescript-eslint/restrict-template-expressions': ['error', {
-        allowNumber: true,
-        allowBoolean: true,
-        allowNullish: true,
-      }],
+      '@typescript-eslint/restrict-template-expressions': [
+        'error',
+        {
+          allowNumber: true,
+          allowBoolean: true,
+          allowNullish: true,
+        },
+      ],
     },
   },
   prettier
