@@ -1,9 +1,93 @@
 /**
  * RegsBot Agent Tests
+ *
+ * Tests for the EPA regulatory knowledge oracle.
  */
 
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { RegsBotService } from './index'
+import type { MonitoringPlan, CAMDFacility } from '../../types/ecmps-api'
+
+// ============================================================================
+// MOCK DATA
+// ============================================================================
+
+const createMockFacility = (): CAMDFacility => ({
+  facilityId: 1234,
+  orisCode: 5678,
+  facilityName: 'Test Power Plant',
+  stateCode: 'PA',
+  programCodes: ['ARP', 'CSAPR'],
+})
+
+const createMockMonitoringPlan = (): MonitoringPlan => ({
+  monitorPlanId: 'MP-001',
+  facilityId: 1234,
+  facilityName: 'Test Power Plant',
+  orisCode: 5678,
+  stateCode: 'PA',
+  unitStackConfigurations: [{ unitId: 'U1', stackPipeId: 'CS1', beginDate: '2020-01-01' }],
+  locations: [{ locationId: 'LOC1', locationType: 'stack', stackPipeId: 'CS1' }],
+  methods: [
+    {
+      methodId: 'MTH-SO2',
+      locationId: 'LOC1',
+      parameterCode: 'SO2',
+      methodCode: 'CEM',
+      substituteDataCode: 'SUBS75',
+      beginDate: '2020-01-01',
+    },
+    {
+      methodId: 'MTH-NOX',
+      locationId: 'LOC1',
+      parameterCode: 'NOX',
+      methodCode: 'CEM',
+      beginDate: '2020-01-01',
+    },
+    {
+      methodId: 'MTH-FLOW',
+      locationId: 'LOC1',
+      parameterCode: 'FLOW',
+      methodCode: 'CEM',
+      beginDate: '2020-01-01',
+    },
+    {
+      methodId: 'MTH-O2',
+      locationId: 'LOC1',
+      parameterCode: 'O2',
+      methodCode: 'CEM',
+      beginDate: '2020-01-01',
+    },
+  ],
+  systems: [
+    {
+      systemId: 'SYS-SO2',
+      locationId: 'LOC1',
+      systemTypeCode: 'SO2',
+      beginDate: '2020-01-01',
+    },
+    {
+      systemId: 'SYS-NOX',
+      locationId: 'LOC1',
+      systemTypeCode: 'NOX',
+      beginDate: '2020-01-01',
+    },
+    {
+      systemId: 'SYS-FLOW',
+      locationId: 'LOC1',
+      systemTypeCode: 'FLOW',
+      beginDate: '2020-01-01',
+    },
+    {
+      systemId: 'SYS-O2',
+      locationId: 'LOC1',
+      systemTypeCode: 'O2',
+      beginDate: '2020-01-01',
+    },
+  ],
+  spans: [],
+  qualifications: [],
+})
 
 describe('RegsBotService', () => {
   let regsBot: RegsBotService
@@ -206,6 +290,131 @@ describe('RegsBotService', () => {
 
       expect(library.items).toHaveLength(1)
       expect(library.scope).toBe('project')
+    })
+  })
+
+  // ============================================================================
+  // MONITORING PLAN ANALYSIS TESTS
+  // ============================================================================
+
+  describe('analyzeMonitoringPlan', () => {
+    it('analyzes a monitoring plan and returns DAHS requirements', async () => {
+      const mockFacility = createMockFacility()
+      const mockPlan = createMockMonitoringPlan()
+      const mockPrograms = ['ARP', 'CSAPR']
+
+      // Create service with mocked clients
+      const mockEcmpsClient = {
+        getFacility: vi.fn().mockResolvedValue(mockFacility),
+        getMonitoringPlan: vi.fn().mockResolvedValue(mockPlan),
+        getFacilityPrograms: vi.fn().mockResolvedValue(mockPrograms),
+        getMonitorMethods: vi.fn(),
+      }
+
+      const service = new RegsBotService({
+        ecmpsClient: mockEcmpsClient as never,
+      })
+
+      const requirements = await service.analyzeMonitoringPlan(5678)
+
+      // Verify structure
+      expect(requirements.facilityName).toBe('Test Power Plant')
+      expect(requirements.orisCode).toBe(5678)
+      expect(requirements.programs).toEqual(['ARP', 'CSAPR'])
+
+      // Verify monitoring requirements derived
+      expect(requirements.monitoringRequirements.length).toBeGreaterThan(0)
+      const so2Mon = requirements.monitoringRequirements.find(
+        (r) => r.parameter === 'Sulfur Dioxide'
+      )
+      expect(so2Mon).toBeDefined()
+      expect(so2Mon?.methodCode).toBe('CEM')
+      expect(so2Mon?.frequency).toBe('continuous')
+
+      // Verify calculation requirements
+      expect(requirements.calculationRequirements.length).toBeGreaterThan(0)
+      const hourlyAvg = requirements.calculationRequirements.find(
+        (r) => r.calculationType === 'hourly_average'
+      )
+      expect(hourlyAvg).toBeDefined()
+
+      // Should have heat input calculation (has Flow and O2)
+      const heatInput = requirements.calculationRequirements.find(
+        (r) => r.calculationType === 'heat_input'
+      )
+      expect(heatInput).toBeDefined()
+
+      // Should have mass emission calculations
+      const so2Mass = requirements.calculationRequirements.find(
+        (r) => r.name === 'SO2 Mass Emissions'
+      )
+      expect(so2Mass).toBeDefined()
+
+      // Verify QA requirements
+      expect(requirements.qaRequirements.length).toBeGreaterThan(0)
+      const dailyCal = requirements.qaRequirements.filter((r) => r.testType === 'daily_calibration')
+      expect(dailyCal.length).toBe(4) // One for each system
+
+      const rata = requirements.qaRequirements.filter((r) => r.testType === 'rata')
+      expect(rata.length).toBe(4) // One for each system
+
+      // Verify reporting requirements
+      expect(requirements.reportingRequirements.length).toBeGreaterThan(0)
+      const quarterlyEdr = requirements.reportingRequirements.find((r) =>
+        r.reportType.includes('Quarterly')
+      )
+      expect(quarterlyEdr).toBeDefined()
+
+      // Verify substitution requirements (SO2 has SUBS75)
+      const subReqs = requirements.substitutionRequirements.filter((r) => r.parameter === 'SO2')
+      expect(subReqs.length).toBeGreaterThan(0)
+
+      // Verify recordkeeping requirements
+      expect(requirements.recordkeepingRequirements.length).toBeGreaterThan(0)
+    })
+
+    it('includes linearity tests for gas analyzers', async () => {
+      const mockFacility = createMockFacility()
+      const mockPlan = createMockMonitoringPlan()
+
+      const mockEcmpsClient = {
+        getFacility: vi.fn().mockResolvedValue(mockFacility),
+        getMonitoringPlan: vi.fn().mockResolvedValue(mockPlan),
+        getFacilityPrograms: vi.fn().mockResolvedValue(['ARP']),
+        getMonitorMethods: vi.fn(),
+      }
+
+      const service = new RegsBotService({
+        ecmpsClient: mockEcmpsClient as never,
+      })
+
+      const requirements = await service.analyzeMonitoringPlan(5678)
+
+      const linearityTests = requirements.qaRequirements.filter((r) => r.testType === 'linearity')
+      // Should have linearity for SO2, NOX, O2 (gas analyzers)
+      expect(linearityTests.length).toBeGreaterThanOrEqual(3)
+    })
+
+    it('includes flow-to-load check when FLOW system present', async () => {
+      const mockFacility = createMockFacility()
+      const mockPlan = createMockMonitoringPlan()
+
+      const mockEcmpsClient = {
+        getFacility: vi.fn().mockResolvedValue(mockFacility),
+        getMonitoringPlan: vi.fn().mockResolvedValue(mockPlan),
+        getFacilityPrograms: vi.fn().mockResolvedValue(['ARP']),
+        getMonitorMethods: vi.fn(),
+      }
+
+      const service = new RegsBotService({
+        ecmpsClient: mockEcmpsClient as never,
+      })
+
+      const requirements = await service.analyzeMonitoringPlan(5678)
+
+      const flowToLoad = requirements.qaRequirements.find((r) => r.testType === 'flow_to_load')
+      expect(flowToLoad).toBeDefined()
+      expect(flowToLoad?.frequency).toBe('quarterly')
     })
   })
 })

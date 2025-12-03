@@ -283,6 +283,133 @@ export interface QAWorkflowConfiguration {
   obligationLinks: string[]
 }
 
+// ============================================================================
+// DAHS CONFIGURATION REQUIREMENTS (from RegsBot Analysis)
+// ============================================================================
+
+/**
+ * Complete analysis of what a DAHS needs based on regulatory requirements.
+ * This is produced by RegsBot analyzing a monitoring plan + regulations.
+ */
+export interface DAHSRequirements {
+  facilityId: string
+  facilityName: string
+  orisCode: number
+  programs: string[] // e.g., ["ARP", "CSAPR", "MATS"]
+  analyzedAt: string
+
+  // What the DAHS must monitor
+  monitoringRequirements: MonitoringRequirement[]
+
+  // Calculations DAHS must perform
+  calculationRequirements: CalculationRequirement[]
+
+  // QA/QC tests DAHS must track
+  qaRequirements: QARequirement[]
+
+  // Reports DAHS must generate
+  reportingRequirements: ReportingRequirement[]
+
+  // Limits DAHS must track for exceedances
+  emissionLimits: EmissionLimit[]
+
+  // Missing data substitution requirements
+  substitutionRequirements: SubstitutionRequirement[]
+
+  // Recordkeeping requirements
+  recordkeepingRequirements: RecordkeepingRequirement[]
+}
+
+/** Monitoring requirement derived from regulations */
+export interface MonitoringRequirement {
+  id: string
+  parameter: string // SO2, NOx, CO2, Flow, etc.
+  methodCode: string // CEM, CALC, AD, LME
+  systemType: string // SO2, NOXP, FLOW, etc.
+  frequency: 'continuous' | 'hourly' | 'daily'
+  regulatoryBasis: string // "40 CFR 75.10(a)(1)"
+  applicablePrograms: string[]
+  notes: string[]
+}
+
+/** Calculation requirement derived from regulations */
+export interface CalculationRequirement {
+  id: string
+  name: string
+  calculationType: CalculationType
+  inputParameters: string[]
+  outputParameter: string
+  outputUnits: string
+  frequency: 'hourly' | 'daily' | 'quarterly' | 'annual'
+  formula?: string
+  regulatoryBasis: string
+  notes: string[]
+}
+
+/** QA/QC test requirement */
+export interface QARequirement {
+  id: string
+  testType:
+    | 'daily_calibration'
+    | 'linearity'
+    | 'rata'
+    | 'cga'
+    | 'leak_check'
+    | 'beam_intensity'
+    | 'flow_to_load'
+    | 'quarterly_gas_audit'
+  parameterCode: string
+  frequency: string // "daily", "quarterly", "semi-annual", "annual"
+  toleranceCriteria: string // e.g., "±2.5% of span"
+  regulatoryBasis: string
+  consequenceOfFailure: string
+  notes: string[]
+}
+
+/** Reporting requirement */
+export interface ReportingRequirement {
+  id: string
+  reportType: string // "Quarterly EDR", "Annual Compliance", etc.
+  frequency: 'quarterly' | 'semi-annual' | 'annual' | 'event-driven'
+  submissionDeadline: string // e.g., "30 days after quarter end"
+  dataElements: string[]
+  regulatoryBasis: string
+  notes: string[]
+}
+
+/** Emission limit to track */
+export interface EmissionLimit {
+  id: string
+  parameter: string
+  limitValue: number
+  units: string
+  averagingPeriod: string // "hourly", "30-day rolling", "annual"
+  limitType: 'emission_rate' | 'mass' | 'concentration' | 'opacity'
+  regulatoryBasis: string
+  applicablePrograms: string[]
+  notes: string[]
+}
+
+/** Missing data substitution requirement */
+export interface SubstitutionRequirement {
+  id: string
+  parameter: string
+  substituteDataCode: string // SUBS75, MHHI, etc.
+  method: string
+  regulatoryBasis: string
+  notes: string[]
+}
+
+/** Recordkeeping requirement */
+export interface RecordkeepingRequirement {
+  id: string
+  category: string
+  description: string
+  retentionPeriod: string // "3 years", "5 years", etc.
+  regulatoryBasis: string
+  notes: string[]
+}
+
 /** Development item for unsupported obligations */
 export interface DevelopmentItem {
   id: string
