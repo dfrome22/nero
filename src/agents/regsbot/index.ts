@@ -1,26 +1,49 @@
 /**
  * RegsBot Agent
  *
- * Supreme Commander of EPA Knowledge
+ * EPA Regulatory Knowledge Oracle
  *
- * PURPOSE: RegsBot is the regulatory knowledge oracle. Given a facility's
- * monitoring plan or permit, it can deduce:
- * - What parameters must be monitored (SO2, NOx, Flow, etc.)
- * - What QA/QC tests are required (daily calibration, RATA, CGA, linearity)
- * - What calculations the DAHS must perform (hourly averages, heat input, mass emissions)
- * - What emission limits apply and must be tracked for exceedances
- * - What reports must be generated (quarterly EDR, annual compliance)
- * - What missing data substitution rules apply
+ * PURPOSE: Answer regulatory questions about what a DAHS needs to:
+ * - RECORD: What data must be logged and stored
+ * - CALCULATE: What emissions calculations are required
+ * - QA/QC: What testing and calibration is required
+ * - REPORT: What reports must be submitted
  *
- * STANDALONE USAGE:
+ * INPUTS: RegsBot accepts any of:
+ * - Natural language questions ("What QA tests do I need for SO2?")
+ * - Structured queries ({ queryType: 'qa-requirements', context: { parameters: ['SO2'] }})
+ * - Monitoring plan JSON (from file or API)
+ * - Permit text (from OCR or paste)
+ * - ORIS code (to fetch from ECMPS API)
+ *
+ * SOURCES: RegsBot searches controlled regulatory sources:
+ * - eCFR (Electronic Code of Federal Regulations)
+ * - ECMPS/CAMD APIs (Monitoring plans, facility data)
+ * - State permits (Title V / Part 70)
+ * - EPA guidance documents
+ *
+ * USAGE:
  *   const regsBot = new RegsBotService()
- *   const requirements = await regsBot.analyzeMonitoringPlan(orisCode)
- *   // Returns structured DAHSRequirements object
  *
- * LLM INTEGRATION:
- *   RegsBot produces structured JSON output that an LLM orchestrator can
- *   pass to RequirementsBot for gap analysis against DAHS capabilities.
+ *   // Natural language
+ *   const answer = await regsBot.ask({
+ *     question: "What QA tests are required for a SO2 CEMS?"
+ *   })
+ *
+ *   // With context
+ *   const answer = await regsBot.ask({
+ *     queryType: 'qa-requirements',
+ *     context: { orisCode: 3, locationId: '7B' }
+ *   })
+ *
+ *   // With monitoring plan
+ *   const answer = await regsBot.ask({
+ *     question: "What subparts apply?",
+ *     context: { monitoringPlan: jsonPlan }
+ *   })
  */
+
+/* eslint-disable @typescript-eslint/strict-boolean-expressions */
 
 import type {
   ECFRQuery,
@@ -36,18 +59,31 @@ import type {
   UnitQualification,
 } from '../../types/ecmps-api'
 import type {
+  ApplicableRegulation,
+  ApplicableSubpart,
   CalculationRequirement,
   CitationAnchor,
   DAHSRequirements,
   EmissionLimit,
   EvidenceItem,
   EvidenceLibraryData,
+  LocationInfo,
+  MonitoringPlanQuery,
+  MonitoringPlanQueryResult,
   MonitoringRequirement,
   ObligationType,
   PermitDocument,
   PermitObligation,
   QARequirement,
+  QATestInfo,
   RecordkeepingRequirement,
+  RegsBotContext,
+  RegsBotInput,
+  RegsBotQueryType,
+  RegsBotResponse,
+  RegsBotResponseData,
+  RegulatoryCitation,
+  RegulatorySource,
   ReportingRequirement,
   SubstitutionRequirement,
 } from '../../types/orchestration'
@@ -72,6 +108,712 @@ export class RegsBotService {
     this.ecmps = config.ecmpsClient ?? ecmpsClient
   }
 
+  // ============================================================================
+  // MAIN ENTRY POINT - Ask RegsBot anything
+  // ============================================================================
+
+  /**
+   * Ask RegsBot a regulatory question.
+   *
+   * @param input - Question (natural language or structured) with optional context
+   * @returns Structured response with answer, data, and citations
+   *
+   * @example
+   * // Natural language
+   * await regsBot.ask({ question: "What QA tests are required for SO2?" })
+   *
+   * // Structured query with context
+   * await regsBot.ask({
+   *   queryType: 'qa-requirements',
+   *   context: { orisCode: 3, parameters: ['SO2', 'NOX'] }
+   * })
+   *
+   * // With monitoring plan
+   * await regsBot.ask({
+   *   queryType: 'applicable-regulations',
+   *   context: { monitoringPlan: jsonPlan, locationId: '7B' }
+   * })
+   */
+  async ask(input: RegsBotInput): Promise<RegsBotResponse> {
+    // Determine the query type from natural language if not specified
+    const queryType = input.queryType ?? this.inferQueryType(input.question)
+
+    // Get or fetch the monitoring plan if we have context
+    const monitoringPlan = await this.resolveMonitoringPlan(input.context)
+
+    // Build response based on query type
+    const responseData = this.buildResponse(queryType, input, monitoringPlan)
+
+    // Generate natural language answer
+    const answer = this.generateAnswer(queryType, responseData, input)
+
+    // Collect citations
+    const citations = this.collectCitations(responseData, input.sources)
+
+    return {
+      input,
+      answer,
+      data: responseData,
+      citations,
+      relatedQuestions: this.suggestRelatedQuestions(queryType),
+      confidence: this.assessConfidence(input, monitoringPlan),
+      warnings: this.generateWarnings(input, monitoringPlan),
+    }
+  }
+
+  /**
+   * Infer query type from natural language question
+   */
+  private inferQueryType(question?: string): RegsBotQueryType {
+    if (!question) return 'general'
+
+    const q = question.toLowerCase()
+
+    if (q.includes('qa') || q.includes('test') || q.includes('calibrat') || q.includes('rata')) {
+      return 'qa-requirements'
+    }
+    if (q.includes('monitor') || q.includes('parameter') || q.includes('cems')) {
+      return 'what-to-monitor'
+    }
+    if (
+      q.includes('calculat') ||
+      q.includes('average') ||
+      q.includes('heat input') ||
+      q.includes('mass')
+    ) {
+      return 'what-to-calculate'
+    }
+    if (q.includes('record') || q.includes('store') || q.includes('retain') || q.includes('log')) {
+      return 'what-to-record'
+    }
+    if (
+      q.includes('report') ||
+      q.includes('submit') ||
+      q.includes('edr') ||
+      q.includes('quarterly')
+    ) {
+      return 'reporting-requirements'
+    }
+    if (
+      q.includes('regulation') ||
+      q.includes('subpart') ||
+      q.includes('cfr') ||
+      q.includes('part 75')
+    ) {
+      return 'applicable-regulations'
+    }
+    if (q.includes('limit') || q.includes('exceed') || q.includes('threshold')) {
+      return 'emission-limits'
+    }
+    if (q.includes('missing') || q.includes('substitut') || q.includes('data availab')) {
+      return 'missing-data'
+    }
+
+    return 'general'
+  }
+
+  /**
+   * Resolve monitoring plan from context (fetch if needed)
+   */
+  private async resolveMonitoringPlan(
+    context?: RegsBotContext
+  ): Promise<MonitoringPlan | undefined> {
+    if (!context) return undefined
+
+    // Use provided monitoring plan
+    if (context.monitoringPlan) {
+      return context.monitoringPlan
+    }
+
+    // Fetch from ECMPS if ORIS code provided
+    if (context.orisCode) {
+      try {
+        return await this.getMonitoringPlan(context.orisCode)
+      } catch {
+        // API might not be available, continue without it
+        return undefined
+      }
+    }
+
+    return undefined
+  }
+
+  /**
+   * Build response data based on query type
+   */
+  private buildResponse(
+    queryType: RegsBotQueryType,
+    input: RegsBotInput,
+    plan?: MonitoringPlan
+  ): RegsBotResponseData {
+    const context = input.context
+    const locationId = context?.locationId
+    const parameters = context?.parameters
+
+    switch (queryType) {
+      case 'what-to-monitor':
+        return {
+          monitoringRequirements: plan
+            ? this.deriveMonitoringRequirements(plan, context?.programs ?? [])
+            : this.getGenericMonitoringRequirements(parameters),
+          regulations: this.getMonitoringRegulations(parameters),
+        }
+
+      case 'what-to-calculate':
+        return {
+          calculationRequirements: plan
+            ? this.deriveCalculationRequirements(plan, [])
+            : this.getGenericCalculationRequirements(parameters),
+          regulations: this.getCalculationRegulations(),
+        }
+
+      case 'qa-requirements':
+        return {
+          qaRequirements: plan
+            ? this.deriveQARequirements(plan, [])
+            : this.getGenericQARequirements(parameters),
+          regulations: this.getQARegulations(),
+        }
+
+      case 'reporting-requirements':
+        return {
+          reportingRequirements: this.deriveReportingRequirements(context?.programs ?? ['ARP']),
+          regulations: this.getReportingRegulations(),
+        }
+
+      case 'applicable-regulations':
+        return {
+          regulations: plan
+            ? this.deriveApplicableRegulations(plan, locationId)
+            : this.getGenericRegulations(parameters, context?.programs),
+        }
+
+      case 'emission-limits':
+        return {
+          emissionLimits: plan ? this.deriveEmissionLimits(plan, context?.programs ?? []) : [],
+          regulations: this.getLimitRegulations(context?.programs),
+        }
+
+      case 'missing-data':
+        return {
+          substitutionRequirements: plan
+            ? this.deriveSubstitutionRequirements(plan)
+            : this.getGenericSubstitutionRequirements(),
+          regulations: this.getMissingDataRegulations(),
+        }
+
+      case 'what-to-record':
+        return {
+          recordkeepingRequirements: this.deriveRecordkeepingRequirements(context?.programs ?? []),
+          regulations: this.getRecordkeepingRegulations(),
+        }
+
+      case 'general':
+      default:
+        // For general questions, provide overview
+        return {
+          regulations: plan
+            ? this.deriveApplicableRegulations(plan, locationId)
+            : this.getGenericRegulations(parameters, context?.programs),
+        }
+    }
+  }
+
+  /**
+   * Generate natural language answer from response data
+   */
+  private generateAnswer(
+    queryType: RegsBotQueryType,
+    data: RegsBotResponseData,
+    input: RegsBotInput
+  ): string {
+    const context = input.context
+    const locationStr = context?.locationId
+      ? ` for location ${context.locationId}`
+      : context?.orisCode
+        ? ` for ORIS ${context.orisCode}`
+        : ''
+
+    switch (queryType) {
+      case 'what-to-monitor': {
+        const reqs = data.monitoringRequirements ?? []
+        const params = reqs.map((r) => r.parameter).join(', ')
+        return `Based on Part 75 requirements${locationStr}, the following parameters must be monitored: ${params || 'See monitoring plan for specifics'}. Each parameter requires continuous monitoring with hourly data recording.`
+      }
+
+      case 'what-to-calculate': {
+        const calcs = data.calculationRequirements ?? []
+        const types = [...new Set(calcs.map((c) => c.name))].slice(0, 5).join(', ')
+        return `The DAHS must perform these calculations${locationStr}: ${types || 'hourly averages, heat input, mass emissions'}. All calculations must be performed hourly and stored per 40 CFR 75 Appendix F.`
+      }
+
+      case 'qa-requirements': {
+        const qa = data.qaRequirements ?? []
+        const tests = [...new Set(qa.map((q) => q.testType))].join(', ')
+        return `Required QA/QC tests${locationStr}: ${tests || 'daily calibration, quarterly linearity, RATA, CGA'}. The DAHS must track test results, due dates, and grace periods per 40 CFR 75 Appendix B.`
+      }
+
+      case 'reporting-requirements': {
+        const reports = data.reportingRequirements ?? []
+        return `Reporting requirements${locationStr}: ${reports.map((r) => r.reportType).join(', ') || 'Quarterly EDR, Annual Compliance Certification'}. Submit via ECMPS per 40 CFR 75.64.`
+      }
+
+      case 'applicable-regulations': {
+        const regs = data.regulations ?? []
+        const summary = regs
+          .slice(0, 5)
+          .map((r) => r.cfr)
+          .join(', ')
+        return `Applicable regulations${locationStr}: ${summary || '40 CFR 75 (Part 75 monitoring), 40 CFR 75 Appendix B (QA/QC)'}. ${regs.length} total regulatory provisions apply.`
+      }
+
+      case 'emission-limits': {
+        const limits = data.emissionLimits ?? []
+        if (limits.length === 0) {
+          return `Emission limits are facility-specific and come from your permit. Check your Title V permit for applicable limits. The DAHS must track exceedances and report them.`
+        }
+        return `Found ${limits.length} emission limits${locationStr}. The DAHS must track these for exceedance monitoring and reporting.`
+      }
+
+      case 'missing-data': {
+        return `Missing data substitution${locationStr}: Part 75 Subpart D procedures apply. The DAHS must use 90th percentile values for emissions, maximum values for flow, based on quality-assured hours in the lookback period. Data availability must be ≥90% to avoid bias adjustment.`
+      }
+
+      case 'what-to-record': {
+        const records = data.recordkeepingRequirements ?? []
+        return `Recordkeeping requirements${locationStr}: ${records.map((r) => r.category).join(', ') || 'hourly emissions data, QA records, calibration gas certificates'}. All records must be retained for ${records[0]?.retentionPeriod ?? '3 years'} per 40 CFR 75.57.`
+      }
+
+      default:
+        return `Based on EPA regulations${locationStr}, the DAHS must continuously monitor emissions, perform required calculations, conduct QA/QC testing, and submit quarterly reports. See the detailed data for specifics.`
+    }
+  }
+
+  /**
+   * Collect citations from response data
+   */
+  private collectCitations(
+    data: RegsBotResponseData,
+    _sources?: RegulatorySource[]
+  ): RegulatoryCitation[] {
+    const citations: RegulatoryCitation[] = []
+
+    // Add citations from regulations
+    for (const reg of data.regulations ?? []) {
+      const citation: RegulatoryCitation = {
+        source: 'ecfr',
+        reference: reg.cfr,
+        title: reg.title,
+        excerpt: reg.description,
+      }
+      if (reg.url) {
+        citation.url = reg.url
+      }
+      citations.push(citation)
+    }
+
+    // Add citations from QA requirements
+    for (const qa of data.qaRequirements ?? []) {
+      if (!citations.some((c) => c.reference === qa.regulatoryBasis)) {
+        citations.push({
+          source: 'ecfr',
+          reference: qa.regulatoryBasis,
+          title: `${qa.testType} Requirements`,
+          excerpt: `${qa.frequency}, tolerance: ${qa.toleranceCriteria}`,
+        })
+      }
+    }
+
+    return citations.slice(0, 10) // Limit citations
+  }
+
+  /**
+   * Suggest related questions
+   */
+  private suggestRelatedQuestions(queryType: RegsBotQueryType): string[] {
+    const suggestions: Record<RegsBotQueryType, string[]> = {
+      'what-to-monitor': [
+        'What calculations are required for these parameters?',
+        'What QA tests do I need for my monitors?',
+        'What are the missing data procedures?',
+      ],
+      'what-to-calculate': [
+        'How is heat input calculated?',
+        'What are the mass emission formulas?',
+        'When are calculations due?',
+      ],
+      'qa-requirements': [
+        'What is the RATA frequency?',
+        'What happens if I fail a linearity test?',
+        'What calibration gases do I need?',
+      ],
+      'reporting-requirements': [
+        'When is the quarterly EDR due?',
+        'What data goes in the annual certification?',
+        'How do I submit to ECMPS?',
+      ],
+      'applicable-regulations': [
+        'What monitoring is required?',
+        'What QA/QC tests do I need?',
+        'What are my reporting deadlines?',
+      ],
+      'emission-limits': [
+        'How do I track exceedances?',
+        'What are the averaging periods?',
+        'What happens if I exceed a limit?',
+      ],
+      'missing-data': [
+        'What is the substitute data formula?',
+        'What is the lookback period?',
+        'When is bias adjustment required?',
+      ],
+      'what-to-record': [
+        'How long must I retain records?',
+        'What format should records be in?',
+        'What must be in the audit trail?',
+      ],
+      general: [
+        'What parameters must I monitor?',
+        'What QA tests are required?',
+        'What are my reporting requirements?',
+      ],
+    }
+
+    return suggestions[queryType]
+  }
+
+  /**
+   * Assess confidence level
+   */
+  private assessConfidence(input: RegsBotInput, plan?: MonitoringPlan): 'high' | 'medium' | 'low' {
+    // High confidence if we have a monitoring plan
+    if (plan) return 'high'
+
+    // Medium if we have ORIS code or specific parameters
+    const params = input.context?.parameters
+    if (input.context?.orisCode || (params && params.length > 0)) {
+      return 'medium'
+    }
+
+    // Low for general questions without context
+    return 'low'
+  }
+
+  /**
+   * Generate warnings
+   */
+  private generateWarnings(input: RegsBotInput, plan?: MonitoringPlan): string[] {
+    const warnings: string[] = []
+
+    if (!plan && !input.context?.orisCode) {
+      warnings.push(
+        'Response is based on general Part 75 requirements. Provide a monitoring plan or ORIS code for facility-specific guidance.'
+      )
+    }
+
+    if (!input.context?.programs?.length) {
+      warnings.push(
+        'Regulatory programs not specified. Assuming Acid Rain Program (ARP) requirements.'
+      )
+    }
+
+    if (input.context?.stateCode) {
+      warnings.push(
+        `State-specific (${input.context.stateCode}) Title V requirements may apply but are not included in this response.`
+      )
+    }
+
+    return warnings
+  }
+
+  // ============================================================================
+  // GENERIC REQUIREMENT BUILDERS (when no monitoring plan available)
+  // ============================================================================
+
+  private getGenericMonitoringRequirements(parameters?: string[]): MonitoringRequirement[] {
+    const params = parameters ?? ['SO2', 'NOX', 'CO2', 'FLOW', 'O2']
+    return params.map((param, i) => ({
+      id: `mon-generic-${i}`,
+      parameter: this.getParameterDisplayName(param),
+      methodCode: 'CEM',
+      systemType: param,
+      frequency: 'continuous' as const,
+      regulatoryBasis: '40 CFR 75.10',
+      applicablePrograms: ['ARP'],
+      notes: ['Continuous emissions monitoring required'],
+    }))
+  }
+
+  private getGenericCalculationRequirements(parameters?: string[]): CalculationRequirement[] {
+    const calcs: CalculationRequirement[] = [
+      {
+        id: 'calc-hourly-avg',
+        name: 'Hourly Average',
+        calculationType: 'hourly_average',
+        inputParameters: parameters ?? ['SO2', 'NOX', 'CO2'],
+        outputParameter: 'HOURLY_AVG',
+        outputUnits: 'various',
+        frequency: 'hourly',
+        regulatoryBasis: '40 CFR 75.10',
+        notes: ['Required for all monitored parameters'],
+      },
+      {
+        id: 'calc-heat-input',
+        name: 'Heat Input',
+        calculationType: 'heat_input',
+        inputParameters: ['FLOW', 'O2'],
+        outputParameter: 'HI',
+        outputUnits: 'MMBtu',
+        frequency: 'hourly',
+        formula: 'HI = Qh × Fd × (20.9/(20.9 - %O2)) × 10^-6',
+        regulatoryBasis: '40 CFR 75 Appendix F',
+        notes: ['F-factor based calculation'],
+      },
+      {
+        id: 'calc-so2-mass',
+        name: 'SO2 Mass Emissions',
+        calculationType: 'mass_emission',
+        inputParameters: ['SO2', 'FLOW'],
+        outputParameter: 'SO2_MASS',
+        outputUnits: 'lb/hr',
+        frequency: 'hourly',
+        regulatoryBasis: '40 CFR 75 Appendix F',
+        notes: ['Required for ARP'],
+      },
+    ]
+    return calcs
+  }
+
+  private getGenericQARequirements(parameters?: string[]): QARequirement[] {
+    const params = parameters ?? ['SO2', 'NOX', 'FLOW']
+    const reqs: QARequirement[] = []
+
+    for (const param of params) {
+      reqs.push({
+        id: `qa-cal-${param}`,
+        testType: 'daily_calibration',
+        parameterCode: param,
+        frequency: 'daily (each operating day)',
+        toleranceCriteria: '±2.5% of span value',
+        regulatoryBasis: '40 CFR 75 Appendix B §2.1',
+        consequenceOfFailure: 'Recalibrate within 8 hours or invalidate data',
+        notes: ['Zero and upscale gases required'],
+      })
+
+      if (['SO2', 'NOX', 'CO2', 'O2'].includes(param)) {
+        reqs.push({
+          id: `qa-lin-${param}`,
+          testType: 'linearity',
+          parameterCode: param,
+          frequency: 'quarterly',
+          toleranceCriteria: '±5% of reference or ±0.5% of span',
+          regulatoryBasis: '40 CFR 75 Appendix B §2.2',
+          consequenceOfFailure: 'Data invalid back to last passed test',
+          notes: ['Low, mid, high gases - 3 injections each'],
+        })
+      }
+
+      reqs.push({
+        id: `qa-rata-${param}`,
+        testType: 'rata',
+        parameterCode: param,
+        frequency: 'semi-annual or annual',
+        toleranceCriteria: param === 'FLOW' ? '≤10% RA' : '≤10% RA',
+        regulatoryBasis: '40 CFR 75 Appendix B §2.3',
+        consequenceOfFailure: 'Potential to lose CEM certification',
+        notes: ['Reference method testing', 'At least 9 valid run pairs'],
+      })
+    }
+
+    return reqs
+  }
+
+  private getGenericSubstitutionRequirements(): SubstitutionRequirement[] {
+    return [
+      {
+        id: 'sub-emissions',
+        parameter: 'Emissions (SO2, NOx, CO2)',
+        substituteDataCode: 'SUBS75',
+        method: '90th percentile from quality-assured hours in lookback period',
+        regulatoryBasis: '40 CFR 75 Subpart D',
+        notes: ['2,160 hour lookback', 'Use maximum if <2,160 QA hours'],
+      },
+      {
+        id: 'sub-flow',
+        parameter: 'FLOW',
+        substituteDataCode: 'SUBS75',
+        method: 'Maximum value from quality-assured hours',
+        regulatoryBasis: '40 CFR 75 Subpart D',
+        notes: ['Conservative approach for flow'],
+      },
+    ]
+  }
+
+  // ============================================================================
+  // REGULATION LOOKUPS
+  // ============================================================================
+
+  private getMonitoringRegulations(parameters?: string[]): ApplicableRegulation[] {
+    const regs: ApplicableRegulation[] = [
+      {
+        cfr: '40 CFR 75.10',
+        part: 75,
+        section: '10',
+        title: 'General Operating Requirements',
+        description: 'Core monitoring requirements for affected units',
+        applicability: 'All Part 75 affected units',
+      },
+      {
+        cfr: '40 CFR 75 Subpart B',
+        part: 75,
+        subpart: 'B',
+        title: 'Monitoring Provisions',
+        description: 'CEM requirements for SO2, NOx, CO2, and flow',
+        applicability: 'Units using CEMS',
+      },
+    ]
+
+    if (parameters?.includes('HG') || parameters?.includes('HCL')) {
+      regs.push({
+        cfr: '40 CFR 63 Subpart UUUUU',
+        part: 63,
+        subpart: 'UUUUU',
+        title: 'MATS',
+        description: 'Mercury and Air Toxics Standards',
+        applicability: 'Coal and oil-fired EGUs',
+      })
+    }
+
+    return regs
+  }
+
+  private getCalculationRegulations(): ApplicableRegulation[] {
+    return [
+      {
+        cfr: '40 CFR 75 Appendix F',
+        part: 75,
+        subpart: 'Appendix F',
+        title: 'Calculation Procedures',
+        description: 'Heat input, emission rate, and mass emission calculations',
+        applicability: 'All Part 75 sources',
+      },
+    ]
+  }
+
+  private getQARegulations(): ApplicableRegulation[] {
+    return [
+      {
+        cfr: '40 CFR 75 Appendix B',
+        part: 75,
+        subpart: 'Appendix B',
+        title: 'Quality Assurance and Quality Control Procedures',
+        description: 'Calibration, linearity, RATA, CGA requirements',
+        applicability: 'All Part 75 CEMS',
+      },
+    ]
+  }
+
+  private getReportingRegulations(): ApplicableRegulation[] {
+    return [
+      {
+        cfr: '40 CFR 75.64',
+        part: 75,
+        section: '64',
+        title: 'Quarterly Reports',
+        description: 'Electronic Data Report submission requirements',
+        applicability: 'All Part 75 sources',
+      },
+      {
+        cfr: '40 CFR 75.63',
+        part: 75,
+        section: '63',
+        title: 'Compliance Certification',
+        description: 'Annual compliance certification requirements',
+        applicability: 'All Part 75 sources',
+      },
+    ]
+  }
+
+  private getLimitRegulations(programs?: string[]): ApplicableRegulation[] {
+    const regs: ApplicableRegulation[] = []
+
+    if (programs?.includes('ARP') || !programs) {
+      regs.push({
+        cfr: '40 CFR 76',
+        part: 76,
+        title: 'Acid Rain Nitrogen Oxides Emission Reduction Program',
+        description: 'NOx emission limits by boiler type',
+        applicability: 'ARP affected units',
+      })
+    }
+
+    if (programs?.includes('CSAPR')) {
+      regs.push({
+        cfr: '40 CFR 97 Subpart CCCCC',
+        part: 97,
+        subpart: 'CCCCC',
+        title: 'CSAPR SO2 Trading Program',
+        description: 'SO2 allowance requirements',
+        applicability: 'CSAPR affected states',
+      })
+    }
+
+    return regs
+  }
+
+  private getMissingDataRegulations(): ApplicableRegulation[] {
+    return [
+      {
+        cfr: '40 CFR 75 Subpart D',
+        part: 75,
+        subpart: 'D',
+        title: 'Missing Data Substitution Procedures',
+        description: 'Standard procedures for missing CEMS data',
+        applicability: 'All Part 75 CEMS',
+      },
+    ]
+  }
+
+  private getRecordkeepingRegulations(): ApplicableRegulation[] {
+    return [
+      {
+        cfr: '40 CFR 75.57',
+        part: 75,
+        section: '57',
+        title: 'General Recordkeeping Provisions',
+        description: 'Record retention and format requirements',
+        applicability: 'All Part 75 sources',
+      },
+    ]
+  }
+
+  private getGenericRegulations(
+    parameters?: string[],
+    programs?: string[]
+  ): ApplicableRegulation[] {
+    return [
+      ...this.getMonitoringRegulations(parameters),
+      ...this.getQARegulations(),
+      ...this.getCalculationRegulations(),
+      ...this.getReportingRegulations(),
+      ...this.getLimitRegulations(programs),
+    ]
+  }
+
+  private deriveApplicableRegulations(
+    plan: MonitoringPlan,
+    locationId?: string
+  ): ApplicableRegulation[] {
+    const methods = locationId
+      ? plan.methods.filter((m) => m.locationId === locationId)
+      : plan.methods
+    const params = methods.map((m) => m.parameterCode)
+
+    return this.getGenericRegulations(params)
+  }
+
+  // ============================================================================
+  // REGULATION LOOKUP (existing methods)
   // ============================================================================
   // REGULATION LOOKUP
   // ============================================================================
@@ -139,6 +881,648 @@ export class RegsBotService {
    */
   async getFacilityPrograms(orisCode: number): Promise<string[]> {
     return this.ecmps.getFacilityPrograms(orisCode)
+  }
+
+  // ============================================================================
+  // MONITORING PLAN QUERIES - Answer questions about a specific MP
+  // ============================================================================
+
+  /**
+   * Query a monitoring plan - answer questions about regulatory requirements.
+   * Can accept a JSON monitoring plan directly or fetch by ORIS code.
+   *
+   * @example
+   * // With JSON monitoring plan
+   * regsBot.queryMonitoringPlan({
+   *   plan: jsonMonitoringPlan,
+   *   locationId: '7B',
+   *   question: 'subparts'
+   * })
+   *
+   * // Fetch from API
+   * regsBot.queryMonitoringPlan({
+   *   orisCode: 3,
+   *   locationId: '7B',
+   *   question: 'subparts'
+   * })
+   */
+  async queryMonitoringPlan(query: MonitoringPlanQuery): Promise<MonitoringPlanQueryResult> {
+    // Get the monitoring plan (from JSON or API)
+    if (query.plan) {
+      const plan = query.plan
+      return this.executeMonitoringPlanQuery(query, plan)
+    }
+    if (query.orisCode === undefined) {
+      throw new Error('Either plan or orisCode must be provided')
+    }
+    const plan = await this.getMonitoringPlan(query.orisCode)
+    return this.executeMonitoringPlanQuery(query, plan)
+  }
+
+  private executeMonitoringPlanQuery(
+    query: MonitoringPlanQuery,
+    plan: MonitoringPlan
+  ): MonitoringPlanQueryResult {
+    // Filter to specific location if provided
+    const locationId = query.locationId
+    const unitId = query.unitId
+
+    // Route to appropriate query handler
+    switch (query.question) {
+      case 'subparts':
+        return this.queryApplicableSubparts(plan, locationId, unitId)
+      case 'parameters':
+        return this.queryMonitoredParameters(plan, locationId)
+      case 'methods':
+        return this.queryMonitoringMethods(plan, locationId)
+      case 'qa-tests':
+        return this.queryRequiredQATests(plan, locationId)
+      case 'systems':
+        return this.queryMonitoringSystems(plan, locationId)
+      case 'qualifications':
+        return this.queryUnitQualifications(plan, locationId, unitId)
+      case 'summary':
+      default:
+        return this.queryLocationSummary(plan, locationId, unitId)
+    }
+  }
+
+  /**
+   * Get all locations in a monitoring plan
+   */
+  getLocations(plan: MonitoringPlan): LocationInfo[] {
+    return plan.locations.map((loc) => {
+      const info: LocationInfo = {
+        locationId: loc.locationId,
+        locationType: loc.locationType,
+        isActive: loc.retireDate === undefined,
+        parameters: plan.methods
+          .filter((m) => m.locationId === loc.locationId)
+          .map((m) => m.parameterCode),
+        systems: plan.systems
+          .filter((s) => s.locationId === loc.locationId)
+          .map((s) => s.systemTypeCode),
+      }
+      if (loc.unitId) info.unitId = loc.unitId
+      if (loc.stackPipeId) info.stackPipeId = loc.stackPipeId
+      return info
+    })
+  }
+
+  /**
+   * Query: What regulatory subparts apply to this location/unit?
+   */
+  private queryApplicableSubparts(
+    plan: MonitoringPlan,
+    locationId?: string,
+    unitId?: string
+  ): MonitoringPlanQueryResult {
+    const subparts: ApplicableSubpart[] = []
+    const methods = this.filterByLocation(plan.methods, locationId)
+    const qualifications = this.filterQualificationsByLocation(
+      plan.qualifications,
+      locationId,
+      unitId
+    )
+    const parameterCodes = new Set(methods.map((m) => m.parameterCode))
+
+    // Part 75 - Core monitoring (always applies if any CEM methods)
+    const hasCEM = methods.some((m) => m.methodCode === 'CEM')
+    if (hasCEM) {
+      subparts.push({
+        part: 75,
+        subpart: 'A',
+        title: 'General Provisions',
+        description: 'Core Part 75 monitoring requirements',
+        applicableParameters: Array.from(parameterCodes),
+        regulatoryBasis: '40 CFR 75 Subpart A',
+      })
+
+      // Subpart B - Continuous Emission Monitoring
+      subparts.push({
+        part: 75,
+        subpart: 'B',
+        title: 'Continuous Emission Monitoring',
+        description: 'CEM requirements for SO2, NOx, CO2, and flow',
+        applicableParameters: ['SO2', 'NOX', 'CO2', 'FLOW'].filter((p) => parameterCodes.has(p)),
+        regulatoryBasis: '40 CFR 75 Subpart B',
+      })
+
+      // Subpart C - Missing Data
+      subparts.push({
+        part: 75,
+        subpart: 'C',
+        title: 'Missing Data Substitution',
+        description: 'Procedures for missing data',
+        applicableParameters: Array.from(parameterCodes),
+        regulatoryBasis: '40 CFR 75 Subpart C',
+      })
+
+      // Subpart D - Missing Data (Alternative)
+      if (methods.some((m) => m.substituteDataCode !== undefined)) {
+        subparts.push({
+          part: 75,
+          subpart: 'D',
+          title: 'Missing Data Substitution Procedures',
+          description: 'Alternative missing data procedures',
+          applicableParameters: methods
+            .filter((m) => m.substituteDataCode !== undefined)
+            .map((m) => m.parameterCode),
+          regulatoryBasis: '40 CFR 75 Subpart D',
+        })
+      }
+    }
+
+    // Appendix D - Fuel flow if AD method
+    if (methods.some((m) => m.methodCode === 'AD')) {
+      subparts.push({
+        part: 75,
+        subpart: 'Appendix D',
+        title: 'Optional SO2 Emissions Data Protocol',
+        description: 'Fuel-based SO2 monitoring using fuel flow and sulfur content',
+        applicableParameters: ['SO2', 'HI'],
+        regulatoryBasis: '40 CFR 75 Appendix D',
+      })
+    }
+
+    // LME - Low Mass Emissions
+    if (
+      methods.some((m) => m.methodCode === 'LME') ||
+      qualifications.some(
+        (q) => q.qualificationTypeCode === 'LMEA' || q.qualificationTypeCode === 'LMES'
+      )
+    ) {
+      subparts.push({
+        part: 75,
+        subpart: '75.19',
+        title: 'Low Mass Emissions Units',
+        description: 'Simplified monitoring for low-emitting units',
+        applicableParameters: ['SO2', 'NOX', 'CO2'],
+        regulatoryBasis: '40 CFR 75.19',
+      })
+    }
+
+    // Subpart G - CO2 (if monitoring CO2)
+    if (parameterCodes.has('CO2')) {
+      subparts.push({
+        part: 75,
+        subpart: 'G',
+        title: 'CO2 Mass Emissions',
+        description: 'CO2 monitoring and reporting requirements',
+        applicableParameters: ['CO2'],
+        regulatoryBasis: '40 CFR 75 Subpart G',
+      })
+    }
+
+    // Subpart H - NOx mass (if monitoring NOx)
+    if (parameterCodes.has('NOX')) {
+      subparts.push({
+        part: 75,
+        subpart: 'H',
+        title: 'NOx Mass Emissions',
+        description: 'NOx mass emissions monitoring provisions',
+        applicableParameters: ['NOX'],
+        regulatoryBasis: '40 CFR 75 Subpart H',
+      })
+    }
+
+    // Check for mercury monitoring
+    if (parameterCodes.has('HG') || parameterCodes.has('HCL') || parameterCodes.has('HF')) {
+      subparts.push({
+        part: 63,
+        subpart: 'UUUUU',
+        title: 'MATS - Mercury and Air Toxics Standards',
+        description: 'HAP monitoring for coal/oil EGUs',
+        applicableParameters: ['HG', 'HCL', 'HF'].filter((p) => parameterCodes.has(p)),
+        regulatoryBasis: '40 CFR 63 Subpart UUUUU',
+      })
+    }
+
+    // Appendix B - QA/QC procedures (always if CEM)
+    if (hasCEM) {
+      subparts.push({
+        part: 75,
+        subpart: 'Appendix B',
+        title: 'Quality Assurance and Quality Control Procedures',
+        description: 'Calibration, linearity, RATA, CGA requirements',
+        applicableParameters: Array.from(parameterCodes),
+        regulatoryBasis: '40 CFR 75 Appendix B',
+      })
+    }
+
+    // Appendix F - Calculation procedures
+    if (parameterCodes.has('FLOW') || parameterCodes.has('HI')) {
+      subparts.push({
+        part: 75,
+        subpart: 'Appendix F',
+        title: 'Calculation Procedures',
+        description: 'Heat input, emission rate, and mass emission calculations',
+        applicableParameters: ['FLOW', 'HI', 'SO2', 'NOX', 'CO2'].filter(
+          (p) => parameterCodes.has(p) || p === 'HI'
+        ),
+        regulatoryBasis: '40 CFR 75 Appendix F',
+      })
+    }
+
+    const result: MonitoringPlanQueryResult = {
+      question: 'subparts',
+      answer: {
+        subparts,
+        totalCount: subparts.length,
+      },
+      summary: `Location ${locationId ?? 'all'} is subject to ${subparts.length} regulatory subparts`,
+    }
+    if (locationId) result.locationId = locationId
+    if (unitId) result.unitId = unitId
+    return result
+  }
+
+  /**
+   * Query: What parameters are monitored at this location?
+   */
+  private queryMonitoredParameters(
+    plan: MonitoringPlan,
+    locationId?: string
+  ): MonitoringPlanQueryResult {
+    const methods = this.filterByLocation(plan.methods, locationId)
+
+    const parameters = methods.map((m) => {
+      const param: {
+        parameterCode: string
+        parameterName: string
+        methodCode: string
+        methodDescription: string
+        substituteDataCode?: string
+        beginDate: string
+        endDate?: string
+        isActive: boolean
+      } = {
+        parameterCode: m.parameterCode,
+        parameterName: this.getParameterDisplayName(m.parameterCode),
+        methodCode: m.methodCode,
+        methodDescription: this.getMethodDescription(m.methodCode),
+        beginDate: m.beginDate,
+        isActive: m.endDate === undefined,
+      }
+      if (m.substituteDataCode) param.substituteDataCode = m.substituteDataCode
+      if (m.endDate) param.endDate = m.endDate
+      return param
+    })
+
+    const result: MonitoringPlanQueryResult = {
+      question: 'parameters',
+      answer: { parameters },
+      summary: `${parameters.length} parameters monitored at location ${locationId ?? 'all'}`,
+    }
+    if (locationId) result.locationId = locationId
+    return result
+  }
+
+  /**
+   * Query: What monitoring methods are used?
+   */
+  private queryMonitoringMethods(
+    plan: MonitoringPlan,
+    locationId?: string
+  ): MonitoringPlanQueryResult {
+    const methods = this.filterByLocation(plan.methods, locationId)
+
+    const methodSummary = methods.map((m) => {
+      const method: {
+        parameterCode: string
+        methodCode: string
+        methodDescription: string
+        regulatoryBasis: string
+        substituteDataCode?: string
+      } = {
+        parameterCode: m.parameterCode,
+        methodCode: m.methodCode,
+        methodDescription: this.getMethodDescription(m.methodCode),
+        regulatoryBasis: this.getMethodRegulatoryBasis(m),
+      }
+      if (m.substituteDataCode) method.substituteDataCode = m.substituteDataCode
+      return method
+    })
+
+    const result: MonitoringPlanQueryResult = {
+      question: 'methods',
+      answer: { methods: methodSummary },
+      summary: `${methodSummary.length} monitoring methods at location ${locationId ?? 'all'}`,
+    }
+    if (locationId) result.locationId = locationId
+    return result
+  }
+
+  /**
+   * Query: What QA tests are required?
+   */
+  private queryRequiredQATests(
+    plan: MonitoringPlan,
+    locationId?: string
+  ): MonitoringPlanQueryResult {
+    const systems = this.filterByLocation(plan.systems, locationId)
+
+    const qaTests: QATestInfo[] = []
+
+    for (const system of systems) {
+      // Daily calibration for all systems
+      qaTests.push({
+        testType: 'Daily Calibration',
+        systemId: system.systemId,
+        parameterCode: system.systemTypeCode,
+        frequency: 'Daily (each operating day)',
+        tolerance: '±2.5% of span',
+        regulatoryBasis: '40 CFR 75 Appendix B §2.1',
+      })
+
+      // Linearity for gas analyzers
+      if (['SO2', 'NOX', 'NOXC', 'CO2', 'O2'].includes(system.systemTypeCode)) {
+        qaTests.push({
+          testType: 'Linearity Check',
+          systemId: system.systemId,
+          parameterCode: system.systemTypeCode,
+          frequency: 'Quarterly',
+          tolerance: '±5% of reference or ±0.5% of span',
+          regulatoryBasis: '40 CFR 75 Appendix B §2.2',
+        })
+
+        qaTests.push({
+          testType: 'Cylinder Gas Audit (CGA)',
+          systemId: system.systemId,
+          parameterCode: system.systemTypeCode,
+          frequency: 'Quarterly (alternate with RATA)',
+          tolerance: '±15% of certified value',
+          regulatoryBasis: '40 CFR 75 Appendix B §2.2.1',
+        })
+      }
+
+      // RATA for all systems
+      qaTests.push({
+        testType: 'RATA',
+        systemId: system.systemId,
+        parameterCode: system.systemTypeCode,
+        frequency: 'Semi-annual or Annual',
+        tolerance: system.systemTypeCode === 'FLOW' ? '≤10% RA' : '≤10% RA',
+        regulatoryBasis: '40 CFR 75 Appendix B §2.3',
+      })
+
+      // Flow-specific tests
+      if (system.systemTypeCode === 'FLOW') {
+        qaTests.push({
+          testType: 'Flow-to-Load Ratio',
+          systemId: system.systemId,
+          parameterCode: 'FLOW',
+          frequency: 'Quarterly',
+          tolerance: '±15% of baseline',
+          regulatoryBasis: '40 CFR 75 Appendix B §2.2.5',
+        })
+
+        qaTests.push({
+          testType: 'Leak Check',
+          systemId: system.systemId,
+          parameterCode: 'FLOW',
+          frequency: 'Quarterly',
+          tolerance: 'No measurable leak',
+          regulatoryBasis: '40 CFR 75 Appendix B §2.2.2',
+        })
+      }
+    }
+
+    const result: MonitoringPlanQueryResult = {
+      question: 'qa-tests',
+      answer: { qaTests },
+      summary: `${qaTests.length} QA tests required at location ${locationId ?? 'all'}`,
+    }
+    if (locationId) result.locationId = locationId
+    return result
+  }
+
+  /**
+   * Query: What monitoring systems are installed?
+   */
+  private queryMonitoringSystems(
+    plan: MonitoringPlan,
+    locationId?: string
+  ): MonitoringPlanQueryResult {
+    const systems = this.filterByLocation(plan.systems, locationId)
+
+    const systemInfo = systems.map((s) => {
+      const sys: {
+        systemId: string
+        systemType: string
+        systemTypeName: string
+        designationCode?: string
+        fuelCode?: string
+        beginDate: string
+        endDate?: string
+        isActive: boolean
+        componentCount: number
+      } = {
+        systemId: s.systemId,
+        systemType: s.systemTypeCode,
+        systemTypeName: this.getSystemTypeName(s.systemTypeCode),
+        beginDate: s.beginDate,
+        isActive: s.endDate === undefined,
+        componentCount: s.components?.length ?? 0,
+      }
+      if (s.systemDesignationCode) sys.designationCode = s.systemDesignationCode
+      if (s.fuelCode) sys.fuelCode = s.fuelCode
+      if (s.endDate) sys.endDate = s.endDate
+      return sys
+    })
+
+    const result: MonitoringPlanQueryResult = {
+      question: 'systems',
+      answer: { systems: systemInfo },
+      summary: `${systemInfo.length} monitoring systems at location ${locationId ?? 'all'}`,
+    }
+    if (locationId) result.locationId = locationId
+    return result
+  }
+
+  /**
+   * Query: What unit qualifications apply?
+   */
+  private queryUnitQualifications(
+    plan: MonitoringPlan,
+    locationId?: string,
+    unitId?: string
+  ): MonitoringPlanQueryResult {
+    const qualifications = this.filterQualificationsByLocation(
+      plan.qualifications,
+      locationId,
+      unitId
+    )
+
+    const qualInfo = qualifications.map((q) => {
+      const qual: {
+        qualificationType: string
+        qualificationName: string
+        description: string
+        beginDate: string
+        endDate?: string
+        isActive: boolean
+      } = {
+        qualificationType: q.qualificationTypeCode,
+        qualificationName: this.getQualificationName(q.qualificationTypeCode),
+        description: this.getQualificationDescription(q.qualificationTypeCode),
+        beginDate: q.beginDate,
+        isActive: q.endDate === undefined,
+      }
+      if (q.endDate) qual.endDate = q.endDate
+      return qual
+    })
+
+    const result: MonitoringPlanQueryResult = {
+      question: 'qualifications',
+      answer: { qualifications: qualInfo },
+      summary: `${qualInfo.length} unit qualifications at location ${locationId ?? unitId ?? 'all'}`,
+    }
+    if (locationId) result.locationId = locationId
+    if (unitId) result.unitId = unitId
+    return result
+  }
+
+  /**
+   * Query: Get a summary of everything at a location
+   */
+  private queryLocationSummary(
+    plan: MonitoringPlan,
+    locationId?: string,
+    unitId?: string
+  ): MonitoringPlanQueryResult {
+    const location = plan.locations.find((l) =>
+      locationId !== undefined
+        ? l.locationId === locationId
+        : unitId !== undefined
+          ? l.unitId === unitId
+          : false
+    )
+
+    const methods = this.filterByLocation(plan.methods, locationId)
+    const systems = this.filterByLocation(plan.systems, locationId)
+    const qualifications = this.filterQualificationsByLocation(
+      plan.qualifications,
+      locationId,
+      unitId
+    )
+
+    interface LocInfoType {
+      locationId: string
+      locationType: 'unit' | 'stack' | 'pipe' | 'common'
+      unitId?: string
+      stackPipeId?: string
+    }
+
+    const locInfo: LocInfoType | undefined = location
+      ? ((): LocInfoType => {
+          const info: LocInfoType = {
+            locationId: location.locationId,
+            locationType: location.locationType,
+          }
+          if (location.unitId) info.unitId = location.unitId
+          if (location.stackPipeId) info.stackPipeId = location.stackPipeId
+          return info
+        })()
+      : undefined
+
+    const summary = {
+      location: locInfo,
+      parameterCount: methods.length,
+      parameters: methods.map((m) => m.parameterCode),
+      systemCount: systems.length,
+      systems: systems.map((s) => s.systemTypeCode),
+      qualifications: qualifications.map((q) => q.qualificationTypeCode),
+      hasCEM: methods.some((m) => m.methodCode === 'CEM'),
+      hasAppendixD: methods.some((m) => m.methodCode === 'AD'),
+      hasLME: methods.some((m) => m.methodCode === 'LME'),
+    }
+
+    const result: MonitoringPlanQueryResult = {
+      question: 'summary',
+      answer: summary,
+      summary: `Location ${locationId ?? unitId ?? 'all'}: ${methods.length} parameters, ${systems.length} systems`,
+    }
+    if (locationId) result.locationId = locationId
+    if (unitId) result.unitId = unitId
+    return result
+  }
+
+  // ============================================================================
+  // QUERY HELPER METHODS
+  // ============================================================================
+
+  private filterByLocation<T extends { locationId: string }>(items: T[], locationId?: string): T[] {
+    if (locationId === undefined) return items
+    return items.filter((item) => item.locationId === locationId)
+  }
+
+  private filterQualificationsByLocation(
+    qualifications: UnitQualification[],
+    locationId?: string,
+    unitId?: string
+  ): UnitQualification[] {
+    if (locationId === undefined && unitId === undefined) return qualifications
+    return qualifications.filter(
+      (q) =>
+        (locationId === undefined || q.locationId === locationId) &&
+        (unitId === undefined || q.locationId.includes(unitId))
+    )
+  }
+
+  private getMethodDescription(methodCode: string): string {
+    const descriptions: Record<string, string> = {
+      CEM: 'Continuous Emission Monitoring System',
+      CALC: 'Calculation-based methodology',
+      AD: 'Appendix D fuel flow methodology',
+      LME: 'Low Mass Emissions exemption',
+      LTFF: 'Long-term fuel flow',
+      EXC: 'Excepted methodology',
+    }
+    return descriptions[methodCode] ?? methodCode
+  }
+
+  private getSystemTypeName(systemType: string): string {
+    const names: Record<string, string> = {
+      SO2: 'SO2 Monitoring System',
+      NOX: 'NOx Monitoring System',
+      NOXC: 'NOx Concentration System',
+      NOXP: 'NOx-Diluent System',
+      CO2: 'CO2 Monitoring System',
+      O2: 'O2 Monitoring System',
+      FLOW: 'Flow Monitoring System',
+      H2O: 'Moisture Monitoring System',
+      HG: 'Mercury Monitoring System',
+      HCL: 'HCl Monitoring System',
+      HF: 'HF Monitoring System',
+    }
+    return names[systemType] ?? systemType
+  }
+
+  private getQualificationName(qualType: string): string {
+    const names: Record<string, string> = {
+      LMEA: 'Low Mass Emissions - Appendix A',
+      LMES: 'Low Mass Emissions - Standard',
+      SK: 'Sorbent Trap (Stack)',
+      GF: 'Gas-Fired',
+      PRATA1: 'RATA Frequency - Annual (Group 1)',
+      PRATA2: 'RATA Frequency - Annual (Group 2)',
+      COMPLEX: 'Complex Stack Configuration',
+      PEAKING: 'Peaking Unit',
+    }
+    return names[qualType] ?? qualType
+  }
+
+  private getQualificationDescription(qualType: string): string {
+    const descriptions: Record<string, string> = {
+      LMEA: 'Qualifies for simplified monitoring under Appendix A procedures',
+      LMES: 'Qualifies for low mass emissions simplified monitoring',
+      GF: 'Gas-fired unit - may use Appendix D for SO2',
+      PRATA1: 'Annual RATA based on prior test results',
+      PRATA2: 'Annual RATA based on prior test results',
+      PEAKING: 'Operates less than threshold hours - special provisions apply',
+    }
+    return descriptions[qualType] ?? 'See 40 CFR 75 for details'
   }
 
   // ============================================================================

@@ -4,9 +4,9 @@
  * Tests for the EPA regulatory knowledge oracle.
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import type { CAMDFacility, MonitoringPlan } from '../../types/ecmps-api'
 import { RegsBotService } from './index'
-import type { MonitoringPlan, CAMDFacility } from '../../types/ecmps-api'
 
 // ============================================================================
 // MOCK DATA
@@ -415,6 +415,175 @@ describe('RegsBotService', () => {
       const flowToLoad = requirements.qaRequirements.find((r) => r.testType === 'flow_to_load')
       expect(flowToLoad).toBeDefined()
       expect(flowToLoad?.frequency).toBe('quarterly')
+    })
+  })
+
+  // ============================================================================
+  // ask() - Universal Query Interface
+  // ============================================================================
+
+  describe('ask()', () => {
+    it('answers natural language question about QA requirements', async () => {
+      const response = await regsBot.ask({
+        question: 'What QA tests are required for SO2?',
+      })
+
+      expect(response.answer).toBeTruthy()
+      expect(response.answer).toContain('QA')
+      expect(response.data.qaRequirements).toBeDefined()
+      expect(response.data.qaRequirements?.length).toBeGreaterThan(0)
+      expect(response.confidence).toBe('low') // No specific context provided
+      expect(response.relatedQuestions).toBeDefined()
+    })
+
+    it('infers query type from natural language', async () => {
+      const response = await regsBot.ask({
+        question: 'What do I need to monitor under Part 75?',
+      })
+
+      expect(response.data.monitoringRequirements).toBeDefined()
+      expect(response.answer).toContain('monitor')
+    })
+
+    it('accepts structured query type', async () => {
+      const response = await regsBot.ask({
+        queryType: 'what-to-calculate',
+      })
+
+      expect(response.data.calculationRequirements).toBeDefined()
+      expect(response.answer).toContain('calculation')
+    })
+
+    it('has higher confidence with ORIS code context', async () => {
+      const mockEcmpsClient = {
+        getFacility: vi.fn().mockResolvedValue(createMockFacility()),
+        getMonitoringPlan: vi.fn().mockResolvedValue(createMockMonitoringPlan()),
+        getFacilityPrograms: vi.fn().mockResolvedValue(['ARP']),
+        getMonitorMethods: vi.fn(),
+      }
+
+      const service = new RegsBotService({ ecmpsClient: mockEcmpsClient as never })
+
+      const response = await service.ask({
+        question: 'What QA tests do I need?',
+        context: { orisCode: 5678 },
+      })
+
+      expect(response.confidence).toBe('high') // Has monitoring plan
+    })
+
+    it('has higher confidence with provided monitoring plan', async () => {
+      const response = await regsBot.ask({
+        queryType: 'qa-requirements',
+        context: { monitoringPlan: createMockMonitoringPlan() },
+      })
+
+      expect(response.confidence).toBe('high')
+      expect(response.data.qaRequirements).toBeDefined()
+    })
+
+    it('returns applicable regulations', async () => {
+      const response = await regsBot.ask({
+        queryType: 'applicable-regulations',
+      })
+
+      expect(response.data.regulations).toBeDefined()
+      const regulations = response.data.regulations ?? []
+      expect(regulations.length).toBeGreaterThan(0)
+      expect(regulations[0]?.cfr).toContain('CFR')
+    })
+
+    it('returns citations for the answer', async () => {
+      const response = await regsBot.ask({
+        queryType: 'qa-requirements',
+      })
+
+      expect(response.citations).toBeDefined()
+      expect(response.citations.length).toBeGreaterThan(0)
+      const firstCitation = response.citations[0]
+      expect(firstCitation).toBeDefined()
+      expect(firstCitation?.source).toBeDefined()
+      expect(firstCitation?.reference).toBeDefined()
+    })
+
+    it('suggests related questions', async () => {
+      const response = await regsBot.ask({
+        question: 'What parameters need monitoring?',
+      })
+
+      expect(response.relatedQuestions).toBeDefined()
+      expect(response.relatedQuestions?.length).toBeGreaterThan(0)
+    })
+
+    it('includes warnings when context is missing', async () => {
+      const response = await regsBot.ask({
+        question: 'What are my emission limits?',
+      })
+
+      expect(response.warnings).toBeDefined()
+      expect(response.warnings?.length).toBeGreaterThan(0)
+      expect(response.warnings?.[0]).toContain('monitoring plan')
+    })
+
+    it('answers emission limit questions', async () => {
+      const response = await regsBot.ask({
+        queryType: 'emission-limits',
+        context: { programs: ['ARP'] },
+      })
+
+      expect(response.answer).toContain('limit')
+      expect(response.data.regulations).toBeDefined()
+    })
+
+    it('answers missing data questions', async () => {
+      const response = await regsBot.ask({
+        queryType: 'missing-data',
+      })
+
+      expect(response.data.substitutionRequirements).toBeDefined()
+      expect(response.answer).toContain('substitut')
+    })
+
+    it('answers recordkeeping questions', async () => {
+      const response = await regsBot.ask({
+        queryType: 'what-to-record',
+      })
+
+      expect(response.data.recordkeepingRequirements).toBeDefined()
+      expect(response.answer).toContain('record')
+    })
+
+    it('answers reporting questions', async () => {
+      const response = await regsBot.ask({
+        queryType: 'reporting-requirements',
+      })
+
+      expect(response.data.reportingRequirements).toBeDefined()
+      expect(response.answer.toLowerCase()).toContain('report')
+    })
+
+    it('uses monitoring plan data when provided in context', async () => {
+      const plan = createMockMonitoringPlan()
+
+      const response = await regsBot.ask({
+        queryType: 'what-to-monitor',
+        context: { monitoringPlan: plan },
+      })
+
+      // Should include monitoring requirements derived from the plan
+      expect(response.data.monitoringRequirements).toBeDefined()
+      const params = response.data.monitoringRequirements?.map((r) => r.parameter)
+      // Plan has SO2, NOX, FLOW, O2
+      expect(params?.some((p) => p.includes('SO2') || p.includes('Sulfur'))).toBe(true)
+    })
+
+    it('includes location ID in answer when provided', async () => {
+      const response = await regsBot.ask({
+        question: 'What monitoring is required?',
+        context: { orisCode: 3, locationId: '7B' },
+      })
+
+      expect(response.answer).toContain('7B')
     })
   })
 })

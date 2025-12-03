@@ -141,6 +141,228 @@ export type ObligationType =
   | 'other'
 
 // ============================================================================
+// MONITORING PLAN QUERIES - RegsBot Query Interface
+// ============================================================================
+
+/** Query types for monitoring plan questions */
+export type MonitoringPlanQuestionType =
+  | 'subparts' // What regulatory subparts apply?
+  | 'parameters' // What parameters are monitored?
+  | 'methods' // What monitoring methods are used?
+  | 'qa-tests' // What QA tests are required?
+  | 'systems' // What monitoring systems are installed?
+  | 'qualifications' // What unit qualifications apply?
+  | 'summary' // Get a summary of everything
+
+/** Query for asking questions about a monitoring plan */
+export interface MonitoringPlanQuery {
+  /** Provide JSON monitoring plan directly */
+  plan?: import('./ecmps-api').MonitoringPlan
+  /** Or fetch by ORIS code */
+  orisCode?: number
+  /** Filter to specific location (e.g., "7B", "CS001") */
+  locationId?: string
+  /** Filter to specific unit */
+  unitId?: string
+  /** What do you want to know? */
+  question: MonitoringPlanQuestionType
+}
+
+/** Result from a monitoring plan query */
+export interface MonitoringPlanQueryResult {
+  question: MonitoringPlanQuestionType
+  locationId?: string
+  unitId?: string
+  answer: unknown
+  summary: string
+}
+
+/** Information about a monitoring location */
+export interface LocationInfo {
+  locationId: string
+  locationType: 'unit' | 'stack' | 'pipe' | 'common'
+  unitId?: string
+  stackPipeId?: string
+  isActive: boolean
+  parameters: string[]
+  systems: string[]
+}
+
+/** Applicable regulatory subpart */
+export interface ApplicableSubpart {
+  part: number // e.g., 75, 63
+  subpart: string // e.g., "A", "UUUUU", "Appendix B"
+  title: string
+  description: string
+  applicableParameters: string[]
+  regulatoryBasis: string
+}
+
+/** QA Test information */
+export interface QATestInfo {
+  testType: string
+  systemId: string
+  parameterCode: string
+  frequency: string
+  tolerance: string
+  regulatoryBasis: string
+}
+
+// ============================================================================
+// REGSBOT Q&A INTERFACE - Regulatory Knowledge Queries
+// ============================================================================
+
+/**
+ * Input to RegsBot - can be natural language, structured query, or context
+ */
+export interface RegsBotInput {
+  /** Natural language question (e.g., "What QA tests do I need for SO2?") */
+  question?: string
+
+  /** Structured query type */
+  queryType?: RegsBotQueryType
+
+  /** Context to help answer the question */
+  context?: RegsBotContext
+
+  /** Which sources to search (defaults to all) */
+  sources?: RegulatorySource[]
+
+  /** Limit response to specific topics */
+  topics?: DAHSTopic[]
+}
+
+/** Types of structured queries RegsBot can answer */
+export type RegsBotQueryType =
+  | 'what-to-monitor' // What parameters must be monitored?
+  | 'what-to-calculate' // What calculations are required?
+  | 'what-to-record' // What data must be recorded/stored?
+  | 'qa-requirements' // What QA/QC tests are required?
+  | 'reporting-requirements' // What reports must be submitted?
+  | 'applicable-regulations' // What regulations apply?
+  | 'emission-limits' // What are the emission limits?
+  | 'missing-data' // What are the missing data procedures?
+  | 'general' // General regulatory question
+
+/** Regulatory sources RegsBot can search */
+export type RegulatorySource =
+  | 'ecfr' // Electronic Code of Federal Regulations
+  | 'ecmps' // EPA ECMPS/CAMD APIs
+  | 'state-permits' // State Title V / Part 70 permits
+  | 'epa-guidance' // EPA guidance documents
+  | 'monitoring-plan' // Facility monitoring plan (JSON or from API)
+  | 'permit-text' // Uploaded permit text/PDF
+
+/** Topics related to DAHS functionality */
+export type DAHSTopic =
+  | 'monitoring' // Data acquisition, parameters
+  | 'calculations' // Hourly averages, heat input, mass emissions
+  | 'qa-qc' // Calibration, RATA, CGA, linearity
+  | 'reporting' // EDR, quarterly reports, compliance certs
+  | 'limits' // Emission limits, exceedance tracking
+  | 'substitution' // Missing data procedures
+  | 'recordkeeping' // Data retention, audit trails
+
+/** Context provided to help answer the question */
+export interface RegsBotContext {
+  /** Facility ORIS code (for ECMPS lookup) */
+  orisCode?: number
+
+  /** Specific location within facility */
+  locationId?: string
+
+  /** Specific unit */
+  unitId?: string
+
+  /** Monitoring plan JSON (if already have it) */
+  monitoringPlan?: import('./ecmps-api').MonitoringPlan
+
+  /** Permit text (extracted from PDF or pasted) */
+  permitText?: string
+
+  /** Known regulatory programs */
+  programs?: string[]
+
+  /** Parameters of interest */
+  parameters?: string[]
+
+  /** State (for state-specific regulations) */
+  stateCode?: string
+}
+
+/** RegsBot's response */
+export interface RegsBotResponse {
+  /** The original question/query */
+  input: RegsBotInput
+
+  /** Natural language answer */
+  answer: string
+
+  /** Structured data supporting the answer */
+  data: RegsBotResponseData
+
+  /** Sources cited */
+  citations: RegulatoryCitation[]
+
+  /** Related questions the user might want to ask */
+  relatedQuestions?: string[]
+
+  /** Confidence level */
+  confidence: 'high' | 'medium' | 'low'
+
+  /** Warnings or caveats */
+  warnings?: string[]
+}
+
+/** Structured data in RegsBot response */
+export interface RegsBotResponseData {
+  /** Applicable regulations */
+  regulations?: ApplicableRegulation[]
+
+  /** Monitoring requirements */
+  monitoringRequirements?: MonitoringRequirement[]
+
+  /** Calculation requirements */
+  calculationRequirements?: CalculationRequirement[]
+
+  /** QA/QC requirements */
+  qaRequirements?: QARequirement[]
+
+  /** Reporting requirements */
+  reportingRequirements?: ReportingRequirement[]
+
+  /** Emission limits */
+  emissionLimits?: EmissionLimit[]
+
+  /** Substitution procedures */
+  substitutionRequirements?: SubstitutionRequirement[]
+
+  /** Recordkeeping requirements */
+  recordkeepingRequirements?: RecordkeepingRequirement[]
+}
+
+/** A specific regulation that applies */
+export interface ApplicableRegulation {
+  cfr: string // e.g., "40 CFR 75"
+  part: number
+  subpart?: string
+  section?: string
+  title: string
+  description: string
+  url?: string
+  applicability: string // Why it applies
+}
+
+/** Citation to a regulatory source */
+export interface RegulatoryCitation {
+  source: RegulatorySource
+  reference: string // e.g., "40 CFR 75.10(a)(1)"
+  title: string
+  excerpt: string
+  url?: string
+}
+
+// ============================================================================
 // DAHS CAPABILITY & GAP ANALYSIS
 // ============================================================================
 
