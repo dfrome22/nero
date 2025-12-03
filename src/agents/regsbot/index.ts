@@ -12,7 +12,12 @@
  * - Build Evidence Library with citations
  */
 
-import type { ECFRSearchResult, ECFRSection } from '../../types/ecfr-api'
+import type {
+  ECFRQuery,
+  ECFRSearchQuery,
+  ECFRSearchResult,
+  ECFRSection,
+} from '../../types/ecfr-api'
 import { REGULATORY_LANGUAGE_PATTERNS } from '../../types/ecfr-api'
 import type { CAMDFacility, MonitoringPlan } from '../../types/ecmps-api'
 import type {
@@ -53,14 +58,25 @@ export class RegsBotService {
    * @example lookupRegulation({ title: 40, part: 75, section: "11" })
    */
   async lookupRegulation(title: number, part: number, section?: string): Promise<ECFRSection> {
-    return this.ecfr.getSection({ title, part, section })
+    const query: ECFRQuery = { title, part }
+    if (section !== undefined) {
+      query.section = section
+    }
+    return this.ecfr.getSection(query)
   }
 
   /**
    * Search eCFR for specific terms
    */
   async searchRegulations(query: string, title?: number, part?: number): Promise<ECFRSearchResult> {
-    return this.ecfr.search({ query, title, part })
+    const searchQuery: ECFRSearchQuery = { query }
+    if (title !== undefined) {
+      searchQuery.title = title
+    }
+    if (part !== undefined) {
+      searchQuery.part = part
+    }
+    return this.ecfr.search(searchQuery)
   }
 
   /**
@@ -229,20 +245,29 @@ export class RegsBotService {
     while ((match = shallPattern.exec(text)) !== null) {
       const obligationText = match[0].trim()
       const obligationType = this.classifyObligationType(obligationText)
+      const regulatoryBasis = this.findRegulatoryBasis(obligationText)
+      const frequency = this.extractFrequency(obligationText)
 
-      obligations.push({
+      const obligation: PermitObligation = {
         id: `${permitId}-obl-${(index++).toString()}`,
         permitId,
         pageReference,
         originalText: obligationText,
         obligationType,
         summary: this.summarizeObligation(obligationText),
-        regulatoryBasis: this.findRegulatoryBasis(obligationText),
-        frequency: this.extractFrequency(obligationText),
         parameters: this.extractParameters(obligationText),
         confidence: 0.8, // Base confidence for extracted obligations
         confirmedByHuman: false,
-      })
+      }
+
+      if (regulatoryBasis !== undefined) {
+        obligation.regulatoryBasis = regulatoryBasis
+      }
+      if (frequency !== undefined) {
+        obligation.frequency = frequency
+      }
+
+      obligations.push(obligation)
     }
 
     return obligations

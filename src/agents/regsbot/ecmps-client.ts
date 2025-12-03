@@ -30,7 +30,9 @@ export class ECMPSClient {
   private apiKey?: string
 
   constructor(apiKey?: string) {
-    this.apiKey = apiKey
+    if (apiKey !== undefined) {
+      this.apiKey = apiKey
+    }
   }
 
   private getHeaders(): HeadersInit {

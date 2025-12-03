@@ -17,14 +17,19 @@ Current development tasks and roadmap for NERO.
 
 ### In Progress
 
-- [ ] Define core TypeScript types for orchestration
+- [ ] Create Workflow Builder canvas component
 
 ### Up Next
 
-- [ ] Create Workflow Builder canvas component
 - [ ] Implement Node palette (agent + control nodes)
 - [ ] Build Node Inspector panel
 - [ ] Set up Run Console (timeline, logs, outputs)
+
+### Recently Completed
+
+- [x] Define core TypeScript types for orchestration
+- [x] Implement RegsBotService with eCFR/ECMPS API clients (24 tests)
+- [x] Implement RequirementsBotService with gap analysis (27 tests)
 
 ---
 
@@ -59,17 +64,24 @@ Current development tasks and roadmap for NERO.
 
 ### RegsBot
 
+- [x] eCFR API client integration
+- [x] ECMPS/CAMD API client integration
+- [x] Regulatory language scanning
+- [x] Citation extraction with location anchors
+- [x] Obligation extraction and classification
 - [ ] Evidence Library builder (eCFR, EPA docs, permits)
-- [ ] Citation extraction with location anchors
 - [ ] OCR ingestion with confidence tracking
 - [ ] Evidence scoping (project-wide vs node-scoped)
 - **Feature Doc**: `docs/features/regsbot.md`
 
 ### RequirementsBot
 
+- [x] Gap analysis (DAHS capability matching)
+- [x] Development item generation
+- [x] DAHS configuration proposal generation
+- [x] DAHS proposal artifact generation
 - [ ] Generate Requirement Sets from evidence
 - [ ] User persona and workflow generation
-- [ ] DAHS solution mapping (tags, calcs, alarms)
 - [ ] Trace link generation to evidence
 - **Feature Doc**: `docs/features/requirementsbot.md`
 
@@ -134,6 +146,10 @@ Current development tasks and roadmap for NERO.
 - [x] Strict linting configuration
 - [x] GitHub repo + CI pipeline
 - [x] Core documentation (VISION, CHANGELOG, TODO)
+- [x] Core orchestration types (Workflow, Run, Artifact, Evidence, Requirement)
+- [x] Permit processing types (PermitDocument, PermitObligation, DAHSProfile)
+- [x] RegsBotService with eCFR/ECMPS API clients (24 tests)
+- [x] RequirementsBotService with gap analysis (27 tests)
 
 ---
 
