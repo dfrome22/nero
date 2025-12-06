@@ -1,5 +1,15 @@
 # NERO Development Guidelines
 
+## Technology Stack
+
+- **Framework**: React 19.2 with TypeScript 5.9
+- **Build Tool**: Vite 7.2
+- **Testing**: Vitest 4.0 + React Testing Library + Playwright 1.57
+- **Linting**: ESLint 9 with strict TypeScript rules
+- **Formatting**: Prettier 3.7
+- **Package Manager**: npm with lockfile
+- **Node.js**: 20.x (LTS)
+
 ## TDD Workflow
 
 This project follows strict Test-Driven Development:
@@ -137,3 +147,104 @@ Agents communicate through structured protocols. When implementing agent interac
 4. Pre-commit hooks will validate
 5. Push and create PR to `develop`
 6. CI will run full validation
+
+### Commit Message Format
+
+Use conventional commit messages:
+
+```
+<type>(<scope>): <description>
+
+[optional body]
+```
+
+**Types**: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
+
+**Examples**:
+
+```
+feat(regsbot): add permit text parsing
+fix(ui): correct navigation layout
+docs(readme): update testing guide
+test(requirementsbot): add gap analysis tests
+```
+
+## Security Guidelines
+
+- Never commit secrets, API keys, or credentials
+- Use environment variables for sensitive configuration
+- Validate all user inputs
+- Follow OWASP security best practices
+
+## Boundaries and Restrictions
+
+### Do Not Modify
+
+- `.github/workflows/` - CI/CD configuration (requires review)
+- `package-lock.json` - Auto-generated, do not edit manually
+- Third-party code in `node_modules/`
+- Build artifacts in `dist/`, `coverage/`, `playwright-report/`
+
+### Protected Patterns
+
+- Do not disable TypeScript strict checks
+- Do not add `// @ts-ignore` or `// eslint-disable` without justification
+- Do not reduce test coverage
+- Do not remove existing tests without replacement
+
+## Code Style Examples
+
+### React Component
+
+```typescript
+import type { ReactNode } from 'react'
+import styles from './Component.module.css'
+
+interface ComponentProps {
+  title: string
+  children: ReactNode
+  onClick?: () => void
+}
+
+export function Component({ title, children, onClick }: ComponentProps): ReactNode {
+  return (
+    <div className={styles['container']} onClick={onClick}>
+      <h2>{title}</h2>
+      {children}
+    </div>
+  )
+}
+```
+
+### Agent Service
+
+```typescript
+import type { AgentInput, AgentOutput } from '@/types/orchestration'
+
+export class AgentService {
+  async process(input: AgentInput): Promise<AgentOutput> {
+    // Implementation
+    return {
+      success: true,
+      data: {},
+      citations: [],
+    }
+  }
+}
+```
+
+### Test File
+
+```typescript
+import { describe, it, expect } from 'vitest'
+import { AgentService } from './index'
+
+describe('AgentService', () => {
+  it('should process input correctly', async () => {
+    const service = new AgentService()
+    const result = await service.process({ query: 'test' })
+
+    expect(result.success).toBe(true)
+  })
+})
+```
