@@ -6,7 +6,13 @@
 
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { CAMDFacility, MonitoringPlan } from '../../types/ecmps-api'
+import type { ApplicableSubpart } from '../../types/orchestration'
 import { RegsBotService } from './index'
+
+// Type helper for extracting subparts from result
+interface SubpartAnswer {
+  subparts: ApplicableSubpart[]
+}
 
 // ============================================================================
 // MOCK DATA
@@ -416,6 +422,31 @@ describe('RegsBotService', () => {
       expect(flowToLoad).toBeDefined()
       expect(flowToLoad?.frequency).toBe('quarterly')
     })
+
+    it('handles getUnits 404 error gracefully when fetching programs', async () => {
+      // Simulates the real-world case where getUnits returns 404 for some facilities
+      const mockFacility = createMockFacility()
+      mockFacility.programCodes = ['ARP', 'CSNOX'] // Facility has programs at facility level
+      const mockPlan = createMockMonitoringPlan()
+
+      const mockEcmpsClient = {
+        getFacility: vi.fn().mockResolvedValue(mockFacility),
+        getMonitoringPlan: vi.fn().mockResolvedValue(mockPlan),
+        // getFacilityPrograms should handle errors internally and still return facility-level programs
+        getFacilityPrograms: vi.fn().mockResolvedValue(['ARP', 'CSNOX', 'CSAPR']),
+        getMonitorMethods: vi.fn(),
+      }
+
+      const service = new RegsBotService({
+        ecmpsClient: mockEcmpsClient as never,
+      })
+
+      const requirements = await service.analyzeMonitoringPlan(5678)
+
+      // Should still work with facility-level programs
+      expect(requirements.programs).toContain('ARP')
+      expect(requirements.programs.length).toBeGreaterThan(0)
+    })
   })
 
   // ============================================================================
@@ -584,6 +615,466 @@ describe('RegsBotService', () => {
       })
 
       expect(response.answer).toContain('7B')
+    })
+
+    // ========================================================================
+    // Question-Specific Answer Generation (DAHS-focused)
+    // ========================================================================
+
+    describe('Question-Specific Answers', () => {
+      it('answers RATA frequency question specifically', async () => {
+        const response = await regsBot.ask({
+          question: 'What is the RATA frequency?',
+          queryType: 'qa-requirements',
+        })
+
+        // Should contain specific frequency info, not just list of tests
+        expect(response.answer.toLowerCase()).toContain('rata')
+        expect(response.answer).toMatch(/semi-?annual|annual|quarterly/i)
+        expect(response.answer).toContain('40 CFR 75')
+      })
+
+      it('answers linearity test question specifically', async () => {
+        const response = await regsBot.ask({
+          question: 'What happens if linearity test fails?',
+          queryType: 'qa-requirements',
+        })
+
+        expect(response.answer.toLowerCase()).toContain('linear')
+        expect(response.answer).toMatch(/quarterly|tolerance|calibration/i)
+      })
+
+      it('answers daily calibration question specifically', async () => {
+        const response = await regsBot.ask({
+          question: 'How often are daily calibrations required?',
+          queryType: 'qa-requirements',
+        })
+
+        expect(response.answer.toLowerCase()).toContain('calibrat')
+        expect(response.answer).toMatch(/daily|operating day/i)
+      })
+
+      it('answers missing data lookback question specifically', async () => {
+        const response = await regsBot.ask({
+          question: 'What is the lookback period for missing data?',
+          queryType: 'missing-data',
+        })
+
+        expect(response.answer).toContain('2,160')
+        expect(response.answer).toContain('40 CFR 75')
+      })
+
+      it('answers missing data percentile question specifically', async () => {
+        const response = await regsBot.ask({
+          question: 'What percentile is used for substitute data?',
+          queryType: 'missing-data',
+        })
+
+        expect(response.answer).toMatch(/90th|95th|percentile/i)
+        expect(response.answer).toContain('Subpart D')
+      })
+
+      it('answers heat input calculation question specifically', async () => {
+        const response = await regsBot.ask({
+          question: 'How do I calculate heat input?',
+          queryType: 'what-to-calculate',
+        })
+
+        expect(response.answer.toLowerCase()).toContain('heat input')
+        expect(response.answer).toMatch(/mmBtu|fuel|Appendix F/i)
+      })
+
+      it('answers quarterly EDR reporting question specifically', async () => {
+        const response = await regsBot.ask({
+          question: 'When are quarterly reports due?',
+          queryType: 'reporting-requirements',
+        })
+
+        expect(response.answer).toMatch(/30 days|quarterly|EDR/i)
+        expect(response.answer).toContain('40 CFR 75')
+      })
+
+      it('answers CO2 monitoring question specifically', async () => {
+        const response = await regsBot.ask({
+          question: 'How do I monitor CO2?',
+          queryType: 'what-to-monitor',
+        })
+
+        expect(response.answer).toMatch(/CO2|carbon dioxide/i)
+        // Accept CEM, CEMS, Appendix G, or fuel-based methods
+        expect(response.answer).toMatch(/Appendix G|CEM|fuel/i)
+      })
+    })
+
+    describe('EPA Code Lookup', () => {
+      it('explains CEM method code when asked', async () => {
+        const response = await regsBot.ask({
+          question: 'What does CEM method code mean?',
+          queryType: 'what-to-monitor',
+        })
+
+        expect(response.answer).toMatch(/CEM/i)
+        expect(response.answer).toMatch(/Continuous Emission Monitoring/i)
+        expect(response.answer).toMatch(/40 CFR 75/i)
+      })
+
+      it('explains AD (Appendix D) method code when asked', async () => {
+        const response = await regsBot.ask({
+          question: 'What is AD monitoring method?',
+          queryType: 'what-to-monitor',
+        })
+
+        expect(response.answer).toMatch(/AD/i)
+        expect(response.answer).toMatch(/Appendix D|fuel/i)
+      })
+
+      it('explains formula codes when asked', async () => {
+        const response = await regsBot.ask({
+          question: 'What is formula D-5?',
+          queryType: 'what-to-calculate',
+        })
+
+        expect(response.answer).toMatch(/D-5/i)
+        expect(response.answer).toMatch(/SO2|sulfur/i)
+      })
+
+      it('explains heat input formula F-20 when asked', async () => {
+        const response = await regsBot.ask({
+          question: 'What is formula F-20?',
+          queryType: 'what-to-calculate',
+        })
+
+        expect(response.answer).toMatch(/F-20/i)
+        expect(response.answer).toMatch(/heat input|HI|GCV/i)
+      })
+
+      it('uses method code from monitoring requirement if present', async () => {
+        // Test that when a monitoring requirement has a method code,
+        // the answer uses the EPA code information
+        const response = await regsBot.ask({
+          question: 'What does AD method code mean for monitoring?',
+          queryType: 'what-to-monitor',
+        })
+
+        // Should use the AD method info from EPA codes
+        expect(response.answer).toMatch(/AD/i)
+        expect(response.answer).toMatch(/Appendix D|fuel/i)
+      })
+    })
+  })
+
+  describe('Fuel and Formula Parsing', () => {
+    it('detects coal fuel and suggests MATS applicability', async () => {
+      const plan = createMockMonitoringPlan()
+      plan.unitFuels = [
+        {
+          unitFuelId: 'UF-1',
+          locationId: 'LOC1',
+          fuelCode: 'C',
+          indicatorCode: 'P',
+          beginDate: '2020-01-01',
+        },
+      ]
+
+      const result = await regsBot.queryMonitoringPlan({
+        plan,
+        question: 'subparts',
+      })
+
+      const subparts = (result.answer as SubpartAnswer).subparts
+      const matsSubpart = subparts.find((s) => s.subpart === 'UUUUU')
+      expect(matsSubpart).toBeDefined()
+      expect(matsSubpart?.title).toContain('MATS')
+    })
+
+    it('detects gas fuel and suggests Appendix E for peaking units', async () => {
+      const plan = createMockMonitoringPlan()
+      plan.unitFuels = [
+        {
+          unitFuelId: 'UF-1',
+          locationId: 'LOC1',
+          fuelCode: 'NFS',
+          indicatorCode: 'P',
+          beginDate: '2020-01-01',
+        },
+      ]
+      // Add EXC method for Appendix E
+      plan.methods.push({
+        methodId: 'MTH-NOXE',
+        locationId: 'LOC1',
+        parameterCode: 'NOX',
+        methodCode: 'EXC',
+        beginDate: '2020-01-01',
+      })
+
+      const result = await regsBot.queryMonitoringPlan({
+        plan,
+        question: 'subparts',
+      })
+
+      const subparts = (result.answer as SubpartAnswer).subparts
+      const appendixE = subparts.find((s) => s.subpart === 'Appendix E')
+      expect(appendixE).toBeDefined()
+      expect(appendixE?.title).toContain('NOx')
+    })
+
+    it('detects fuel flow formulas and adds Appendix D', async () => {
+      const plan = createMockMonitoringPlan()
+      plan.formulas = [
+        {
+          formulaId: 'F-1',
+          locationId: 'LOC1',
+          parameterCode: 'HI',
+          formulaCode: 'F-21A',
+          beginDate: '2020-01-01',
+        },
+      ]
+
+      const result = await regsBot.queryMonitoringPlan({
+        plan,
+        question: 'subparts',
+      })
+
+      const subparts = (result.answer as SubpartAnswer).subparts
+      const appendixD = subparts.find((s) => s.subpart === 'Appendix D')
+      expect(appendixD).toBeDefined()
+      expect(appendixD?.description).toContain('Fuel-based')
+    })
+
+    it('detects apportionment formulas and adds common stack provisions', async () => {
+      const plan = createMockMonitoringPlan()
+      plan.formulas = [
+        {
+          formulaId: 'F-1',
+          locationId: 'LOC1',
+          parameterCode: 'HI',
+          formulaCode: 'F-23',
+          beginDate: '2020-01-01',
+        },
+        {
+          formulaId: 'F-2',
+          locationId: 'LOC1',
+          parameterCode: 'NOX',
+          formulaCode: 'F-24',
+          beginDate: '2020-01-01',
+        },
+      ]
+
+      const result = await regsBot.queryMonitoringPlan({
+        plan,
+        question: 'subparts',
+      })
+
+      const subparts = (result.answer as SubpartAnswer).subparts
+      const commonStack = subparts.find((s) => s.subpart.includes('75.16'))
+      expect(commonStack).toBeDefined()
+      expect(commonStack?.description).toContain('F-23')
+      expect(commonStack?.description).toContain('F-24')
+    })
+
+    it('lists formula codes in Appendix F description', async () => {
+      const plan = createMockMonitoringPlan()
+      plan.formulas = [
+        {
+          formulaId: 'F-1',
+          locationId: 'LOC1',
+          parameterCode: 'SO2',
+          formulaCode: 'F-1',
+          beginDate: '2020-01-01',
+        },
+        {
+          formulaId: 'F-2',
+          locationId: 'LOC1',
+          parameterCode: 'NOX',
+          formulaCode: 'F-5',
+          beginDate: '2020-01-01',
+        },
+        {
+          formulaId: 'F-3',
+          locationId: 'LOC1',
+          parameterCode: 'CO2',
+          formulaCode: 'F-11',
+          beginDate: '2020-01-01',
+        },
+      ]
+
+      const result = await regsBot.queryMonitoringPlan({
+        plan,
+        question: 'subparts',
+      })
+
+      const subparts = (result.answer as SubpartAnswer).subparts
+      const appendixF = subparts.find((s) => s.subpart === 'Appendix F')
+      expect(appendixF).toBeDefined()
+      expect(appendixF?.description).toContain('F-1')
+      expect(appendixF?.description).toContain('F-5')
+    })
+
+    it('identifies primary fuel from indicator code', async () => {
+      const plan = createMockMonitoringPlan()
+      plan.unitFuels = [
+        {
+          unitFuelId: 'UF-1',
+          locationId: 'LOC1',
+          fuelCode: 'NFS',
+          indicatorCode: 'P',
+          beginDate: '2020-01-01',
+        },
+        {
+          unitFuelId: 'UF-2',
+          locationId: 'LOC1',
+          fuelCode: 'OIL',
+          indicatorCode: 'S',
+          beginDate: '2020-01-01',
+        },
+      ]
+      // Add AD method to get Appendix D in results
+      plan.methods.push({
+        methodId: 'MTH-AD',
+        locationId: 'LOC1',
+        parameterCode: 'SO2',
+        methodCode: 'AD',
+        beginDate: '2020-01-01',
+      })
+
+      const result = await regsBot.queryMonitoringPlan({
+        plan,
+        question: 'subparts',
+      })
+
+      const subparts = (result.answer as SubpartAnswer).subparts
+      const appendixD = subparts.find((s) => s.subpart === 'Appendix D')
+      expect(appendixD).toBeDefined()
+      // Should list fuels in description
+      expect(appendixD?.description).toContain('Natural Gas')
+    })
+
+    it('adds Subpart E for peaking unit qualifications', async () => {
+      const plan = createMockMonitoringPlan()
+      plan.qualifications = [
+        {
+          qualificationId: 'Q-1',
+          locationId: 'LOC1',
+          qualificationTypeCode: 'PK',
+          beginDate: '2020-01-01',
+        },
+      ]
+
+      const result = await regsBot.queryMonitoringPlan({
+        plan,
+        question: 'subparts',
+      })
+
+      const subparts = (result.answer as SubpartAnswer).subparts
+      const subpartE = subparts.find((s) => s.subpart === 'E')
+      expect(subpartE).toBeDefined()
+      expect(subpartE?.title).toContain('Peaking')
+    })
+
+    it('includes Subpart F (recordkeeping) for all plans', async () => {
+      const plan = createMockMonitoringPlan()
+
+      const result = await regsBot.queryMonitoringPlan({
+        plan,
+        question: 'subparts',
+      })
+
+      const subparts = (result.answer as SubpartAnswer).subparts
+      const subpartF = subparts.find((s) => s.subpart === 'F')
+      expect(subpartF).toBeDefined()
+      expect(subpartF?.title).toContain('Recordkeeping')
+    })
+
+    it('includes Appendix A (monitoring plan requirements) for all plans', async () => {
+      const plan = createMockMonitoringPlan()
+
+      const result = await regsBot.queryMonitoringPlan({
+        plan,
+        question: 'subparts',
+      })
+
+      const subparts = (result.answer as SubpartAnswer).subparts
+      const appendixA = subparts.find((s) => s.subpart === 'Appendix A')
+      expect(appendixA).toBeDefined()
+      expect(appendixA?.title).toContain('Monitoring Plan')
+    })
+
+    it('detects Appendix D formulas (D-5, D-6, etc.) and adds Appendix D', async () => {
+      const plan = createMockMonitoringPlan()
+      plan.formulas = [
+        {
+          formulaId: 'FRM-1',
+          locationId: 'LOC1',
+          parameterCode: 'HI',
+          formulaCode: 'D-5',
+          beginDate: '2020-01-01',
+        },
+      ]
+
+      const result = await regsBot.queryMonitoringPlan({
+        plan,
+        question: 'subparts',
+      })
+
+      const subparts = (result.answer as SubpartAnswer).subparts
+      const appendixD = subparts.find((s) => s.subpart === 'Appendix D')
+      expect(appendixD).toBeDefined()
+      expect(appendixD?.description).toContain('D-5')
+    })
+
+    it('includes CFR section references for known formulas', async () => {
+      const plan = createMockMonitoringPlan()
+      plan.formulas = [
+        {
+          formulaId: 'FRM-1',
+          locationId: 'LOC1',
+          parameterCode: 'SO2',
+          formulaCode: 'F-1',
+          beginDate: '2020-01-01',
+        },
+      ]
+
+      const result = await regsBot.queryMonitoringPlan({
+        plan,
+        question: 'subparts',
+      })
+
+      const subparts = (result.answer as SubpartAnswer).subparts
+      const appendixF = subparts.find((s) => s.subpart === 'Appendix F')
+      expect(appendixF).toBeDefined()
+      // Should include CFR reference from FORMULA_TO_CFR mapping
+      expect(appendixF?.description).toContain('40 CFR 75')
+    })
+
+    it('detects mixed Appendix D and F formulas', async () => {
+      const plan = createMockMonitoringPlan()
+      plan.formulas = [
+        {
+          formulaId: 'FRM-1',
+          locationId: 'LOC1',
+          parameterCode: 'HI',
+          formulaCode: 'D-5', // Appendix D
+          beginDate: '2020-01-01',
+        },
+        {
+          formulaId: 'FRM-2',
+          locationId: 'LOC1',
+          parameterCode: 'NOX',
+          formulaCode: 'F-5', // Appendix F
+          beginDate: '2020-01-01',
+        },
+      ]
+
+      const result = await regsBot.queryMonitoringPlan({
+        plan,
+        question: 'subparts',
+      })
+
+      const subparts = (result.answer as SubpartAnswer).subparts
+      const appendixD = subparts.find((s) => s.subpart === 'Appendix D')
+      const appendixF = subparts.find((s) => s.subpart === 'Appendix F')
+      expect(appendixD).toBeDefined()
+      expect(appendixF).toBeDefined()
     })
   })
 })

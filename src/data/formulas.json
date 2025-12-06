@@ -1,0 +1,351 @@
+{
+"_metadata": {
+    "source": "Part 75 Appendices D, E, F, G and LME provisions",
+    "version": "1.1.0",
+    "lastUpdated": "2025-06-19",
+    "verifiedAgainst": "DAHS MPCrossReferenceService"
+  },
+  "D-1": {
+    "appendix": "Appendix D",
+    "section": "40 CFR 75 Appendix D Section 3.3.1",
+    "description": "SO2 mass from fuel sulfur content and fuel flow (gas)",
+    "parameters": ["SO2", "HI"],
+    "applicableUnits": "Gas-fired units"
+  },
+  "D-2": {
+    "appendix": "Appendix D",
+    "section": "40 CFR 75 Appendix D Section 3.3.2",
+    "description": "SO2 mass from fuel sulfur content and fuel flow (oil)",
+    "parameters": ["SO2", "HI"],
+    "applicableUnits": "Oil-fired units"
+  },
+  "D-3": {
+    "appendix": "Appendix D",
+    "section": "40 CFR 75 Appendix D Section 3.3.3",
+    "description": "SO2 mass from fuel analysis (coal)",
+    "parameters": ["SO2", "HI"],
+    "applicableUnits": "Coal-fired units"
+  },
+  "D-4": {
+    "appendix": "Appendix D",
+    "section": "40 CFR 75 Appendix D Section 3.3.4",
+    "description": "SO2 rate from sulfur content",
+    "parameters": ["SO2"],
+    "applicableUnits": "All fuel types"
+  },
+  "D-5": {
+    "appendix": "Appendix D",
+    "section": "40 CFR 75 Appendix D Section 3.4.1",
+    "description": "Heat input from gas fuel flow",
+    "parameters": ["HI"],
+    "applicableUnits": "Gas-fired units"
+  },
+  "D-6": {
+    "appendix": "Appendix D",
+    "section": "40 CFR 75 Appendix D Section 3.4.2",
+    "description": "Heat input from oil fuel flow",
+    "parameters": ["HI"],
+    "applicableUnits": "Oil-fired units"
+  },
+  "D-8": {
+    "appendix": "Appendix D",
+    "section": "40 CFR 75 Appendix D Section 3.4.3",
+    "description": "Heat input from coal fuel flow",
+    "parameters": ["HI"],
+    "applicableUnits": "Coal-fired units"
+  },
+  "D-10": {
+    "appendix": "Appendix D",
+    "section": "40 CFR 75 Appendix D Section 3.5.1",
+    "description": "SO2 from oil using fuel sampling",
+    "parameters": ["SO2"],
+    "applicableUnits": "Oil-fired units"
+  },
+  "D-11": {
+    "appendix": "Appendix D",
+    "section": "40 CFR 75 Appendix D Section 3.5.2",
+    "description": "SO2 from oil using default emission factors",
+    "parameters": ["SO2"],
+    "applicableUnits": "Oil-fired units"
+  },
+  "D-12": {
+    "appendix": "Appendix D",
+    "section": "40 CFR 75 Appendix D Section 3.3.6",
+    "description": "SO2 from measured sulfur content",
+    "parameters": ["SO2"],
+    "applicableUnits": "All fuel types"
+  },
+  "D-15": {
+    "appendix": "Appendix D",
+    "section": "40 CFR 75 Appendix D Section 3.6.1",
+    "description": "SO2 using %S from oil sampling",
+    "parameters": ["SO2"],
+    "applicableUnits": "Oil-fired units"
+  },
+  "D-15A": {
+    "appendix": "Appendix D",
+    "section": "40 CFR 75 Appendix D Section 3.5.1",
+    "description": "Total heat input multiple fuels",
+    "parameters": ["HI"],
+    "applicableUnits": "Units burning multiple fuels"
+  },
+  "D-15B": {
+    "appendix": "Appendix D",
+    "section": "40 CFR 75 Appendix D Section 3.5.2",
+    "description": "Apportioned heat input",
+    "parameters": ["HI"],
+    "applicableUnits": "Common stacks with multiple units"
+  },
+  "E-1": {
+    "appendix": "Appendix E",
+    "section": "40 CFR 75 Appendix E Section 2.1",
+    "description": "NOx emission rate from fuel-specific testing (gas/oil)",
+    "parameters": ["NOX"],
+    "applicableUnits": "Peaking units using Appendix E"
+  },
+  "E-2": {
+    "appendix": "Appendix E",
+    "section": "40 CFR 75 Appendix E Section 2",
+    "description": "NOx emission rate from fuel-specific testing",
+    "parameters": ["NOX"],
+    "applicableUnits": "Peaking units using Appendix E"
+  },
+  "F-1": {
+    "appendix": "Appendix F",
+    "section": "40 CFR 75 Appendix F Section 1",
+    "description": "SO2 mass from CEM (lb/hr)",
+    "parameters": ["SO2", "FLOW"],
+    "applicableUnits": "CEM-equipped units"
+  },
+  "F-2": {
+    "appendix": "Appendix F",
+    "section": "40 CFR 75 Appendix F Section 2",
+    "description": "SO2 mass from fuel sampling",
+    "parameters": ["SO2"],
+    "applicableUnits": "Units using fuel analysis"
+  },
+  "F-5": {
+    "appendix": "Appendix F",
+    "section": "40 CFR 75 Appendix F Section 3",
+    "description": "NOx mass from CEM (lb/hr)",
+    "parameters": ["NOX", "FLOW"],
+    "applicableUnits": "CEM-equipped units"
+  },
+  "F-6": {
+    "appendix": "Appendix F",
+    "section": "40 CFR 75 Appendix F Section 3.2",
+    "description": "NOx mass using F-factor and diluent",
+    "parameters": ["NOX", "O2", "CO2"],
+    "applicableUnits": "Units with diluent monitors"
+  },
+  "F-7A": {
+    "appendix": "Appendix F",
+    "section": "40 CFR 75 Appendix F Section 4.1",
+    "description": "CO2 concentration from O2 (F-factor)",
+    "parameters": ["CO2", "O2"],
+    "applicableUnits": "Units calculating CO2"
+  },
+  "F-7B": {
+    "appendix": "Appendix F",
+    "section": "40 CFR 75 Appendix F Section 4.2",
+    "description": "CO2 concentration (wet basis)",
+    "parameters": ["CO2", "H2O"],
+    "applicableUnits": "Units with moisture correction"
+  },
+  "F-11": {
+    "appendix": "Appendix F",
+    "section": "40 CFR 75 Appendix F Section 5",
+    "description": "CO2 mass from CEM",
+    "parameters": ["CO2", "FLOW"],
+    "applicableUnits": "CEM-equipped units"
+  },
+  "F-14A": {
+    "appendix": "Appendix F",
+    "section": "40 CFR 75 Appendix F Section 3.3.1",
+    "description": "NOx emission rate (lb/MMBtu) from CEM",
+    "parameters": ["NOX", "HI"],
+    "applicableUnits": "CEM-equipped units"
+  },
+  "F-14B": {
+    "appendix": "Appendix F",
+    "section": "40 CFR 75 Appendix F Section 3.3.2",
+    "description": "NOx emission rate using O2 diluent",
+    "parameters": ["NOX", "O2"],
+    "applicableUnits": "Units with O2 monitor"
+  },
+  "F-16": {
+    "appendix": "Appendix F",
+    "section": "40 CFR 75 Appendix F Section 7",
+    "description": "Heat input from flow and diluent",
+    "parameters": ["HI", "FLOW", "O2"],
+    "applicableUnits": "CEM-equipped units"
+  },
+  "F-17": {
+    "appendix": "Appendix F",
+    "section": "40 CFR 75 Appendix F Section 7.2",
+    "description": "Heat input using CO2 diluent",
+    "parameters": ["HI", "FLOW", "CO2"],
+    "applicableUnits": "Units with CO2 monitor"
+  },
+  "F-18": {
+    "appendix": "Appendix F",
+    "section": "40 CFR 75 Appendix F Section 8",
+    "description": "Moisture correction",
+    "parameters": ["H2O"],
+    "applicableUnits": "All units requiring moisture correction"
+  },
+  "F-19": {
+    "appendix": "Appendix F",
+    "section": "40 CFR 75 Appendix F Section 8.2",
+    "description": "Moisture from wet-dry difference",
+    "parameters": ["H2O", "O2"],
+    "applicableUnits": "Units without moisture monitor"
+  },
+  "F-20": {
+    "appendix": "Appendix F",
+    "section": "40 CFR 75 Appendix F Section 8.3",
+    "description": "Default moisture for gas-fired units",
+    "parameters": ["H2O"],
+    "applicableUnits": "Gas-fired units"
+  },
+  "F-21": {
+    "appendix": "Appendix F",
+    "section": "40 CFR 75 Appendix F Section 9",
+    "description": "Heat input from steam load",
+    "parameters": ["HI"],
+    "applicableUnits": "Units with steam flow measurement"
+  },
+  "F-21A": {
+    "appendix": "Appendix F",
+    "section": "40 CFR 75 Appendix F Section 9.1",
+    "description": "Heat input from gas fuel flow",
+    "parameters": ["HI"],
+    "applicableUnits": "Gas-fired units"
+  },
+  "F-21B": {
+    "appendix": "Appendix F",
+    "section": "40 CFR 75 Appendix F Section 9.2",
+    "description": "Heat input from oil fuel flow",
+    "parameters": ["HI"],
+    "applicableUnits": "Oil-fired units"
+  },
+  "F-21C": {
+    "appendix": "Appendix F",
+    "section": "40 CFR 75 Appendix F Section 9.3",
+    "description": "Heat input from coal fuel flow",
+    "parameters": ["HI"],
+    "applicableUnits": "Coal-fired units"
+  },
+  "F-21D": {
+    "appendix": "Appendix F",
+    "section": "40 CFR 75 Appendix F Section 9.4",
+    "description": "Heat input from mixed fuels",
+    "parameters": ["HI"],
+    "applicableUnits": "Units burning multiple fuel types"
+  },
+  "F-23": {
+    "appendix": "Appendix F",
+    "section": "40 CFR 75 Appendix F Section 10.1",
+    "description": "Heat input apportionment for common stack",
+    "parameters": ["HI"],
+    "applicableUnits": "Common stacks (multiple units)"
+  },
+  "F-24": {
+    "appendix": "Appendix F",
+    "section": "40 CFR 75 Appendix F Section 10.2",
+    "description": "Apportioned NOx mass emissions",
+    "parameters": ["NOX"],
+    "applicableUnits": "Common stacks (multiple units)"
+  },
+  "F-24A": {
+    "appendix": "Appendix F",
+    "section": "40 CFR 75 Appendix F Section 10.2.1",
+    "description": "NOx mass apportionment (alternative)",
+    "parameters": ["NOX"],
+    "applicableUnits": "Common stacks with load data"
+  },
+  "F-25": {
+    "appendix": "Appendix F",
+    "section": "40 CFR 75 Appendix F Section 10.3",
+    "description": "Apportioned CO2 mass emissions",
+    "parameters": ["CO2"],
+    "applicableUnits": "Common stacks (multiple units)"
+  },
+  "F-26": {
+    "appendix": "Appendix F",
+    "section": "40 CFR 75 Appendix F Section 10.4",
+    "description": "Apportioned SO2 mass emissions",
+    "parameters": ["SO2"],
+    "applicableUnits": "Common stacks (multiple units)"
+  },
+  "G-1": {
+    "appendix": "Appendix G",
+    "section": "40 CFR 75 Appendix G Section 2.1",
+    "description": "Stack gas volumetric flow rate",
+    "parameters": ["FLOW"],
+    "applicableUnits": "CEM-equipped stacks"
+  },
+  "G-2": {
+    "appendix": "Appendix G",
+    "section": "40 CFR 75 Appendix G Section 2.2",
+    "description": "CO2 from oil using carbon content",
+    "parameters": ["CO2"],
+    "applicableUnits": "Oil-fired units"
+  },
+  "G-3": {
+    "appendix": "Appendix G",
+    "section": "40 CFR 75 Appendix G Section 2.3",
+    "description": "CO2 from natural gas using defaults",
+    "parameters": ["CO2"],
+    "applicableUnits": "Gas-fired units"
+  },
+  "G-4": {
+    "appendix": "Appendix G",
+    "section": "40 CFR 75 Appendix G Section 2.3",
+    "description": "Corrected flow with moisture",
+    "parameters": ["FLOW", "H2O"],
+    "applicableUnits": "Stacks requiring moisture correction"
+  },
+  "G-4A": {
+    "appendix": "Appendix G",
+    "section": "40 CFR 75 Appendix G Section 2.4",
+    "description": "CO2 from multiple fuels using apportionment",
+    "parameters": ["CO2"],
+    "applicableUnits": "Multi-fuel units"
+  },
+  "19-1": {
+    "appendix": "Part 75.19",
+    "section": "40 CFR 75.19(c)(4)",
+    "description": "Low mass emissions excepted methodology - SO2",
+    "parameters": ["SO2", "HI"],
+    "applicableUnits": "Units qualifying for LME under 75.19"
+  },
+  "19-2": {
+    "appendix": "Part 75.19",
+    "section": "40 CFR 75.19(c)(4)",
+    "description": "Low mass emissions excepted methodology - NOx",
+    "parameters": ["NOX", "HI"],
+    "applicableUnits": "Units qualifying for LME under 75.19"
+  },
+  "19-3": {
+    "appendix": "Part 75.19",
+    "section": "40 CFR 75.19(c)(4)",
+    "description": "Low mass emissions excepted methodology - CO2",
+    "parameters": ["CO2", "HI"],
+    "applicableUnits": "Units qualifying for LME under 75.19"
+  },
+  "19-4": {
+    "appendix": "Part 75.19",
+    "section": "40 CFR 75.19(c)(4)",
+    "description": "Low mass emissions excepted methodology - HI",
+    "parameters": ["HI"],
+    "applicableUnits": "Units qualifying for LME under 75.19"
+  },
+  "19-5": {
+    "appendix": "Part 75.19",
+    "section": "40 CFR 75.19(c)(4)",
+    "description": "Low mass emissions operating time calculation",
+    "parameters": ["OPTIME"],
+    "applicableUnits": "Units qualifying for LME under 75.19"
+  }
+}

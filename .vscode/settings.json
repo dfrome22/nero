@@ -9,6 +9,16 @@
   "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
   "testing.automaticallyOpenPeekView": "never",
 
+  // MCP Servers - Shared EPA Compliance Rules Engine
+  "mcp": {
+    "servers": {
+      "epa-compliance": {
+        "command": "node",
+        "args": ["C:/WebApp/shared/epa-compliance-mcp/dist/index.js"]
+      }
+    }
+  },
+
   "[typescript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },

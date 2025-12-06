@@ -101,6 +101,67 @@ Start → Import → RegsBot → ApprovalGate → RequirementsBot → SolutionMa
 Start → RequirementsBot → FigmaBot → ApprovalGate → Publish → End
 ```
 
+## Cross-Agent Context Sharing
+
+Agents communicate through typed context envelopes that carry artifacts between steps.
+
+### Context Types
+
+| Type                                 | Description                                                         |
+| ------------------------------------ | ------------------------------------------------------------------- |
+| `AgentContext<T>`                    | Generic envelope with source/target agents, artifact data, metadata |
+| `RegsBotToRequirementsBotContext`    | ComplianceReport + extracted obligations                            |
+| `RegsBotToFigmaBotContext`           | ComplianceReport + UI requirements                                  |
+| `RequirementsBotToTestingBotContext` | DAHSProposal + testable requirements                                |
+
+### Agent Flow
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                         RegsBot                                  │
+│   Monitoring Plan → ComplianceReport + PermitObligations        │
+└───────────────────────────────────┬─────────────────────────────┘
+                                    │
+                    ┌───────────────┴───────────────┐
+                    ▼                               ▼
+┌─────────────────────────────┐   ┌─────────────────────────────┐
+│      RequirementsBot        │   │         FigmaBot            │
+│  Obligations → GapAnalysis  │   │ ComplianceReport → Wireframes │
+│  → DAHSProposal             │   │                             │
+└──────────────┬──────────────┘   └─────────────────────────────┘
+               │
+               ▼
+┌─────────────────────────────┐
+│        TestingBot           │
+│  DAHSProposal → TestPlan    │
+└─────────────────────────────┘
+```
+
+### Helper Functions
+
+```typescript
+// Create a context envelope for agent communication
+createAgentContext<T>(
+  sourceAgent: AgentType,
+  targetAgents: AgentType[],
+  artifactType: SharedArtifactType,
+  data: T,
+  facility: { id: string; orisCode: number },
+  citationIds?: string[]
+): AgentContext<T>
+
+// Extract PermitObligations from a ComplianceReport for RequirementsBot
+extractObligationsFromReport(report: ComplianceReport): PermitObligation[]
+```
+
+### Test Coverage
+
+Cross-agent context sharing has **11 tests** covering:
+
+- Context envelope creation
+- Obligation extraction from ComplianceReport
+- All obligation types (monitoring, QA, calculation, reporting, limits, recordkeeping)
+
 ## Implementation
 
 ### Key Components
@@ -125,9 +186,14 @@ See `src/types/orchestration.ts` for:
 - `Run`, `RunStep`, `RunStatus`
 - `Artifact`, `ArtifactType`
 - `Approval`, `ApprovalAction`
+- `AgentContext`, `AgentType`, `SharedArtifactType` (cross-agent sharing)
+- `extractObligationsFromReport()` (ComplianceReport → PermitObligations)
 
 ## Acceptance Criteria
 
+- [x] Typed context envelopes for agent communication
+- [x] ComplianceReport to PermitObligation extraction
+- [x] 11 tests for context sharing
 - [ ] BA can drag nodes onto canvas
 - [ ] BA can connect nodes with edges
 - [ ] BA can configure node inputs/outputs

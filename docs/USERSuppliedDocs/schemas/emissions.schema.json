@@ -1,0 +1,2052 @@
+{
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "$id": "https://api.epa.gov/easey/beta/content-mgmt/ecmps/reporting-instructions/emissions.schema.json",
+  "title": "Emissions Data Schema",
+  "version": "1.0.0",
+  "lastUpdated": "2024-07-02",
+  "type": "object",
+  "additionalProperties": true,
+  "properties": {
+    "orisCode": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 999999
+    },
+    "version": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "year": {
+      "type": "number",
+      "minimum": 2000,
+      "maximum": 2099
+    },
+    "quarter": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 4
+    },
+    "submissionComment": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 3500
+    },
+    "dailyBackstopData": {
+      "type": "array",
+      "minItems": 0,
+      "items": {
+        "$ref": "#/definitions/DailyBackstop"
+      }
+    },
+    "dailyEmissionData": {
+      "type": "array",
+      "minItems": 0,
+      "items": {
+        "$ref": "#/definitions/DailyEmission"
+      }
+    },
+    "weeklyTestSummaryData": {
+      "type": "array",
+      "minItems": 0,
+      "items": {
+        "$ref": "#/definitions/WeeklyTestSummary"
+      }
+    },
+    "summaryValueData": {
+      "type": "array",
+      "minItems": 0,
+      "items": {
+        "$ref": "#/definitions/SummaryValue"
+      }
+    },
+    "dailyTestSummaryData": {
+      "type": "array",
+      "minItems": 0,
+      "items": {
+        "$ref": "#/definitions/DailyTestSummary"
+      }
+    },
+    "hourlyOperatingData": {
+      "type": "array",
+      "minItems": 0,
+      "items": {
+        "$ref": "#/definitions/HourlyOperating"
+      }
+    },
+    "longTermFuelFlowData": {
+      "type": "array",
+      "minItems": 0,
+      "items": {
+        "$ref": "#/definitions/LongTermFuelFlow"
+      }
+    },
+    "sorbentTrapData": {
+      "type": "array",
+      "minItems": 0,
+      "items": {
+        "$ref": "#/definitions/SorbentTrap"
+      }
+    },
+    "nsps4tSummaryData": {
+      "type": "array",
+      "minItems": 0,
+      "items": {
+        "$ref": "#/definitions/NSPS4TSummary"
+      }
+    }
+  },
+  "required": [
+    "orisCode",
+    "year",
+    "quarter"
+  ],
+  "definitions": {
+    "DailyEmission": {
+      "title": "DailyEmission",
+      "type": "object",
+      "anyOf": [
+        {
+          "required": [
+            "stackPipeId"
+          ]
+        },
+        {
+          "required": [
+            "unitId"
+          ]
+        }
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "stackPipeId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 6,
+          "pattern": "^(C|c|M|m|X|x)(S|s|P|p)[A-z0-9\\-]{1,6}$"
+        },
+        "unitId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 6,
+          "pattern": "^[A-z0-9\\-\\*#]{1,6}$"
+        },
+        "date": {
+          "type": "string",
+          "format": "date"
+        },
+        "parameterCode": {
+          "type": "string"
+        },
+        "totalDailyEmissions": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": -999999999.9,
+          "maximum": 999999999.9
+        },
+        "totalCarbonBurned": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": -9999999999999.9,
+          "maximum": 9999999999999.9
+        },
+        "adjustedDailyEmissions": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": -999999999.9,
+          "maximum": 999999999.9
+        },
+        "unadjustedDailyEmissions": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": -999999999.9,
+          "maximum": 999999999.9
+        },
+        "sorbentRelatedMassEmissions": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": -999999999.9,
+          "maximum": 999999999.9
+        },
+        "dailyFuelData": {
+          "type": "array",
+          "minItems": 0,
+          "items": {
+            "$ref": "#/definitions/DailyFuel"
+          }
+        }
+      },
+      "required": [
+        "date",
+        "parameterCode",
+        "totalDailyEmissions",
+        "totalCarbonBurned",
+        "adjustedDailyEmissions",
+        "unadjustedDailyEmissions",
+        "sorbentRelatedMassEmissions"
+      ]
+    },
+    "DailyFuel": {
+      "title": "DailyFuel",
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "fuelCode": {
+          "type": "string"
+        },
+        "dailyFuelFeed": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": -9999999999999.9,
+          "maximum": 9999999999999.9
+        },
+        "carbonContentUsed": {
+          "type": "number",
+          "multipleOf": 0.1,
+          "minimum": -99999.9,
+          "maximum": 99999.9
+        },
+        "fuelCarbonBurned": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": -9999999999999.9,
+          "maximum": 9999999999999.9
+        }
+      },
+      "required": [
+        "fuelCode",
+        "dailyFuelFeed",
+        "carbonContentUsed",
+        "fuelCarbonBurned"
+      ]
+    },
+    "DailyBackstop": {
+      "title": "DailyBackstop",
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "unitId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 6,
+          "pattern": "^[A-z0-9\\-\\*#]{1,6}$"
+        },        
+        "date": {
+          "type": "string",
+          "format": "date"
+        },
+        "dailyNoxEmissions": {
+          "type": "number",
+          "multipleOf": 0.1,
+          "minimum": -999999999.9,
+          "maximum": 999999999.9
+        },
+        "dailyHeatInput": {
+          "type": "number",
+          "multipleOf": 0.1,
+          "minimum": -999999999.9,
+          "maximum": 999999999.9
+        },
+        "dailyAverageNoxRate": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.001,
+          "minimum": -9999.999,
+          "maximum": 9999.999
+        },
+        "dailyNoxExceedance": {
+          "type": "number",
+          "multipleOf": 0.1,
+          "minimum": -999999999.9,
+          "maximum": 999999999.9
+        },
+        "cumulativeOsNoxExceedance": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": -999999999999.9,
+          "maximum": 999999999999.9
+        }
+      },
+      "required": [
+        "unitId",
+        "date",
+        "dailyNoxEmissions",
+        "dailyHeatInput",
+        "dailyAverageNoxRate",
+        "dailyNoxExceedance",
+        "cumulativeOsNoxExceedance"
+      ]
+    },
+    "WeeklyTestSummary": {
+      "title": "WeeklyTestSummary",
+      "type": "object",
+      "additionalProperties": true,
+      "anyOf": [
+        {
+          "required": [
+            "stackPipeId"
+          ]
+        },
+        {
+          "required": [
+            "unitId"
+          ]
+        }
+      ],
+      "properties": {
+        "stackPipeId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 6,
+          "pattern": "^(C|c|M|m|X|x)(S|s|P|p)[A-z0-9\\-]{1,6}$"
+        },
+        "unitId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 6,
+          "pattern": "^[A-z0-9\\-\\*#]{1,6}$"
+        },
+        "date": {
+          "type": "string",
+          "format": "date"
+        },
+        "hour": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 23
+        },
+        "minute": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 59
+        },
+        "componentId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 3,
+          "pattern": "^[A-Z0-9]{1,3}$"
+        },
+        "testTypeCode": {
+          "type": "string"
+        },
+        "testResultCode": {
+          "type": "string"
+        },
+        "spanScaleCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "weeklySystemIntegrityData": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": {
+            "$ref": "#/definitions/WeeklySystemIntegrity"
+          }
+        }
+      },
+      "required": [
+        "date",
+        "hour",
+        "minute",
+        "componentId",
+        "testTypeCode",
+        "testResultCode",
+        "spanScaleCode",
+        "weeklySystemIntegrityData"
+      ]
+    },
+    "WeeklySystemIntegrity": {
+      "title": "WeeklySystemIntegrity",
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "gasLevelCode": {
+          "type": "string"
+        },
+        "referenceValue": {
+          "type": "number",
+          "multipleOf": 0.001,
+          "minimum": 0,
+          "maximum": 9999999999.999
+        },
+        "measuredValue": {
+          "type": "number",
+          "multipleOf": 0.001,
+          "minimum": -9999999999.999,
+          "maximum": 9999999999.999
+        },
+        "apsIndicator": {
+          "type": "number",
+          "enum": [0, 1]
+        },
+        "systemIntegrityError": {
+          "type": "number",
+          "multipleOf": 0.1,
+          "minimum": 0,
+          "maximum": 9999.9
+        }
+      },
+      "required": [
+        "apsIndicator",
+        "gasLevelCode",
+        "referenceValue",
+        "measuredValue",
+        "systemIntegrityError"
+      ]
+    },
+    "SummaryValue": {
+      "title": "SummaryValue",
+      "type": "object",
+      "additionalProperties": true,
+      "anyOf": [
+        {
+          "required": [
+            "stackPipeId"
+          ]
+        },
+        {
+          "required": [
+            "unitId"
+          ]
+        }
+      ],
+      "properties": {
+        "stackPipeId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 6,
+          "pattern": "^(C|c|M|m|X|x)(S|s|P|p)[A-z0-9\\-]{1,6}$"
+        },
+        "unitId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 6,
+          "pattern": "^[A-z0-9\\-\\*#]{1,6}$"
+        },
+        "parameterCode": {
+          "type": "string"
+        },
+        "currentReportingPeriodTotal": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.001,
+          "minimum": 0,
+          "maximum": 9999999999.999
+        },
+        "ozoneSeasonToDateTotal": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.001,
+          "minimum": 0,
+          "maximum": 9999999999.999
+        },
+        "yearToDateTotal": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.001,
+          "minimum": 0,
+          "maximum": 9999999999.999
+        }
+      },
+      "required": [
+        "parameterCode",
+        "currentReportingPeriodTotal",
+        "ozoneSeasonToDateTotal",
+        "yearToDateTotal"
+      ]
+    },
+    "DailyTestSummary": {
+      "title": "DailyTestSummary",
+      "type": "object",
+      "additionalProperties": true,
+      "anyOf": [
+        {
+          "required": [
+            "stackPipeId"
+          ]
+        },
+        {
+          "required": [
+            "unitId"
+          ]
+        }
+      ],
+      "properties": {
+        "stackPipeId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 6,
+          "pattern": "^(C|c|M|m|X|x)(S|s|P|p)[A-z0-9\\-]{1,6}$"
+        },
+        "unitId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 6,
+          "pattern": "^[A-z0-9\\-\\*#]{1,6}$"
+        },
+        "date": {
+          "type": "string",
+          "format": "date"
+        },
+        "hour": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 23
+        },
+        "minute": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 59
+        },
+        "monitoringSystemId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 3,
+          "pattern": "^[A-Z0-9]{1,3}$"
+        },
+        "componentId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 3,
+          "pattern": "^[A-Z0-9]{1,3}$"
+        },
+        "testTypeCode": {
+          "type": "string"
+        },
+        "testResultCode": {
+          "type": "string"
+        },
+        "spanScaleCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "dailyCalibrationData": {
+          "type": "array",
+          "minItems": 0,
+          "items": {
+            "$ref": "#/definitions/DailyCalibration"
+          }
+        }
+      },
+      "required": [
+        "date",
+        "hour",
+        "minute",
+        "monitoringSystemId",
+        "componentId",
+        "testTypeCode",
+        "testResultCode",
+        "spanScaleCode"
+      ]
+    },
+    "DailyCalibration": {
+      "title": "DailyCalibration",
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "onlineOfflineIndicator": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "enum": [null, 0, 1]
+        },
+        "upscaleGasCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "zeroInjectionDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "zeroInjectionHour": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 23
+        },
+        "zeroInjectionMinute": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 59
+        },
+        "upscaleInjectionDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "upscaleInjectionHour": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 23
+        },
+        "upscaleInjectionMinute": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 59
+        },
+        "zeroMeasuredValue": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.001,
+          "minimum": -9999999999.999,
+          "maximum": 9999999999.999
+        },
+        "upscaleMeasuredValue": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.001,
+          "minimum": -9999999999.999,
+          "maximum": 9999999999.999
+        },
+        "zeroAPSIndicator": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "enum": [null, 0, 1]
+        },
+        "upscaleAPSIndicator": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "enum": [null, 0, 1]
+        },
+        "zeroCalibrationError": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.01,
+          "minimum": -9999.99,
+          "maximum": 9999.99
+        },
+        "upscaleCalibrationError": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.01,
+          "minimum": -9999.99,
+          "maximum": 9999.99
+        },
+        "zeroReferenceValue": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.001,
+          "minimum": -9999999999.999,
+          "maximum": 9999999999.999
+        },
+        "upscaleReferenceValue": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.001,
+          "minimum": -9999999999.999,
+          "maximum": 9999999999.999
+        },
+        "upscaleGasTypeCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "cylinderIdentifier": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 25
+        },
+        "vendorIdentifier": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 8
+        },
+        "expirationDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "injectionProtocolCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "upscaleAPSIndicator",
+        "zeroAPSIndicator",
+        "onlineOfflineIndicator",
+        "upscaleGasCode",
+        "zeroInjectionDate",
+        "zeroInjectionHour",
+        "zeroInjectionMinute",
+        "upscaleInjectionDate",
+        "upscaleInjectionHour",
+        "upscaleInjectionMinute",
+        "zeroMeasuredValue",
+        "upscaleMeasuredValue",
+        "zeroCalibrationError",
+        "upscaleCalibrationError",
+        "zeroReferenceValue",
+        "upscaleReferenceValue",
+        "upscaleGasTypeCode",
+        "cylinderIdentifier",
+        "vendorIdentifier",
+        "expirationDate",
+        "injectionProtocolCode"
+      ]
+    },
+    "HourlyOperating": {
+      "title": "HourlyOperating",
+      "type": "object",
+      "additionalProperties": true,
+      "anyOf": [
+        {
+          "required": [
+            "stackPipeId"
+          ]
+        },
+        {
+          "required": [
+            "unitId"
+          ]
+        }
+      ],
+      "properties": {
+        "stackPipeId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 6,
+          "pattern": "^(C|c|M|m|X|x)(S|s|P|p)[A-z0-9\\-]{1,6}$"
+        },
+        "unitId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 6,
+          "pattern": "^[A-z0-9\\-\\*#]{1,6}$"
+        },
+        "date": {
+          "type": "string",
+          "format": "date"
+        },
+        "hour": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 23
+        },
+        "operatingTime": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.01,
+          "minimum": -9.99,
+          "maximum": 9.99
+        },
+        "hourLoad": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 999999
+        },
+        "loadUnitsOfMeasureCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "matsHourLoad": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": -999999,
+          "maximum": 999999
+        },
+        "loadRange": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 20
+        },
+        "commonStackLoadRange": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 20
+        },
+        "fcFactor": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": -9999999.9,
+          "maximum": 9999999.9
+        },
+        "fdFactor": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": -9999999.9,
+          "maximum": 9999999.9
+        },
+        "fwFactor": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": -9999999.9,
+          "maximum": 9999999.9
+        },
+        "fuelCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "matsStartupShutdownFlag": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [null, "D", "U"]
+        },
+        "monitorHourlyValueData": {
+          "type": "array",
+          "minItems": 0,
+          "items": {
+            "$ref": "#/definitions/MonitorHourlyValue"
+          }
+        },
+        "matsMonitorHourlyValueData": {
+          "type": "array",
+          "minItems": 0,
+          "items": {
+            "$ref": "#/definitions/MATSMonitorHourlyValue"
+          }
+        },
+        "derivedHourlyValueData": {
+          "type": "array",
+          "minItems": 0,
+          "items": {
+            "$ref": "#/definitions/DerivedHourlyValue"
+          }
+        },
+        "matsDerivedHourlyValueData": {
+          "type": "array",
+          "minItems": 0,
+          "items": {
+            "$ref": "#/definitions/MATSDerivedHourlyValue"
+          }
+        },
+        "hourlyFuelFlowData": {
+          "type": "array",
+          "minItems": 0,
+          "items": {
+            "$ref": "#/definitions/HourlyFuelFlow"
+          }
+        },
+        "hourlyGFMData": {
+          "type": "array",
+          "minItems": 0,
+          "items": {
+            "$ref": "#/definitions/HourlyGFM"
+          }
+        }
+      },
+      "required": [
+        "date",
+        "hour",
+        "operatingTime",
+        "hourLoad",
+        "loadUnitsOfMeasureCode",
+        "matsHourLoad",
+        "loadRange",
+        "commonStackLoadRange",
+        "fcFactor",
+        "fdFactor",
+        "fwFactor",
+        "fuelCode",
+        "matsStartupShutdownFlag"
+      ]
+    },
+    "MonitorHourlyValue": {
+      "title": "MonitorHourlyValue",
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "parameterCode": {
+          "type": "string"
+        },
+        "unadjustedHourlyValue": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.0001,
+          "minimum": -9999999999.9999,
+          "maximum": 9999999999.9999
+        },
+        "adjustedHourlyValue": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.0001,
+          "minimum": 0,
+          "maximum": 9999999999.9999
+        },
+        "modcCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "monitoringSystemId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 3,
+          "pattern": "^[A-Z0-9]{1,3}$"
+        },
+        "componentId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 3,
+          "pattern": "^[A-Z0-9]{1,3}$"
+        },
+        "percentAvailable": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": 0,
+          "maximum": 999.9
+        },
+        "moistureBasis": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "parameterCode",
+        "unadjustedHourlyValue",
+        "adjustedHourlyValue",
+        "modcCode",
+        "monitoringSystemId",
+        "componentId",
+        "percentAvailable",
+        "moistureBasis"
+      ]
+    },
+    "MATSMonitorHourlyValue": {
+      "title": "MATSMonitorHourlyValue",
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "parameterCode": {
+          "type": "string"
+        },
+        "unadjustedHourlyValue": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 30,
+          "pattern": "^((?!0.00)[-]?[0-9][.][0-9]{1,2}[E]([0]|[-]?[1-9][0-9]*)|0.00E0)$"
+        },
+        "modcCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "monitoringSystemId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 3,
+          "pattern": "^[A-Z0-9]{1,3}$"
+        },
+        "componentId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 3,
+          "pattern": "^[A-Z0-9]{1,3}$"
+        },
+        "percentAvailable": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": 0,
+          "maximum": 999.9
+        }
+      },
+      "required": [
+        "parameterCode",
+        "unadjustedHourlyValue",
+        "modcCode",
+        "monitoringSystemId",
+        "componentId",
+        "percentAvailable"
+      ]
+    },
+    "DerivedHourlyValue": {
+      "title": "DerivedHourlyValueData",
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "parameterCode": {
+          "type": "string"
+        },
+        "unadjustedHourlyValue": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.0001,
+          "minimum": -9999999999.9999,
+          "maximum": 9999999999.9999
+        },
+        "adjustedHourlyValue": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.0001,
+          "minimum": -9999999999.9999,
+          "maximum": 9999999999.9999
+        },
+        "modcCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "monitoringSystemId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 3,
+          "pattern": "^[A-Z0-9]{1,3}$"
+        },
+        "formulaId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 3,
+          "pattern": "^[A-Z0-9\\-]{1,3}$"
+        },
+        "percentAvailable": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": -999.9,
+          "maximum": 999.9
+        },
+        "operatingConditionCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "segmentNumber": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "fuelCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "parameterCode",
+        "unadjustedHourlyValue",
+        "adjustedHourlyValue",
+        "modcCode",
+        "monitoringSystemId",
+        "formulaId",
+        "percentAvailable",
+        "operatingConditionCode",
+        "segmentNumber",
+        "fuelCode"
+      ]
+    },
+    "MATSDerivedHourlyValue": {
+      "title": "MATSDerivedHourlyValueData",
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "parameterCode": {
+          "type": "string"
+        },
+        "unadjustedHourlyValue": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 30,
+          "pattern": "^((?!0.00)[-]?[0-9][.][0-9]{1,2}[E]([0]|[-]?[1-9][0-9]*)|0.00E0)$"
+        },
+        "modcCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "formulaId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 3,
+          "pattern": "^[A-Z0-9\\-]{1,3}$"
+        }
+      },
+      "required": [
+        "parameterCode",
+        "unadjustedHourlyValue",
+        "modcCode",
+        "formulaId"
+      ]
+    },
+    "HourlyFuelFlow": {
+      "title": "HourlyFuelFlow",
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "fuelCode": {
+          "type": "string"
+        },
+        "fuelUsageTime": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.01,
+          "minimum": -9.99,
+          "maximum": 9.99
+        },
+        "volumetricFlowRate": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": -9999999999.9,
+          "maximum": 9999999999.9
+        },
+        "volumetricUnitsOfMeasureCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sourceOfDataVolumetricCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "massFlowRate": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": -9999999999.9,
+          "maximum": 9999999999.9
+        },
+        "sourceOfDataMassCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "monitoringSystemId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 3,
+          "pattern": "^[A-Z0-9]{1,3}$"
+        },
+        "hourlyParameterFuelFlowData": {
+          "type": "array",
+          "minItems": 0,
+          "items": {
+            "$ref": "#/definitions/HourlyParameterFuelFlow"
+          }
+        }
+      },
+      "required": [
+        "fuelCode",
+        "fuelUsageTime",
+        "volumetricFlowRate",
+        "volumetricUnitsOfMeasureCode",
+        "sourceOfDataVolumetricCode",
+        "massFlowRate",
+        "sourceOfDataMassCode",
+        "monitoringSystemId"
+      ]
+    },
+    "HourlyParameterFuelFlow": {
+      "title": "HourlyParameterFuelFlow",
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "parameterCode": {
+          "type": "string"
+        },
+        "parameterValueForFuel": {
+          "type": "number",
+          "multipleOf": 0.00001,
+          "minimum": 0,
+          "maximum": 99999999.99999
+        },
+        "formulaId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 3,
+          "pattern": "^[A-Z0-9\\-]{1,3}$"
+        },
+        "sampleTypeCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "monitoringSystemId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 3,
+          "pattern": "^[A-Z0-9]{1,3}$"
+        },
+        "operatingConditionCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "segmentNumber": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "parameterUnitsOfMeasureCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "parameterCode",
+        "parameterValueForFuel",
+        "formulaId",
+        "sampleTypeCode",
+        "monitoringSystemId",
+        "operatingConditionCode",
+        "segmentNumber",
+        "parameterUnitsOfMeasureCode"
+      ]
+    },
+    "HourlyGFM": {
+      "title": "HourlyGFM",
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "componentId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 3,
+          "pattern": "^[A-Z0-9]{1,3}$"
+        },
+        "beginEndHourFlag": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "hourlyGFMReading": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.01,
+          "minimum": -9999999999.99,
+          "maximum": 9999999999.99
+        },
+        "averageHourlySamplingRate": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.01,
+          "minimum": -9999999999.99,
+          "maximum": 9999999999.99
+        },
+        "samplingRateUnitsOfMeasureCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "hourlySFSRRatio": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": -999.9,
+          "maximum": 999.9
+        }
+      },
+      "required": [
+        "componentId",
+        "beginEndHourFlag",
+        "averageHourlySamplingRate",
+        "samplingRateUnitsOfMeasureCode",
+        "hourlySFSRRatio",
+        "hourlyGFMReading"
+      ]
+    },
+    "LongTermFuelFlow": {
+      "title": "LongTermFuelFlow",
+      "type": "object",
+      "anyOf": [
+        {
+          "required": [
+            "stackPipeId"
+          ]
+        },
+        {
+          "required": [
+            "unitId"
+          ]
+        }
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "stackPipeId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 6,
+          "pattern": "^(C|c|M|m|X|x)(S|s|P|p)[A-z0-9\\-]{1,6}$"
+        },
+        "unitId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 6,
+          "pattern": "^[A-z0-9\\-\\*#]{1,6}$"
+        },
+        "monitoringSystemId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 3,
+          "pattern": "^[A-Z0-9]{1,3}$"
+        },
+        "fuelFlowPeriodCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "longTermFuelFlowValue": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 9999999999
+        },
+        "longTermFuelFlowUnitsOfMeasureCode": {
+          "type": "string"
+        },
+        "grossCalorificValue": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": 0,
+          "maximum": 999999999.9
+        },
+        "gcvUnitsOfMeasureCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "totalHeatInput": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 9999999999
+        }
+      },
+      "required": [
+        "monitoringSystemId",
+        "fuelFlowPeriodCode",
+        "longTermFuelFlowValue",
+        "longTermFuelFlowUnitsOfMeasureCode",
+        "grossCalorificValue",
+        "gcvUnitsOfMeasureCode",
+        "totalHeatInput"
+      ]
+    },
+    "SorbentTrap": {
+      "title": "SorbentTrap",
+      "type": "object",
+      "anyOf": [
+        {
+          "required": [
+            "stackPipeId"
+          ]
+        },
+        {
+          "required": [
+            "unitId"
+          ]
+        }
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "stackPipeId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 6,
+          "pattern": "^(C|c|M|m|X|x)(S|s|P|p)[A-z0-9\\-]{1,6}$"
+        },
+        "unitId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 6,
+          "pattern": "^[A-z0-9\\-\\*#]{1,6}$"
+        },
+        "monitoringSystemId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 3,
+          "pattern": "^[A-Z0-9]{1,3}$"
+        },
+        "beginDate": {
+          "type": "string",
+          "format": "date"
+        },
+        "beginHour": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 23
+        },
+        "endDate": {
+          "type": "string",
+          "format": "date"
+        },
+        "endHour": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 23
+        },
+        "hgSystemConcentration": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 0,
+          "maxLength": 30,
+          "pattern": "^[+\\-]?(?=\\.\\d|\\d)(?:0|[1-9]\\d*)?(?:\\.\\d+)?(?:(?<=\\d)(?:[eE][+\\-]?\\d+))?$"
+        },
+        "pairedTrapAgreement": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.01,
+          "minimum": 0,
+          "maximum": 999.99
+        },
+        "absoluteDifferenceIndicator": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "enum": [null, 0, 1]
+        },
+        "modcCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "rataIndicator": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "enum": [null, 0, 1]
+        },
+        "apsCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "samplingTrainData": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+            "$ref": "#/definitions/SamplingTrain"
+          }
+        }
+      },
+      "required": [
+        "monitoringSystemId",
+        "beginDate",
+        "beginHour",
+        "endDate",
+        "endHour",
+        "hgSystemConcentration",
+        "pairedTrapAgreement",
+        "modcCode",
+        "apsCode",
+        "absoluteDifferenceIndicator",
+        "rataIndicator"
+      ]
+    },
+    "SamplingTrain": {
+      "title": "SamplingTrain",
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "componentId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 3,
+          "pattern": "^[A-Z0-9]{1,3}$"
+        },
+        "sorbentTrapSN": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 20
+        },
+        "mainTrapHg": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 0,
+          "maxLength": 30,
+          "pattern": "^[+\\-]?(?=\\.\\d|\\d)(?:0|[1-9]\\d*)?(?:\\.\\d+)?(?:(?<=\\d)(?:[eE][+\\-]?\\d+))?$"
+        },
+        "btTrapHg": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 0,
+          "maxLength": 30,
+          "pattern": "^[+\\-]?(?=\\.\\d|\\d)(?:0|[1-9]\\d*)?(?:\\.\\d+)?(?:(?<=\\d)(?:[eE][+\\-]?\\d+))?$"
+        },
+        "spikeTrapHg": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 0,
+          "maxLength": 30,
+          "pattern": "^[+\\-]?(?=\\.\\d|\\d)(?:0|[1-9]\\d*)?(?:\\.\\d+)?(?:(?<=\\d)(?:[eE][+\\-]?\\d+))?$"
+        },
+        "spikeReferenceValue": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 0,
+          "maxLength": 30,
+          "pattern": "^[+\\-]?(?=\\.\\d|\\d)(?:0|[1-9]\\d*)?(?:\\.\\d+)?(?:(?<=\\d)(?:[eE][+\\-]?\\d+))?$"
+        },
+        "totalSampleVolumeDSCM": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.0001,
+          "minimum": 0,
+          "maximum": 9999999999.9999
+        },
+        "referenceSFSRRatio": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": 0,
+          "maximum": 999.9
+        },
+        "samplingRatioCheckResultCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "hgConcentration": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 0,
+          "maxLength": 30,
+          "pattern": "^[+\\-]?(?=\\.\\d|\\d)(?:0|[1-9]\\d*)?(?:\\.\\d+)?(?:(?<=\\d)(?:[eE][+\\-]?\\d+))?$"
+        },
+        "postLeakCheckResultCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "percentBreakthrough": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": -10000.0,
+          "maximum": 10000.0
+        },
+        "percentSpikeRecovery": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": 0,
+          "maximum": 999.9
+        },
+        "trainQAStatusCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sampleDamageExplanation": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 0,
+          "maxLength": 1000
+        }
+      },
+      "required": [
+        "componentId",
+        "sorbentTrapSN",
+        "mainTrapHg",
+        "btTrapHg",
+        "spikeTrapHg",
+        "spikeReferenceValue",
+        "totalSampleVolumeDSCM",
+        "referenceSFSRRatio",
+        "samplingRatioCheckResultCode",
+        "hgConcentration",
+        "postLeakCheckResultCode",
+        "percentBreakthrough",
+        "percentSpikeRecovery",
+        "trainQAStatusCode",
+        "sampleDamageExplanation"
+      ]
+    },
+    "NSPS4TSummary": {
+      "title": "NSPS4TSummary",
+      "type": "object",
+      "anyOf": [
+        {
+          "required": [
+            "stackPipeId"
+          ]
+        },
+        {
+          "required": [
+            "unitId"
+          ]
+        }
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "stackPipeId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 6,
+          "pattern": "^(C|c|M|m|X|x)(S|s|P|p)[A-z0-9\\-]{1,6}$"
+        },
+        "unitId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 6,
+          "pattern": "^[A-z0-9\\-\\*#]{1,6}$"
+        },
+        "co2EmissionStandardCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "modusValue": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 99999
+        },
+        "modusUnitsOfMeasureCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "electricalLoadCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "noCompliancePeriodEndedIndicator": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "enum": [null, 0, 1]
+        },
+        "noCompliancePeriodEndedComment": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 3500
+        },
+        "nsps4tCompliancePeriodData": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 3,
+          "items": {
+            "$ref": "#/definitions/NSPS4TCompliancePeriod"
+          }
+        },
+        "nsps4tFourthQuarterData": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 1,
+          "items": {
+            "$ref": "#/definitions/NSPS4TFourthQuarter"
+          }
+        }
+      },
+      "required": [
+        "co2EmissionStandardCode",
+        "modusValue",
+        "modusUnitsOfMeasureCode",
+        "electricalLoadCode",
+        "noCompliancePeriodEndedComment",
+        "noCompliancePeriodEndedIndicator"
+      ]
+    },
+    "NSPS4TCompliancePeriod": {
+      "title": "NSPS4TCompliancePeriod",
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "beginYear": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 2000,
+          "maximum": 2099
+        },
+        "beginMonth": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 12
+        },
+        "endYear": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 2000,
+          "maximum": 2099
+        },
+        "endMonth": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 12
+        },
+        "averageCO2EmissionRate": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 99999
+        },
+        "co2EmissionRateUnitsOfMeasureCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "percentValidOpHours": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": 0,
+          "maximum": 100.0
+        },
+        "violationOfCO2StandardIndicator": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "enum": [null, 0, 1]
+        },
+        "violationOfCO2StandardComment": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 3500
+        }
+      },
+      "required": [
+        "beginYear",
+        "beginMonth",
+        "endYear",
+        "endMonth",
+        "averageCO2EmissionRate",
+        "co2EmissionRateUnitsOfMeasureCode",
+        "percentValidOpHours",
+        "violationOfCO2StandardComment",
+        "violationOfCO2StandardIndicator"
+      ]
+    },
+    "NSPS4TFourthQuarter": {
+      "title": "NSPS4TFourthQuarter",
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "annualEnergySold": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 99999999
+        },
+        "annualEnergySoldTypeCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "annualPotentialElectricOutput": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 99999999
+        }
+      },
+      "required": [
+        "annualEnergySold",
+        "annualEnergySoldTypeCode",
+        "annualPotentialElectricOutput"
+      ]
+    }
+  }
+}

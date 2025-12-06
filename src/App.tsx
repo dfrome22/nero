@@ -1,9 +1,10 @@
-import { Routes, Route } from 'react-router-dom'
+import { Route, Routes } from 'react-router-dom'
 import MainLayout from './layouts/MainLayout'
 import Dashboard from './pages/Dashboard'
+import DAHSBot from './pages/agents/DAHSBot'
+import FigmaBot from './pages/agents/FigmaBot'
 import RegsBot from './pages/agents/RegsBot'
 import RequirementsBot from './pages/agents/RequirementsBot'
-import FigmaBot from './pages/agents/FigmaBot'
 import TestingBot from './pages/agents/TestingBot'
 
 function App(): React.JSX.Element {
@@ -16,6 +17,7 @@ function App(): React.JSX.Element {
           <Route path="requirements" element={<RequirementsBot />} />
           <Route path="figma" element={<FigmaBot />} />
           <Route path="testing" element={<TestingBot />} />
+          <Route path="dahs" element={<DAHSBot />} />
         </Route>
       </Route>
     </Routes>

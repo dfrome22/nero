@@ -1,0 +1,3088 @@
+{
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "$id": "https://api.epa.gov/easey/beta/content-mgmt/ecmps/reporting-instructions/qa-certification.schema.json",
+  "title": "QA Cert/Event Data Schema",
+  "version": "1.0.0",
+  "lastUpdated": "2024-04-24",
+  "type": "object",
+  "additionalProperties": true,
+  "properties": {
+    "orisCode": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 999999
+    },
+    "version": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "testSummaryData": {
+      "type": "array",
+      "minItems": 0,
+      "items": {
+        "$ref": "#/definitions/TestSummary"
+      }
+    },
+    "certificationEventData": {
+      "type": "array",
+      "minItems": 0,
+      "items": {
+        "$ref": "#/definitions/QACertificationEvent"
+      }
+    },
+    "testExtensionExemptionData": {
+      "type": "array",
+      "minItems": 0,
+      "items": {
+        "$ref": "#/definitions/TestExtensionExemption"
+      }
+    }
+  },
+  "required": [
+    "orisCode"
+  ],
+  "definitions": {
+    "TestSummary": {
+      "title": "TestSummary",
+      "type": "object",
+      "anyOf": [
+        {
+          "required": [
+            "stackPipeId"
+          ]
+        },
+        {
+          "required": [
+            "unitId"
+          ]
+        }
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "stackPipeId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 6,
+          "pattern": "^(C|c|M|m|X|x)(S|s|P|p)[A-z0-9\\-]{1,6}$"
+        },
+        "unitId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 6,
+          "pattern": "^[A-z0-9\\-\\*#]{1,6}$"
+        },
+        "testTypeCode": {
+          "type": "string"
+        },
+        "monitoringSystemId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 3,
+          "pattern": "^[A-Z0-9]{1,3}$"
+        },
+        "componentId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 3,
+          "pattern": "^[A-Z0-9]{1,3}$"
+        },
+        "spanScaleCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "testNumber": {
+          "type": "string",
+          "maxLength": 18
+        },
+        "testReasonCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "testDescription": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 100
+        },
+        "testResultCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "beginDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "beginHour": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 23
+        },
+        "beginMinute": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 59
+        },
+        "endDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "endHour": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 23
+        },
+        "endMinute": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 59
+        },
+        "gracePeriodIndicator": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "enum": [
+            null,
+            0,
+            1
+          ]
+        },
+        "year": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 1940,
+          "maximum": 2050
+        },
+        "quarter": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 4
+        },
+        "testComment": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 1000
+        },
+        "injectionProtocolCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "calibrationInjectionData": {
+          "type": "array",
+          "minItems": 0,
+          "items": {
+            "$ref": "#/definitions/CalibrationInjection"
+          }
+        },
+        "linearitySummaryData": {
+          "type": "array",
+          "minItems": 0,
+          "items": {
+            "$ref": "#/definitions/LinearitySummary"
+          }
+        },
+        "rataData": {
+          "type": "array",
+          "minItems": 0,
+          "items": {
+            "$ref": "#/definitions/Rata"
+          }
+        },
+        "flowToLoadReferenceData": {
+          "type": "array",
+          "minItems": 0,
+          "items": {
+            "$ref": "#/definitions/FlowToLoadReference"
+          }
+        },
+        "flowToLoadCheckData": {
+          "type": "array",
+          "minItems": 0,
+          "items": {
+            "$ref": "#/definitions/FlowToLoadCheck"
+          }
+        },
+        "cycleTimeSummaryData": {
+          "type": "array",
+          "minItems": 0,
+          "items": {
+            "$ref": "#/definitions/CycleTimeSummary"
+          }
+        },
+        "onlineOfflineCalibrationData": {
+          "type": "array",
+          "minItems": 0,
+          "items": {
+            "$ref": "#/definitions/OnlineOfflineCalibration"
+          }
+        },
+        "fuelFlowmeterAccuracyData": {
+          "type": "array",
+          "minItems": 0,
+          "items": {
+            "$ref": "#/definitions/FuelFlowmeterAccuracy"
+          }
+        },
+        "transmitterTransducerData": {
+          "type": "array",
+          "minItems": 0,
+          "items": {
+            "$ref": "#/definitions/TransmitterTransducer"
+          }
+        },
+        "fuelFlowToLoadBaselineData": {
+          "type": "array",
+          "minItems": 0,
+          "items": {
+            "$ref": "#/definitions/FuelFlowToLoadBaseline"
+          }
+        },
+        "fuelFlowToLoadTestData": {
+          "type": "array",
+          "minItems": 0,
+          "items": {
+            "$ref": "#/definitions/FuelFlowToLoadCheck"
+          }
+        },
+        "appendixECorrelationTestSummaryData": {
+          "type": "array",
+          "minItems": 0,
+          "items": {
+            "$ref": "#/definitions/AppendixECorrelationTestSummary"
+          }
+        },
+        "unitDefaultTestData": {
+          "type": "array",
+          "minItems": 0,
+          "items": {
+            "$ref": "#/definitions/UnitDefaultTest"
+          }
+        },
+        "hgSummaryData": {
+          "type": "array",
+          "minItems": 0,
+          "items": {
+            "$ref": "#/definitions/HgSummary"
+          }
+        },
+        "testQualificationData": {
+          "type": "array",
+          "minItems": 0,
+          "items": {
+            "$ref": "#/definitions/TestQualification"
+          }
+        },
+        "protocolGasData": {
+          "type": "array",
+          "minItems": 0,
+          "items": {
+            "$ref": "#/definitions/ProtocolGas"
+          }
+        },
+        "airEmissionTestingData": {
+          "type": "array",
+          "minItems": 0,
+          "items": {
+            "$ref": "#/definitions/AirEmissionTesting"
+          }
+        }
+      },
+      "required": [
+        "testTypeCode",
+        "monitoringSystemId",
+        "componentId",
+        "spanScaleCode",
+        "testNumber",
+        "testReasonCode",
+        "testDescription",
+        "testResultCode",
+        "beginDate",
+        "beginHour",
+        "beginMinute",
+        "endDate",
+        "endHour",
+        "endMinute",
+        "gracePeriodIndicator",
+        "year",
+        "quarter",
+        "testComment",
+        "injectionProtocolCode"
+      ]
+    },
+    "QACertificationEvent": {
+      "title": "QACertificationEvent",
+      "type": "object",
+      "anyOf": [
+        {
+          "required": [
+            "stackPipeId"
+          ]
+        },
+        {
+          "required": [
+            "unitId"
+          ]
+        }
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "stackPipeId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 6,
+          "pattern": "^(C|c|M|m|X|x)(S|s|P|p)[A-z0-9\\-]{1,6}$"
+        },
+        "unitId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 6,
+          "pattern": "^[A-z0-9\\-\\*#]{1,6}$"
+        },
+        "monitoringSystemId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 3,
+          "pattern": "^[A-Z0-9]{1,3}$"
+        },
+        "componentId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 3,
+          "pattern": "^[A-Z0-9]{1,3}$"
+        },
+        "certificationEventCode": {
+          "type": "string"
+        },
+        "certificationEventDate": {
+          "type": "string",
+          "format": "date"
+        },
+        "certificationEventHour": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 23
+        },
+        "requiredTestCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "conditionalBeginDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "conditionalBeginHour": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 23
+        },
+        "completionTestDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "completionTestHour": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 23
+        }
+      },
+      "required": [
+        "monitoringSystemId",
+        "componentId",
+        "certificationEventCode",
+        "certificationEventDate",
+        "certificationEventHour",
+        "requiredTestCode",
+        "conditionalBeginDate",
+        "conditionalBeginHour",
+        "completionTestDate",
+        "completionTestHour"
+      ]
+    },
+    "TestExtensionExemption": {
+      "title": "TestExtensionExemption",
+      "type": "object",
+      "anyOf": [
+        {
+          "required": [
+            "stackPipeId"
+          ]
+        },
+        {
+          "required": [
+            "unitId"
+          ]
+        }
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "stackPipeId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 6,
+          "pattern": "^(C|c|M|m|X|x)(S|s|P|p)[A-z0-9\\-]{1,6}$"
+        },
+        "unitId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 6,
+          "pattern": "^[A-z0-9\\-\\*#]{1,6}$"
+        },
+        "year": {
+          "type": "number",
+          "minimum": 2000,
+          "maximum": 2099
+        },
+        "quarter": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 4
+        },
+        "monitoringSystemId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 3,
+          "pattern": "^[A-Z0-9]{1,3}$"
+        },
+        "componentId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 3,
+          "pattern": "^[A-Z0-9]{1,3}$"
+        },
+        "hoursUsed": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 2208
+        },
+        "spanScaleCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "fuelCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "extensionOrExemptionCode": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "year",
+        "quarter",
+        "monitoringSystemId",
+        "componentId",
+        "hoursUsed",
+        "spanScaleCode",
+        "fuelCode",
+        "extensionOrExemptionCode"
+      ]
+    },
+    "CalibrationInjection": {
+      "title": "CalibrationInjection",
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "onlineOfflineIndicator": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "enum": [
+            null,
+            0,
+            1
+          ]
+        },
+        "upscaleGasLevelCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "zeroInjectionDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "zeroInjectionHour": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 23
+        },
+        "zeroInjectionMinute": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 59
+        },
+        "upscaleInjectionDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "upscaleInjectionHour": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 23
+        },
+        "upscaleInjectionMinute": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 59
+        },
+        "zeroMeasuredValue": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.001,
+          "minimum": -9999999999.999,
+          "maximum": 9999999999.999
+        },
+        "upscaleMeasuredValue": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.001,
+          "minimum": -9999999999.999,
+          "maximum": 9999999999.999
+        },
+        "zeroAPSIndicator": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "enum": [
+            null,
+            0,
+            1
+          ]
+        },
+        "upscaleAPSIndicator": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "enum": [
+            null,
+            0,
+            1
+          ]
+        },
+        "zeroCalibrationError": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.001,
+          "minimum": -9999.999,
+          "maximum": 9999.99
+        },
+        "upscaleCalibrationError": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.001,
+          "minimum": -9999.99,
+          "maximum": 9999.99
+        },
+        "zeroReferenceValue": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.001,
+          "minimum": -9999999999.999,
+          "maximum": 9999999999.999
+        },
+        "upscaleReferenceValue": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.001,
+          "minimum": -9999999999.999,
+          "maximum": 9999999999.999
+        }
+      },
+      "required": [
+        "onlineOfflineIndicator",
+        "upscaleGasLevelCode",
+        "zeroInjectionDate",
+        "zeroInjectionHour",
+        "zeroInjectionMinute",
+        "upscaleInjectionDate",
+        "upscaleInjectionHour",
+        "upscaleInjectionMinute",
+        "zeroMeasuredValue",
+        "upscaleMeasuredValue",
+        "zeroAPSIndicator",
+        "upscaleAPSIndicator",
+        "zeroCalibrationError",
+        "upscaleCalibrationError",
+        "zeroReferenceValue",
+        "upscaleReferenceValue"
+      ]
+    },
+    "LinearitySummary": {
+      "title": "LinearitySummary",
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "gasLevelCode": {
+          "type": "string"
+        },
+        "meanMeasuredValue": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.001,
+          "minimum": -9999999999.999,
+          "maximum": 9999999999.999
+        },
+        "meanReferenceValue": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.001,
+          "minimum": 0.000,
+          "maximum": 9999999999.999
+        },
+        "percentError": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": -9999.9,
+          "maximum": 9999.9
+        },
+        "apsIndicator": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "enum": [
+            null,
+            0,
+            1
+          ]
+        },
+        "linearityInjectionData": {
+          "type": "array",
+          "minItems": 0,
+          "items": {
+            "$ref": "#/definitions/LinearityInjection"
+          }
+        }
+      },
+      "required": [
+        "gasLevelCode",
+        "meanMeasuredValue",
+        "meanReferenceValue",
+        "percentError",
+        "apsIndicator"
+      ]
+    },
+    "LinearityInjection": {
+      "title": "LinearityInjection",
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "injectionDate": {
+          "type": "string",
+          "format": "date"
+        },
+        "injectionHour": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 23
+        },
+        "injectionMinute": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 59
+        },
+        "measuredValue": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.001,
+          "minimum": -9999999999.999,
+          "maximum": 9999999999.999
+        },
+        "referenceValue": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.001,
+          "minimum": -9999999999.999,
+          "maximum": 9999999999.999
+        }
+      },
+      "required": [
+        "injectionDate",
+        "injectionHour",
+        "injectionMinute",
+        "measuredValue",
+        "referenceValue"
+      ]
+    },
+    "Rata": {
+      "title": "Rata",
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "numberOfLoadLevels": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 9
+        },
+        "relativeAccuracy": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.01,
+          "minimum": -999.99,
+          "maximum": 999.99
+        },
+        "rataFrequencyCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "overallBiasAdjustmentFactor": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.001,
+          "minimum": -99.999,
+          "maximum": 99.999
+        },
+        "rataSummaryData": {
+          "type": "array",
+          "minItems": 0,
+          "items": {
+            "$ref": "#/definitions/RATASummary"
+          }
+        }
+      },
+      "required": [
+        "numberOfLoadLevels",
+        "relativeAccuracy",
+        "rataFrequencyCode",
+        "overallBiasAdjustmentFactor"
+      ]
+    },
+    "RATASummary": {
+      "title": "RATASummary",
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "operatingLevelCode": {
+          "type": "string"
+        },
+        "averageGrossUnitLoad": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": -999999,
+          "maximum": 999999
+        },
+        "referenceMethodCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "meanCEMValue": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.00001,
+          "minimum": -9999999999.99999,
+          "maximum": 9999999999.99999
+        },
+        "meanRATAReferenceValue": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.00001,
+          "minimum": -9999999999.99999,
+          "maximum": 9999999999.99999
+        },
+        "meanDifference": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.00001,
+          "minimum": -9999999999.99999,
+          "maximum": 9999999999.99999
+        },
+        "standardDeviationDifference": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.00001,
+          "minimum": -9999999999.99999,
+          "maximum": 9999999999.99999
+        },
+        "confidenceCoefficient": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.00001,
+          "minimum": -9999999999.99999,
+          "maximum": 9999999999.99999
+        },
+        "tValue": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.001,
+          "minimum": -999.999,
+          "maximum": 999.999
+        },
+        "apsIndicator": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "enum": [
+            null,
+            0,
+            1
+          ]
+        },
+        "apsCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "relativeAccuracy": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.01,
+          "minimum": 0,
+          "maximum": 999.99
+        },
+        "biasAdjustmentFactor": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.001,
+          "minimum": -99.999,
+          "maximum": 99.999
+        },
+        "co2OrO2ReferenceMethodCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "stackDiameter": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.01,
+          "minimum": 0,
+          "maximum": 999.99
+        },
+        "stackArea": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": 0,
+          "maximum": 99999.9
+        },
+        "numberOfTraversePoints": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 99
+        },
+        "calculatedWAF": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.0001,
+          "minimum": -99.9999,
+          "maximum": 99.9999
+        },
+        "defaultWAF": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.0001,
+          "minimum": -99.9999,
+          "maximum": 99.9999
+        },
+        "rataRunData": {
+          "type": "array",
+          "minItems": 0,
+          "items": {
+            "$ref": "#/definitions/RATARun"
+          }
+        }
+      },
+      "required": [
+        "operatingLevelCode",
+        "averageGrossUnitLoad",
+        "referenceMethodCode",
+        "meanCEMValue",
+        "meanRATAReferenceValue",
+        "meanDifference",
+        "standardDeviationDifference",
+        "confidenceCoefficient",
+        "tValue",
+        "apsIndicator",
+        "apsCode",
+        "relativeAccuracy",
+        "biasAdjustmentFactor",
+        "co2OrO2ReferenceMethodCode",
+        "stackDiameter",
+        "stackArea",
+        "numberOfTraversePoints",
+        "calculatedWAF",
+        "defaultWAF"
+      ]
+    },
+    "RATARun": {
+      "title": "RATARun",
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "runNumber": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 99
+        },
+        "beginDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "beginHour": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 23
+        },
+        "beginMinute": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 59
+        },
+        "endDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "endHour": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 23
+        },
+        "endMinute": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 59
+        },
+        "cemValue": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.00001,
+          "minimum": -9999999999.99999,
+          "maximum": 9999999999.99999
+        },
+        "rataReferenceValue": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.00001,
+          "minimum": -9999999999.99999,
+          "maximum": 9999999999.99999
+        },
+        "grossUnitLoad": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": -999999,
+          "maximum": 999999
+        },
+        "runStatusCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "flowRataRunData": {
+          "type": "array",
+          "minItems": 0,
+          "items": {
+            "$ref": "#/definitions/FlowRATARun"
+          }
+        }
+      },
+      "required": [
+        "runNumber",
+        "beginDate",
+        "beginHour",
+        "beginMinute",
+        "endDate",
+        "endHour",
+        "endMinute",
+        "cemValue",
+        "rataReferenceValue",
+        "grossUnitLoad",
+        "runStatusCode"
+      ]
+    },
+    "FlowRATARun": {
+      "title": "FlowRATARun",
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "numberOfTraversePoints": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 12,
+          "maximum": 99
+        },
+        "barometricPressure": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.01,
+          "minimum": 20,
+          "maximum": 35
+        },
+        "staticStackPressure": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.01,
+          "minimum": -30,
+          "maximum": 30
+        },
+        "percentCO2": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": 0,
+          "maximum": 20
+        },
+        "percentO2": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": 0,
+          "maximum": 22
+        },
+        "percentMoisture": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": -9999.9,
+          "maximum": 9999.9
+        },
+        "dryMolecularWeight": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.01,
+          "minimum": 25,
+          "maximum": 35
+        },
+        "wetMolecularWeight": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.01,
+          "minimum": 25,
+          "maximum": 35
+        },
+        "averageVelocityWithoutWallEffects": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.01,
+          "minimum": 0,
+          "maximum": 9999.99
+        },
+        "averageVelocityWithWallEffects": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.01,
+          "minimum": -9999.99,
+          "maximum": 9999.99
+        },
+        "calculatedWAF": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.0001,
+          "minimum": -99.9999,
+          "maximum": 99.9999
+        },
+        "averageStackFlowRate": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 9999999999
+        },
+        "rataTraverseData": {
+          "type": "array",
+          "minItems": 0,
+          "items": {
+            "$ref": "#/definitions/RATATraverse"
+          }
+        }
+      },
+      "required": [
+        "numberOfTraversePoints",
+        "barometricPressure",
+        "staticStackPressure",
+        "percentCO2",
+        "percentO2",
+        "percentMoisture",
+        "dryMolecularWeight",
+        "wetMolecularWeight",
+        "averageVelocityWithoutWallEffects",
+        "averageVelocityWithWallEffects",
+        "calculatedWAF",
+        "averageStackFlowRate"
+      ]
+    },
+    "RATATraverse": {
+      "title": "RATATraverse",
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "probeId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 11
+        },
+        "probeTypeCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "pressureMeasureCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "methodTraversePointId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 3
+        },
+        "velocityCalibrationCoefficient": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.001,
+          "minimum": 0.5,
+          "maximum": 1.5
+        },
+        "lastProbeDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "averageVelocityDifferencePressure": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.001,
+          "minimum": -99.999,
+          "maximum": 99.999
+        },
+        "averageSquareVelocityDifferencePressure": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.001,
+          "minimum": -99.999,
+          "maximum": 99.999
+        },
+        "tStackTemperature": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": 0,
+          "maximum": 1000
+        },
+        "pointUsedIndicator": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "enum": [
+            null,
+            0,
+            1
+          ]
+        },
+        "numberWallEffectsPoints": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 99
+        },
+        "yawAngle": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": -360,
+          "maximum": 360
+        },
+        "pitchAngle": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": -360,
+          "maximum": 360
+        },
+        "calculatedVelocity": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.01,
+          "minimum": -99999.9,
+          "maximum": 9999.99
+        },
+        "replacementVelocity": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.01,
+          "minimum": -9999.99,
+          "maximum": 9999.99
+        }
+      },
+      "required": [
+        "probeId",
+        "probeTypeCode",
+        "pressureMeasureCode",
+        "methodTraversePointId",
+        "velocityCalibrationCoefficient",
+        "lastProbeDate",
+        "averageVelocityDifferencePressure",
+        "averageSquareVelocityDifferencePressure",
+        "tStackTemperature",
+        "pointUsedIndicator",
+        "numberWallEffectsPoints",
+        "yawAngle",
+        "pitchAngle",
+        "calculatedVelocity",
+        "replacementVelocity"
+      ]
+    },
+    "FlowToLoadReference": {
+      "title": "FlowToLoadReference",
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "rataTestNumber": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 18
+        },
+        "operatingLevelCode": {
+          "type": "string"
+        },
+        "averageGrossUnitLoad": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": -999999,
+          "maximum": 999999
+        },
+        "averageReferenceMethodFlow": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": -9999999999,
+          "maximum": 9999999999
+        },
+        "referenceFlowLoadRatio": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.01,
+          "minimum": -9999.99,
+          "maximum": 9999.99
+        },
+        "averageHourlyHeatInputRate": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": -999999.9,
+          "maximum": 999999.9
+        },
+        "referenceGrossHeatRate": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": -999999,
+          "maximum": 999999
+        },
+        "calculatedSeparateReferenceIndicator": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "enum": [
+            null,
+            0,
+            1
+          ]
+        }
+      },
+      "required": [
+        "rataTestNumber",
+        "operatingLevelCode",
+        "averageGrossUnitLoad",
+        "averageReferenceMethodFlow",
+        "referenceFlowLoadRatio",
+        "averageHourlyHeatInputRate",
+        "referenceGrossHeatRate",
+        "calculatedSeparateReferenceIndicator"
+      ]
+    },
+    "FlowToLoadCheck": {
+      "title": "FlowToLoadCheck",
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "testBasisCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "biasAdjustedIndicator": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "enum": [
+            null,
+            0,
+            1
+          ]
+        },
+        "averageAbsolutePercentDifference": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": -9999.9,
+          "maximum": 9999.9
+        },
+        "numberOfHours": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 9999
+        },
+        "numberOfHoursExcludedForFuel": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 9999
+        },
+        "numberOfHoursExcludedRamping": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 9999
+        },
+        "numberOfHoursExcludedBypass": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 9999
+        },
+        "numberOfHoursExcludedPreRATA": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 9999
+        },
+        "numberOfHoursExcludedTest": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 9999
+        },
+        "numberOfHoursExcludedMainBypass": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 9999
+        },
+        "operatingLevelCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "testBasisCode",
+        "biasAdjustedIndicator",
+        "averageAbsolutePercentDifference",
+        "numberOfHours",
+        "numberOfHoursExcludedForFuel",
+        "numberOfHoursExcludedRamping",
+        "numberOfHoursExcludedBypass",
+        "numberOfHoursExcludedPreRATA",
+        "numberOfHoursExcludedTest",
+        "numberOfHoursExcludedMainBypass",
+        "operatingLevelCode"
+      ]
+    },
+    "CycleTimeSummary": {
+      "title": "CycleTimeSummary",
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "totalTime": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 99
+        },
+        "cycleTimeInjectionData": {
+          "type": "array",
+          "minItems": 0,
+          "items": {
+            "$ref": "#/definitions/CycleTimeInjection"
+          }
+        }
+      },
+      "required": [
+        "totalTime"
+      ]
+    },
+    "CycleTimeInjection": {
+      "title": "CycleTimeInjection",
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "gasLevelCode": {
+          "type": "string"
+        },
+        "calibrationGasValue": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.001,
+          "minimum": -9999999999.999,
+          "maximum": 9999999999.999
+        },
+        "beginDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "beginHour": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 23
+        },
+        "beginMinute": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 59
+        },
+        "endDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "endHour": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 23
+        },
+        "endMinute": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 59
+        },
+        "injectionCycleTime": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 99
+        },
+        "beginMonitorValue": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.001,
+          "minimum": -9999999999.999,
+          "maximum": 9999999999.999
+        },
+        "endMonitorValue": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.001,
+          "minimum": -9999999999.999,
+          "maximum": 9999999999.999
+        }
+      },
+      "required": [
+        "gasLevelCode",
+        "calibrationGasValue",
+        "beginDate",
+        "beginHour",
+        "beginMinute",
+        "endDate",
+        "endHour",
+        "endMinute",
+        "injectionCycleTime",
+        "beginMonitorValue",
+        "endMonitorValue"
+      ]
+    },
+    "OnlineOfflineCalibration": {
+      "title": "OnlineOfflineCalibration",
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "onlineZeroReferenceValue": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.001,
+          "minimum": -9999999999.999,
+          "maximum": 9999999999.999
+        },
+        "onlineUpscaleReferenceValue": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.001,
+          "minimum": -9999999999.999,
+          "maximum": 9999999999.999
+        },
+        "offlineZeroReferenceValue": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.001,
+          "minimum": -9999999999.999,
+          "maximum": 9999999999.999
+        },
+        "offlineUpscaleReferenceValue": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.001,
+          "minimum": -9999999999.999,
+          "maximum": 9999999999.999
+        },
+        "onlineZeroMeasuredValue": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.001,
+          "minimum": -9999999999.999,
+          "maximum": 9999999999.999
+        },
+        "onlineUpscaleMeasuredValue": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.001,
+          "minimum": -9999999999.999,
+          "maximum": 9999999999.999
+        },
+        "offlineZeroMeasuredValue": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.001,
+          "minimum": -9999999999.999,
+          "maximum": 9999999999.999
+        },
+        "offlineUpscaleMeasuredValue": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.001,
+          "minimum": -9999999999.999,
+          "maximum": 9999999999.999
+        },
+        "onlineZeroCalibrationError": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.001,
+          "minimum": -9999.99,
+          "maximum": 9999.99
+        },
+        "onlineUpscaleCalibrationError": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.001,
+          "minimum": -9999.99,
+          "maximum": 9999.99
+        },
+        "offlineZeroCalibrationError": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.001,
+          "minimum": -9999.99,
+          "maximum": 9999.99
+        },
+        "offlineUpscaleCalibrationError": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.001,
+          "minimum": -9999.99,
+          "maximum": 9999.99
+        },
+        "upscaleGasLevelCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "onlineZeroAPSIndicator": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "enum": [
+            null,
+            0,
+            1
+          ]
+        },
+        "onlineUpscaleAPSIndicator": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "enum": [
+            null,
+            0,
+            1
+          ]
+        },
+        "offlineZeroAPSIndicator": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "enum": [
+            null,
+            0,
+            1
+          ]
+        },
+        "offlineUpscaleAPSIndicator": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "enum": [
+            null,
+            0,
+            1
+          ]
+        },
+        "onlineZeroInjectionDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "onlineUpscaleInjectionDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "offlineZeroInjectionDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "offlineUpscaleInjectionDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "onlineZeroInjectionHour": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 23
+        },
+        "onlineUpscaleInjectionHour": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 23
+        },
+        "offlineZeroInjectionHour": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 23
+        },
+        "offlineUpscaleInjectionHour": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 23
+        }
+      },
+      "required": [
+        "onlineZeroReferenceValue",
+        "onlineUpscaleReferenceValue",
+        "offlineZeroReferenceValue",
+        "offlineUpscaleReferenceValue",
+        "onlineZeroMeasuredValue",
+        "onlineUpscaleMeasuredValue",
+        "offlineZeroMeasuredValue",
+        "offlineUpscaleMeasuredValue",
+        "onlineZeroCalibrationError",
+        "onlineUpscaleCalibrationError",
+        "offlineZeroCalibrationError",
+        "offlineUpscaleCalibrationError",
+        "upscaleGasLevelCode",
+        "onlineZeroAPSIndicator",
+        "onlineUpscaleAPSIndicator",
+        "offlineZeroAPSIndicator",
+        "offlineUpscaleAPSIndicator",
+        "onlineZeroInjectionDate",
+        "onlineUpscaleInjectionDate",
+        "offlineZeroInjectionDate",
+        "offlineUpscaleInjectionDate",
+        "onlineZeroInjectionHour",
+        "onlineUpscaleInjectionHour",
+        "offlineZeroInjectionHour",
+        "offlineUpscaleInjectionHour"
+      ]
+    },
+    "FuelFlowmeterAccuracy": {
+      "title": "FuelFlowmeterAccuracy",
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "accuracyTestMethodCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "lowFuelAccuracy": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": -9999.9,
+          "maximum": 9999.9
+        },
+        "midFuelAccuracy": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": -9999.9,
+          "maximum": 9999.9
+        },
+        "highFuelAccuracy": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": -9999.9,
+          "maximum": 9999.9
+        },
+        "reinstallationDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "reinstallationHour": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 23
+        }
+      },
+      "required": [
+        "accuracyTestMethodCode",
+        "lowFuelAccuracy",
+        "midFuelAccuracy",
+        "highFuelAccuracy",
+        "reinstallationDate",
+        "reinstallationHour"
+      ]
+    },
+    "TransmitterTransducer": {
+      "title": "TransmitterTransducer",
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "lowLevelAccuracy": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": -9999.9,
+          "maximum": 9999.9
+        },
+        "lowLevelAccuracySpecCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "midLevelAccuracy": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": -9999.9,
+          "maximum": 9999.9
+        },
+        "midLevelAccuracySpecCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "highLevelAccuracy": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": -9999.9,
+          "maximum": 9999.9
+        },
+        "highLevelAccuracySpecCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "lowLevelAccuracy",
+        "lowLevelAccuracySpecCode",
+        "midLevelAccuracy",
+        "midLevelAccuracySpecCode",
+        "highLevelAccuracy",
+        "highLevelAccuracySpecCode"
+      ]
+    },
+    "FuelFlowToLoadBaseline": {
+      "title": "FuelFlowToLoadBaseline",
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "accuracyTestNumber": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 18
+        },
+        "peiTestNumber": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 18
+        },
+        "averageFuelFlowRate": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": -999999999.9,
+          "maximum": 999999999.9
+        },
+        "averageLoad": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": -999999,
+          "maximum": 999999
+        },
+        "baselineFuelFlowToLoadRatio": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.01,
+          "minimum": -9999.99,
+          "maximum": 9999.99
+        },
+        "fuelFlowToLoadUnitsOfMeasureCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "averageHourlyHeatInputRate": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": -999999.9,
+          "maximum": 999999.9
+        },
+        "baselineGHR": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 999999
+        },
+        "ghrUnitsOfMeasureCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "numberOfHoursExcludedCofiring": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 9999
+        },
+        "numberOfHoursExcludedRamping": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 9999
+        },
+        "numberOfHoursExcludedLowRange": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 9999
+        }
+      },
+      "required": [
+        "accuracyTestNumber",
+        "peiTestNumber",
+        "averageFuelFlowRate",
+        "averageLoad",
+        "baselineFuelFlowToLoadRatio",
+        "fuelFlowToLoadUnitsOfMeasureCode",
+        "averageHourlyHeatInputRate",
+        "baselineGHR",
+        "ghrUnitsOfMeasureCode",
+        "numberOfHoursExcludedCofiring",
+        "numberOfHoursExcludedRamping",
+        "numberOfHoursExcludedLowRange"
+      ]
+    },
+    "FuelFlowToLoadCheck": {
+      "title": "FuelFlowToLoadCheck",
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "testBasisCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "averageDifference": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": -9999.9,
+          "maximum": 9999.9
+        },
+        "numberOfHoursUsed": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 9999
+        },
+        "numberOfHoursExcludedCofiring": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 9999
+        },
+        "numberOfHoursExcludedRamping": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 9999
+        },
+        "numberOfHoursExcludedLowRange": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 9999
+        }
+      },
+      "required": [
+        "testBasisCode",
+        "averageDifference",
+        "numberOfHoursUsed",
+        "numberOfHoursExcludedCofiring",
+        "numberOfHoursExcludedRamping",
+        "numberOfHoursExcludedLowRange"
+      ]
+    },
+    "AppendixECorrelationTestSummary": {
+      "title": "AppendixECorrelationTestSummary",
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "operatingLevelForRun": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 99
+        },
+        "meanReferenceValue": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.001,
+          "minimum": -99999.999,
+          "maximum": 99999.999
+        },
+        "averageHourlyHeatInputRate": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": -999999.9,
+          "maximum": 999999.9
+        },
+        "fFactor": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": -999999999.9,
+          "maximum": 999999999.9
+        },
+        "appendixECorrelationTestRunData": {
+          "type": "array",
+          "minItems": 0,
+          "items": {
+            "$ref": "#/definitions/AppendixECorrelationTestRun"
+          }
+        }
+      },
+      "required": [
+        "operatingLevelForRun",
+        "meanReferenceValue",
+        "averageHourlyHeatInputRate",
+        "fFactor"
+      ]
+    },
+    "AppendixECorrelationTestRun": {
+      "title": "AppendixECorrelationTestRun",
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "runNumber": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 99
+        },
+        "referenceValue": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.001,
+          "minimum": -99999.999,
+          "maximum": 99999.999
+        },
+        "hourlyHeatInputRate": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": -999999.9,
+          "maximum": 999999.9
+        },
+        "totalHeatInput": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": -999999.9,
+          "maximum": 999999.9
+        },
+        "responseTime": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 999
+        },
+        "beginDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "beginHour": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 23
+        },
+        "beginMinute": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 59
+        },
+        "endDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "endHour": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 23
+        },
+        "endMinute": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 59
+        },
+        "appendixEHeatInputFromOilData": {
+          "type": "array",
+          "minItems": 0,
+          "items": {
+            "$ref": "#/definitions/AppendixEHeatInputFromOil"
+          }
+        },
+        "appendixEHeatInputFromGasData": {
+          "type": "array",
+          "minItems": 0,
+          "items": {
+            "$ref": "#/definitions/AppendixEHeatInputFromGas"
+          }
+        }
+      },
+      "required": [
+        "runNumber",
+        "referenceValue",
+        "hourlyHeatInputRate",
+        "totalHeatInput",
+        "responseTime",
+        "beginDate",
+        "beginHour",
+        "beginMinute",
+        "endDate",
+        "endHour",
+        "endMinute"
+      ]
+    },
+    "AppendixEHeatInputFromOil": {
+      "title": "AppendixEHeatInputFromOil",
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "monitoringSystemId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 3,
+          "pattern": "^[A-Z0-9]{1,3}$"
+        },
+        "oilMass": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": -999999999.9,
+          "maximum": 999999999.9
+        },
+        "oilGCV": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": -999999999.9,
+          "maximum": 999999999.9
+        },
+        "oilGCVUnitsOfMeasureCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "oilHeatInput": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": -999999.9,
+          "maximum": 999999.9
+        },
+        "oilVolume": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": -999999999.9,
+          "maximum": 999999999.9
+        },
+        "oilVolumeUnitsOfMeasureCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "oilDensity": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.000001,
+          "minimum": -99999.999999,
+          "maximum": 99999.999999
+        },
+        "oilDensityUnitsOfMeasureCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "monitoringSystemId",
+        "oilMass",
+        "oilGCV",
+        "oilGCVUnitsOfMeasureCode",
+        "oilHeatInput",
+        "oilVolume",
+        "oilVolumeUnitsOfMeasureCode",
+        "oilDensity",
+        "oilDensityUnitsOfMeasureCode"
+      ]
+    },
+    "AppendixEHeatInputFromGas": {
+      "title": "AppendixEHeatInputFromGas",
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "monitoringSystemId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 3,
+          "pattern": "^[A-Z0-9]{1,3}$"
+        },
+        "gasGCV": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": -999999999.9,
+          "maximum": 999999999.9
+        },
+        "gasVolume": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": -999999999.9,
+          "maximum": 999999999.9
+        },
+        "gasHeatInput": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": -999999.9,
+          "maximum": 999999.9
+        }
+      },
+      "required": [
+        "monitoringSystemId",
+        "gasGCV",
+        "gasVolume",
+        "gasHeatInput"
+      ]
+    },
+    "UnitDefaultTest": {
+      "title": "UnitDefaultTest",
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "fuelCode": {
+          "type": "string"
+        },
+        "noxDefaultRate": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.001,
+          "minimum": -999.999,
+          "maximum": 999.999
+        },
+        "operatingConditionCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "groupId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 10
+        },
+        "numberOfUnitsInGroup": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 99
+        },
+        "numberOfTestsForGroup": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 99
+        },
+        "unitDefaultTestRunData": {
+          "type": "array",
+          "minItems": 0,
+          "items": {
+            "$ref": "#/definitions/UnitDefaultTestRun"
+          }
+        }
+      },
+      "required": [
+        "fuelCode",
+        "noxDefaultRate",
+        "operatingConditionCode",
+        "groupId",
+        "numberOfUnitsInGroup",
+        "numberOfTestsForGroup"
+      ]
+    },
+    "UnitDefaultTestRun": {
+      "title": "UnitDefaultTestRun",
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "operatingLevelForRun": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 99
+        },
+        "runNumber": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 99
+        },
+        "beginDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "beginHour": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 23
+        },
+        "beginMinute": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 59
+        },
+        "endDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "endHour": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 23
+        },
+        "endMinute": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 59
+        },
+        "responseTime": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 999
+        },
+        "referenceValue": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.001,
+          "minimum": -99999.999,
+          "maximum": 99999.999
+        },
+        "runUsedIndicator": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "enum": [
+            null,
+            0,
+            1
+          ]
+        }
+      },
+      "required": [
+        "operatingLevelForRun",
+        "runNumber",
+        "beginDate",
+        "beginHour",
+        "beginMinute",
+        "endDate",
+        "endHour",
+        "endMinute",
+        "responseTime",
+        "referenceValue",
+        "runUsedIndicator"
+      ]
+    },
+    "TestQualification": {
+      "title": "TestQualification",
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "testClaimCode": {
+          "type": "string"
+        },
+        "beginDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "endDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "highLoadPercentage": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": 0,
+          "maximum": 9999.9
+        },
+        "midLoadPercentage": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": 0,
+          "maximum": 9999.9
+        },
+        "lowLoadPercentage": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": 0,
+          "maximum": 9999.9
+        }
+      },
+      "required": [
+        "testClaimCode",
+        "beginDate",
+        "endDate",
+        "highLoadPercentage",
+        "midLoadPercentage",
+        "lowLoadPercentage"
+      ]
+    },
+    "ProtocolGas": {
+      "title": "ProtocolGas",
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "gasLevelCode": {
+          "type": "string"
+        },
+        "gasTypeCode": {
+          "type": "string"
+        },
+        "cylinderIdentifier": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 25
+        },
+        "vendorIdentifier": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1,
+          "maxLength": 8,
+          "pattern": "([A-Z0-9]{1,8})*"
+        },
+        "expirationDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        }
+      },
+      "required": [
+        "gasLevelCode",
+        "gasTypeCode",
+        "cylinderIdentifier",
+        "vendorIdentifier",
+        "expirationDate"
+      ]
+    },
+    "AirEmissionTesting": {
+      "title": "AirEmissionTesting",
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "qiLastName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 25
+        },
+        "qiFirstName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 25
+        },
+        "qiMiddleInitial": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 0,
+          "maxLength": 1
+        },
+        "aetbName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 50
+        },
+        "aetbPhoneNumber": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 18
+        },
+        "aetbEmail": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 70
+        },
+        "examDate": {
+          "type": "string",
+          "format": "date"
+        },
+        "providerName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 50
+        },
+        "providerEmail": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 70
+        }
+      },
+      "required": [
+        "qiLastName",
+        "qiFirstName",
+        "qiMiddleInitial",
+        "aetbName",
+        "aetbPhoneNumber",
+        "aetbEmail",
+        "examDate",
+        "providerName",
+        "providerEmail"
+      ]
+    },
+    "HgSummary": {
+      "title": "HgSummary",
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "gasLevelCode": {
+          "type": "string"
+        },
+        "meanMeasuredValue": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.001,
+          "minimum": -9999999999.999,
+          "maximum": 9999999999.999
+        },
+        "meanReferenceValue": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.001,
+          "minimum": -9999999999.999,
+          "maximum": 9999999999.999
+        },
+        "percentError": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.1,
+          "minimum": -9999.9,
+          "maximum": 9999.9
+        },
+        "apsIndicator": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "enum": [
+            null,
+            0,
+            1
+          ]
+        },
+        "hgInjectionData": {
+          "type": "array",
+          "minItems": 0,
+          "items": {
+            "$ref": "#/definitions/HgInjection"
+          }
+        }
+      },
+      "required": [
+        "gasLevelCode",
+        "meanMeasuredValue",
+        "meanReferenceValue",
+        "percentError",
+        "apsIndicator"
+      ]
+    },
+    "HgInjection": {
+      "title": "HgInjection",
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "injectionDate": {
+          "type": "string",
+          "format": "date"
+        },
+        "injectionHour": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 23
+        },
+        "injectionMinute": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 59
+        },
+        "measuredValue": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.001,
+          "minimum": -9999999999.999,
+          "maximum": 9999999999.999
+        },
+        "referenceValue": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "multipleOf": 0.001,
+          "minimum": -9999999999.999,
+          "maximum": 9999999999.999
+        }
+      },
+      "required": [
+        "injectionDate",
+        "injectionHour",
+        "injectionMinute",
+        "measuredValue",
+        "referenceValue"
+      ]
+    }
+  }
+}

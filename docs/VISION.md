@@ -14,9 +14,50 @@ Build a multi-agent AI system that automates the journey from EPA regulatory req
 
 ### Core Workflows
 
-1. **Reg-to-Dev Pipeline**: Ingest sources → extract obligations → draft requirements → generate tests → publish to ADO/wiki
-2. **Permit-to-Config Pipeline**: OCR permit → extract conditions → map to regs → propose DAHS tags/calcs → create implementation stories
-3. **Change-impact Pipeline**: New regulation/permit → diff against prior evidence → identify impacted requirements/tests → publish change set
+1. **Fluent Regulatory Discovery**: Select facility → Ask questions → Generate report → Share to pipeline
+2. **Reg-to-Dev Pipeline**: Ingest sources → extract obligations → draft requirements → generate tests → publish to ADO/wiki
+3. **Permit-to-Config Pipeline**: OCR permit → extract conditions → map to regs → propose DAHS tags/calcs → create implementation stories
+4. **Change-impact Pipeline**: New regulation/permit → diff against prior evidence → identify impacted requirements/tests → publish change set
+
+---
+
+## Fluent Workflow (RegsBot)
+
+The **Fluent Workflow** enables natural regulatory discovery through conversation:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  1. SELECT FACILITY                                             │
+│     FacilitySelector: State → Facility → Monitoring Plan        │
+│     Context loads automatically: programs, methods, formulas    │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  2. ASK QUESTIONS (Conversational)                              │
+│     "What parameters need monitoring?"                          │
+│     "What QA tests are required?"                               │
+│     "What are my reporting deadlines?"                          │
+│     Each answer includes regulatory citations                   │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  3. GENERATE COMPLIANCE REPORT                                  │
+│     Comprehensive structured document                           │
+│     All sections: monitoring, QA, calcs, reporting, limits      │
+│     User can drill down, ask follow-ups                         │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  4. SHARE TO PIPELINE                                           │
+│     Export to RequirementsBot for gap analysis                  │
+│     Or export to workflow for formal processing                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+This approach lets the BA explore and understand requirements naturally before formalizing them into the orchestration pipeline.
 
 ---
 
@@ -86,16 +127,25 @@ The **control plane** that enables:
 ### RegsBot - "Supreme Commander of EPA Knowledge"
 
 - **Purpose**: Authoritative source of regulatory truth + Evidence Library
-- **Inputs**: eCFR, EPA documents, state permits, DAHS specs
-- **Outputs**: Evidence Library, cited regulatory extracts, compliance checklists
-- **Capabilities**: OCR permit ingestion, citation anchoring, confidence tracking
+- **Inputs**: Facility selection, monitoring plans, eCFR, permits
+- **Outputs**: DAHSRequirements, ComplianceReport, cited regulatory extracts
+- **Capabilities**:
+  - Facility selection (state → facility → monitoring plan)
+  - Monitoring plan analysis and normalization
+  - Formula-to-CFR mapping (36 formulas)
+  - Compliance report generation with citations
+  - Q&A for 9 query types (monitoring, QA, calculations, reporting, etc.)
+  - OCR permit ingestion (planned)
 
 ### RequirementsBot - "The Translator"
 
 - **Purpose**: Convert regulations into actionable specifications
-- **Inputs**: RegsBot Evidence Library, stakeholder context
-- **Outputs**: Requirement Sets, user personas, workflows, journey maps
-- **Capabilities**: DAHS solution mapping, trace link generation
+- **Inputs**: RegsBot ComplianceReport, DAHSRequirements
+- **Outputs**: Requirement Sets, gap analysis, development items
+- **Capabilities**:
+  - DAHS capability matching and gap analysis
+  - Configuration proposal generation
+  - Trace link generation to evidence
 
 ### FigmaBot - "The Designer"
 

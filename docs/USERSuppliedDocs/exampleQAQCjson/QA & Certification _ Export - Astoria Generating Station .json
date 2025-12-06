@@ -1,0 +1,271 @@
+{
+	"version": "1.0.0",
+	"orisCode": 8906,
+	"testSummaryData": [
+		{
+			"stackPipeId": null,
+			"unitId": "20",
+			"testTypeCode": "RATA",
+			"monitoringSystemId": "211",
+			"componentId": null,
+			"spanScaleCode": null,
+			"testNumber": "211-Q3-2018-001",
+			"testReasonCode": "QA",
+			"testDescription": null,
+			"testResultCode": "PASSED",
+			"beginDate": "2018-08-28",
+			"beginHour": 21,
+			"beginMinute": 40,
+			"endDate": "2018-08-29",
+			"endHour": 2,
+			"endMinute": 57,
+			"gracePeriodIndicator": 0,
+			"year": null,
+			"quarter": null,
+			"testComment": null,
+			"injectionProtocolCode": null,
+			"evalStatusCodeDescription": null,
+			"submissionAvailabilityCode": null,
+			"submissionAvailabilityCodeDescription": null,
+			"calibrationInjectionData": [],
+			"linearitySummaryData": [],
+			"rataData": [
+				{
+					"rataFrequencyCode": "4QTRS",
+					"relativeAccuracy": 5.95,
+					"overallBiasAdjustmentFactor": 1,
+					"numberOfLoadLevels": 1,
+					"rataSummaryData": [
+						{
+							"operatingLevelCode": "N",
+							"averageGrossUnitLoad": 62,
+							"referenceMethodCode": "7E,3A",
+							"meanCEMValue": 0.073,
+							"meanRATAReferenceValue": 0.07,
+							"meanDifference": -0.003,
+							"standardDeviationDifference": 0.001,
+							"confidenceCoefficient": 0.001,
+							"tValue": 2.306,
+							"apsIndicator": 0,
+							"apsCode": null,
+							"relativeAccuracy": 5.95,
+							"biasAdjustmentFactor": 1,
+							"co2OrO2ReferenceMethodCode": null,
+							"stackDiameter": null,
+							"stackArea": null,
+							"numberOfTraversePoints": null,
+							"calculatedWAF": null,
+							"defaultWAF": null,
+							"rataRunData": [
+								{
+									"runNumber": 7,
+									"beginDate": "2018-08-29",
+									"beginHour": 1,
+									"beginMinute": 5,
+									"endDate": "2018-08-29",
+									"endHour": 1,
+									"endMinute": 25,
+									"cemValue": 0.073,
+									"rataReferenceValue": 0.068,
+									"grossUnitLoad": 62,
+									"runStatusCode": "RUNUSED",
+									"flowRataRunData": []
+								},
+								{
+									"runNumber": 6,
+									"beginDate": "2018-08-29",
+									"beginHour": 0,
+									"beginMinute": 33,
+									"endDate": "2018-08-29",
+									"endHour": 0,
+									"endMinute": 53,
+									"cemValue": 0.073,
+									"rataReferenceValue": 0.069,
+									"grossUnitLoad": 62,
+									"runStatusCode": "RUNUSED",
+									"flowRataRunData": []
+								},
+								{
+									"runNumber": 4,
+									"beginDate": "2018-08-28",
+									"beginHour": 23,
+									"beginMinute": 27,
+									"endDate": "2018-08-28",
+									"endHour": 23,
+									"endMinute": 47,
+									"cemValue": 0.073,
+									"rataReferenceValue": 0.07,
+									"grossUnitLoad": 62,
+									"runStatusCode": "RUNUSED",
+									"flowRataRunData": []
+								},
+								{
+									"runNumber": 2,
+									"beginDate": "2018-08-28",
+									"beginHour": 22,
+									"beginMinute": 13,
+									"endDate": "2018-08-28",
+									"endHour": 22,
+									"endMinute": 33,
+									"cemValue": 0.074,
+									"rataReferenceValue": 0.07,
+									"grossUnitLoad": 61,
+									"runStatusCode": "RUNUSED",
+									"flowRataRunData": []
+								},
+								{
+									"runNumber": 8,
+									"beginDate": "2018-08-29",
+									"beginHour": 1,
+									"beginMinute": 36,
+									"endDate": "2018-08-29",
+									"endHour": 1,
+									"endMinute": 56,
+									"cemValue": 0.073,
+									"rataReferenceValue": 0.07,
+									"grossUnitLoad": 62,
+									"runStatusCode": "RUNUSED",
+									"flowRataRunData": []
+								},
+								{
+									"runNumber": 3,
+									"beginDate": "2018-08-28",
+									"beginHour": 22,
+									"beginMinute": 46,
+									"endDate": "2018-08-28",
+									"endHour": 23,
+									"endMinute": 6,
+									"cemValue": 0.073,
+									"rataReferenceValue": 0.069,
+									"grossUnitLoad": 62,
+									"runStatusCode": "RUNUSED",
+									"flowRataRunData": []
+								},
+								{
+									"runNumber": 5,
+									"beginDate": "2018-08-29",
+									"beginHour": 0,
+									"beginMinute": 1,
+									"endDate": "2018-08-29",
+									"endHour": 0,
+									"endMinute": 21,
+									"cemValue": 0.072,
+									"rataReferenceValue": 0.069,
+									"grossUnitLoad": 62,
+									"runStatusCode": "RUNUSED",
+									"flowRataRunData": []
+								},
+								{
+									"runNumber": 1,
+									"beginDate": "2018-08-28",
+									"beginHour": 21,
+									"beginMinute": 40,
+									"endDate": "2018-08-28",
+									"endHour": 22,
+									"endMinute": 0,
+									"cemValue": 0.073,
+									"rataReferenceValue": 0.068,
+									"grossUnitLoad": 62,
+									"runStatusCode": "NOTUSED",
+									"flowRataRunData": []
+								},
+								{
+									"runNumber": 9,
+									"beginDate": "2018-08-29",
+									"beginHour": 2,
+									"beginMinute": 9,
+									"endDate": "2018-08-29",
+									"endHour": 2,
+									"endMinute": 29,
+									"cemValue": 0.073,
+									"rataReferenceValue": 0.072,
+									"grossUnitLoad": 62,
+									"runStatusCode": "RUNUSED",
+									"flowRataRunData": []
+								},
+								{
+									"runNumber": 10,
+									"beginDate": "2018-08-29",
+									"beginHour": 2,
+									"beginMinute": 37,
+									"endDate": "2018-08-29",
+									"endHour": 2,
+									"endMinute": 57,
+									"cemValue": 0.073,
+									"rataReferenceValue": 0.072,
+									"grossUnitLoad": 62,
+									"runStatusCode": "RUNUSED",
+									"flowRataRunData": []
+								}
+							]
+						}
+					]
+				}
+			],
+			"flowToLoadReferenceData": [],
+			"flowToLoadCheckData": [],
+			"cycleTimeSummaryData": [],
+			"onlineOfflineCalibrationData": [],
+			"fuelFlowmeterAccuracyData": [],
+			"transmitterTransducerData": [],
+			"fuelFlowToLoadBaselineData": [],
+			"appendixECorrelationTestSummaryData": [],
+			"fuelFlowToLoadTestData": [],
+			"unitDefaultTestData": [],
+			"hgSummaryData": [],
+			"testQualificationData": [],
+			"protocolGasData": [
+				{
+					"gasLevelCode": "HIGH",
+					"gasTypeCode": "BALN,CO2,O2",
+					"vendorIdentifier": "B52018",
+					"cylinderIdentifier": "CC46535",
+					"expirationDate": "2026-05-12"
+				},
+				{
+					"gasLevelCode": "HIGH",
+					"gasTypeCode": "BALN,NO,NOX",
+					"vendorIdentifier": "B52017",
+					"cylinderIdentifier": "CC320340",
+					"expirationDate": "2025-03-17"
+				},
+				{
+					"gasLevelCode": "LOW",
+					"gasTypeCode": "ZERO",
+					"vendorIdentifier": null,
+					"cylinderIdentifier": null,
+					"expirationDate": null
+				},
+				{
+					"gasLevelCode": "MID",
+					"gasTypeCode": "BALN,CO,O2",
+					"vendorIdentifier": "B52018",
+					"cylinderIdentifier": "CC263066",
+					"expirationDate": "2026-04-14"
+				},
+				{
+					"gasLevelCode": "MID",
+					"gasTypeCode": "BALN,NO,NOX",
+					"vendorIdentifier": "B52017",
+					"cylinderIdentifier": "CC2230",
+					"expirationDate": "2020-07-13"
+				}
+			],
+			"airEmissionTestingData": [
+				{
+					"qiLastName": "Rathfon",
+					"qiFirstName": "Steven",
+					"qiMiddleInitial": null,
+					"aetbName": "Weston Soultions Inc.",
+					"aetbPhoneNumber": "610-701-3000",
+					"aetbEmail": "rathfon.steven@westonsoultions.com",
+					"examDate": "2017-02-16",
+					"providerName": "Jeffery ONeill",
+					"providerEmail": "ONeil.Jeffery@westonsolutions.com"
+				}
+			]
+		}
+	],
+	"certificationEventData": [],
+	"testExtensionExemptionData": []
+}

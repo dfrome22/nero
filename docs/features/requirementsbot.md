@@ -142,13 +142,47 @@ RegsBot → ApprovalGate → RequirementsBot → ApprovalGate → [TestingBot | 
 5. Config specs → implementation
 6. Dev items → backlog/ADO
 
+## UI Implementation
+
+### RequirementsBot Page (`src/pages/agents/RequirementsBot.tsx`)
+
+**Context Reception**:
+
+- Receives `RegsBotToRequirementsBotContext` via React Router location state
+- Extracts obligations from ComplianceReport if not provided
+- Runs gap analysis automatically on load
+
+**Summary Cards**:
+
+- 6 status cards: Fully Supported, Config Required, Partial Support, Not Supported, Manual Process, Needs Review
+- Click to filter by status
+- Color-coded counts
+
+**Gap Item Display**:
+
+- Obligation summary with regulatory basis
+- Status badge (color-coded)
+- Gap description for unsupported items
+- Recommended solution
+- Development effort indicator (minor/moderate/major)
+- Notes list
+
+**Navigation**:
+
+- Back to RegsBot link
+- Export to ADO button (placeholder)
+- Export Development Items button
+
+**Test Coverage**: 13 tests in `RequirementsBot.test.tsx`
+
 ## Review Interface
 
 BA can review:
 
 ### Gap Analysis Summary
 
-- Pie chart: supported vs. needs work
+- Summary cards with counts by status
+- Filter by clicking status cards
 - List by status category
 - Drill into individual obligations
 
@@ -165,13 +199,16 @@ BA can review:
 
 ## Acceptance Criteria
 
-- [ ] Receives PermitObligations from RegsBot
-- [ ] Loads DAHS capability profile
-- [ ] Performs gap analysis for each obligation
-- [ ] Categorizes obligations by support status
+- [x] Receives ComplianceReport from RegsBot via navigation
+- [x] Extracts PermitObligations from ComplianceReport
+- [x] Loads default DAHS capability profile
+- [x] Performs gap analysis for each obligation
+- [x] Categorizes obligations by support status
+- [x] Provides summary statistics (6 status cards)
+- [x] Filter by gap status
+- [x] Navigation back to RegsBot
 - [ ] Generates DAHS configuration proposals
 - [ ] Generates development items for gaps
-- [ ] Provides summary statistics
 - [ ] Each config/dev item links to source obligation
 - [ ] BA can review and approve/reject
 - [ ] Produces versioned DAHSProposal artifact

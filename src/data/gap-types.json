@@ -1,0 +1,188 @@
+{
+"_metadata": {
+    "source": "DAHS Compliance Configuration Gap Analysis",
+    "version": "1.0.0",
+    "lastUpdated": "2025-06-19",
+    "description": "Gap types for compliance configuration gap analysis"
+  },
+  "gapCategories": {
+    "MONITORING": {
+      "description": "Gaps related to continuous emission monitoring systems",
+      "gaps": [
+        {
+          "id": "MISSING_CEMS",
+          "title": "Missing CEMS",
+          "description": "Required continuous emission monitoring system not configured",
+          "severity": "HIGH",
+          "parameters": ["SO2", "NOX", "CO2", "FLOW", "O2", "H2O"]
+        },
+        {
+          "id": "MISSING_SORBENT_TRAP",
+          "title": "Missing Sorbent Trap System",
+          "description": "Required mercury sorbent trap monitoring system not configured (MATS)",
+          "severity": "HIGH",
+          "parameters": ["Hg"]
+        },
+        {
+          "id": "MISSING_HCL_MONITOR",
+          "title": "Missing HCl Monitor",
+          "description": "Required HCl monitoring system not configured (MATS)",
+          "severity": "HIGH",
+          "parameters": ["HCl"]
+        },
+        {
+          "id": "MISSING_PM_CPMS",
+          "title": "Missing PM CPMS",
+          "description": "Required particulate matter continuous parametric monitoring system not configured",
+          "severity": "MEDIUM",
+          "parameters": ["PM"]
+        }
+      ]
+    },
+    "QAQC": {
+      "description": "Gaps related to QA/QC testing requirements",
+      "gaps": [
+        {
+          "id": "MISSING_RATA",
+          "title": "Missing RATA",
+          "description": "Relative Accuracy Test Audit not scheduled or overdue",
+          "severity": "HIGH",
+          "frequency": "Annual/Semi-annual"
+        },
+        {
+          "id": "MISSING_LINEARITY",
+          "title": "Missing Linearity Check",
+          "description": "Quarterly linearity check not scheduled or overdue",
+          "severity": "MEDIUM",
+          "frequency": "Quarterly"
+        },
+        {
+          "id": "MISSING_CYLINDER_GAS",
+          "title": "Missing Cylinder Gas Audit",
+          "description": "Cylinder gas audit not scheduled or overdue",
+          "severity": "MEDIUM",
+          "frequency": "Quarterly"
+        },
+        {
+          "id": "MISSING_DAILY_CAL",
+          "title": "Missing Daily Calibration",
+          "description": "Daily calibration error test not performed",
+          "severity": "HIGH",
+          "frequency": "Daily"
+        }
+      ]
+    },
+    "LIMIT": {
+      "description": "Gaps related to emission limit configuration",
+      "gaps": [
+        {
+          "id": "MISSING_LIMIT",
+          "title": "Missing Emission Limit",
+          "description": "Required emission limit not configured for parameter",
+          "severity": "HIGH"
+        },
+        {
+          "id": "OUTDATED_LIMIT",
+          "title": "Outdated Emission Limit",
+          "description": "Configured limit has been superseded by newer regulation",
+          "severity": "MEDIUM"
+        },
+        {
+          "id": "CONFLICTING_LIMITS",
+          "title": "Conflicting Limits",
+          "description": "Multiple applicable limits may conflict or overlap",
+          "severity": "LOW"
+        }
+      ]
+    },
+    "FORMULA": {
+      "description": "Gaps related to calculation formula configuration",
+      "gaps": [
+        {
+          "id": "MISSING_FORMULA",
+          "title": "Missing Formula",
+          "description": "Required EPA formula not configured for calculations",
+          "severity": "HIGH"
+        },
+        {
+          "id": "INCORRECT_FORMULA",
+          "title": "Incorrect Formula",
+          "description": "Formula does not match unit fuel type or configuration",
+          "severity": "HIGH"
+        },
+        {
+          "id": "MISSING_APPORTIONMENT",
+          "title": "Missing Apportionment Formula",
+          "description": "Common stack requires heat input apportionment formula",
+          "severity": "HIGH"
+        }
+      ]
+    },
+    "REPORTING": {
+      "description": "Gaps related to regulatory reporting configuration",
+      "gaps": [
+        {
+          "id": "MISSING_EDR_SETUP",
+          "title": "Missing EDR Setup",
+          "description": "Electronic Data Reporting not configured for ECMPS",
+          "severity": "HIGH"
+        },
+        {
+          "id": "MISSING_QUARTERLY_REPORT",
+          "title": "Missing Quarterly Report",
+          "description": "Quarterly emissions report configuration incomplete",
+          "severity": "HIGH"
+        },
+        {
+          "id": "MISSING_MATS_REPORT",
+          "title": "Missing MATS Report",
+          "description": "MATS semiannual compliance report not configured",
+          "severity": "HIGH"
+        }
+      ]
+    },
+    "PROGRAM": {
+      "description": "Gaps related to regulatory program enrollment",
+      "gaps": [
+        {
+          "id": "MISSING_ARP_ENROLLMENT",
+          "title": "Missing ARP Enrollment",
+          "description": "Unit should be enrolled in Acid Rain Program",
+          "severity": "HIGH"
+        },
+        {
+          "id": "MISSING_CSAPR_ENROLLMENT",
+          "title": "Missing CSAPR Enrollment",
+          "description": "Unit should be enrolled in CSAPR based on state",
+          "severity": "HIGH"
+        },
+        {
+          "id": "MISSING_MATS_ENROLLMENT",
+          "title": "Missing MATS Enrollment",
+          "description": "Coal/oil-fired EGU should be enrolled in MATS",
+          "severity": "HIGH"
+        },
+        {
+          "id": "MISSING_RGGI_ENROLLMENT",
+          "title": "Missing RGGI Enrollment",
+          "description": "Unit in RGGI state should be enrolled",
+          "severity": "MEDIUM"
+        }
+      ]
+    }
+  },
+  "severityLevels": {
+    "HIGH": {
+      "description": "Critical compliance issue - immediate attention required",
+      "color": "#dc2626"
+    },
+    "MEDIUM": {
+      "description": "Important issue - should be addressed before next reporting period",
+      "color": "#f59e0b"
+    },
+    "LOW": {
+      "description": "Minor issue - address when convenient",
+      "color": "#3b82f6"
+    }
+  }
+}

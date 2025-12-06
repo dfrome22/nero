@@ -11,6 +11,7 @@ const navItems: NavItem[] = [
   { path: '/', label: 'Dashboard', icon: '🏠' },
   { path: '/agents/regs', label: 'RegsBot', icon: '📜' },
   { path: '/agents/requirements', label: 'RequirementsBot', icon: '📋' },
+  { path: '/agents/dahs', label: 'DAHSBot', icon: '🖥️' },
   { path: '/agents/figma', label: 'FigmaBot', icon: '🎨' },
   { path: '/agents/testing', label: 'TestingBot', icon: '🧪' },
 ]

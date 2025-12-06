@@ -1,0 +1,320 @@
+{
+	"orisCode": 1554,
+	"certificationEventData": [
+
+	],
+	"testExtensionExemptionData": [
+
+	],
+	"testSummaryData": [
+		{
+			"airEmissionTestData": [
+				{
+					"aetbEmail": "SUPPORT@CATALYSTAIR.COM",
+					"aetbName": "CATALYST AIR MANAGEMENT",
+					"aetbPhoneNumber": "865-531-0075",
+					"examDate": "2020-01-28",
+					"providerEmail": "qstiprogram@gmail.com",
+					"providerName": "Source Evaluation Society",
+					"qiFirstName": "Thomas",
+					"qiLastName": "Derrera",
+					"qiMiddleInitial": "R"
+				}
+			],
+			"appendixECorrelationTestSummaryData": [
+
+			],
+			"beginDate": "2024-07-09",
+			"beginHour": 12,
+			"beginMinute": 25,
+			"calibrationInjectionData": [
+
+			],
+			"componentId": null,
+			"cycleTimeSummaryData": [
+
+			],
+			"endDate": "2024-07-09",
+			"endHour": 17,
+			"endMinute": 40,
+			"flowToLoadCheckData": [
+
+			],
+			"flowToLoadReferenceData": [
+
+			],
+			"fuelFlowmeterAccuracyData": [
+
+			],
+			"fuelFlowToLoadBaselineData": [
+
+			],
+			"fuelFlowToLoadTestData": [
+
+			],
+			"gracePeriodIndicator": 0,
+			"hgSummaryData": [
+
+			],
+			"injectionProtocolCode": null,
+			"linearitySummaryData": [
+
+			],
+			"monitoringSystemId": "N61",
+			"onlineOfflineCalibrationData": [
+
+			],
+			"protocolGasData": [
+				{
+					"cylinderIdentifier": null,
+					"expirationDate": null,
+					"gasLevelCode": "LOW",
+					"gasTypeCode": "ZERO",
+					"vendorIdentifier": null
+				},
+				{
+					"cylinderIdentifier": "ALM063024",
+					"expirationDate": "2027-04-01",
+					"gasLevelCode": "MID",
+					"gasTypeCode": "BALN,NO,NOX",
+					"vendorIdentifier": "A12019"
+				},
+				{
+					"cylinderIdentifier": "CC443353",
+					"expirationDate": "2031-09-21",
+					"gasLevelCode": "MID",
+					"gasTypeCode": "BALN,CO2,O2",
+					"vendorIdentifier": "B12023"
+				},
+				{
+					"cylinderIdentifier": "EB0058664",
+					"expirationDate": "2031-04-18",
+					"gasLevelCode": "HIGH",
+					"gasTypeCode": "BALN,CO2,O2",
+					"vendorIdentifier": "G12023"
+				},
+				{
+					"cylinderIdentifier": "CC759533",
+					"expirationDate": "2031-04-12",
+					"gasLevelCode": "HIGH",
+					"gasTypeCode": "BALN,NO,NOX",
+					"vendorIdentifier": "G12023"
+				}
+			],
+			"quarter": null,
+			"rataData": [
+				{
+					"numberOfLoadLevels": 1,
+					"overallBiasAdjustmentFactor": 1.000,
+					"rataFrequencyCode": "4QTRS",
+					"rataSummaryData": [
+						{
+							"apsCode": null,
+							"apsIndicator": 0,
+							"averageGrossUnitLoad": 374.0,
+							"biasAdjustmentFactor": 1.000,
+							"calculatedWAF": null,
+							"co2OrO2ReferenceMethodCode": null,
+							"confidenceCoefficient": 0.00200,
+							"defaultWAF": null,
+							"meanCEMValue": 0.26100,
+							"meanDifference": -0.00600,
+							"meanRATAReferenceValue": 0.25500,
+							"numberOfTraversePoints": null,
+							"operatingLevelCode": "H",
+							"rataRunData": [
+								{
+									"beginDate": "2024-07-09",
+									"beginHour": 12,
+									"beginMinute": 25,
+									"cemValue": 0.26000,
+									"endDate": "2024-07-09",
+									"endHour": 12,
+									"endMinute": 45,
+									"flowRataRunData": [
+
+									],
+									"grossUnitLoad": 374.0,
+									"rataReferenceValue": 0.24800,
+									"runNumber": 1,
+									"runStatusCode": "NOTUSED"
+								},
+								{
+									"beginDate": "2024-07-09",
+									"beginHour": 12,
+									"beginMinute": 56,
+									"cemValue": 0.25700,
+									"endDate": "2024-07-09",
+									"endHour": 13,
+									"endMinute": 16,
+									"flowRataRunData": [
+
+									],
+									"grossUnitLoad": 374.0,
+									"rataReferenceValue": 0.25400,
+									"runNumber": 2,
+									"runStatusCode": "RUNUSED"
+								},
+								{
+									"beginDate": "2024-07-09",
+									"beginHour": 13,
+									"beginMinute": 27,
+									"cemValue": 0.26400,
+									"endDate": "2024-07-09",
+									"endHour": 13,
+									"endMinute": 47,
+									"flowRataRunData": [
+
+									],
+									"grossUnitLoad": 374.0,
+									"rataReferenceValue": 0.25600,
+									"runNumber": 3,
+									"runStatusCode": "RUNUSED"
+								},
+								{
+									"beginDate": "2024-07-09",
+									"beginHour": 13,
+									"beginMinute": 56,
+									"cemValue": 0.26400,
+									"endDate": "2024-07-09",
+									"endHour": 14,
+									"endMinute": 16,
+									"flowRataRunData": [
+
+									],
+									"grossUnitLoad": 374.0,
+									"rataReferenceValue": 0.25700,
+									"runNumber": 4,
+									"runStatusCode": "RUNUSED"
+								},
+								{
+									"beginDate": "2024-07-09",
+									"beginHour": 14,
+									"beginMinute": 28,
+									"cemValue": 0.26800,
+									"endDate": "2024-07-09",
+									"endHour": 14,
+									"endMinute": 48,
+									"flowRataRunData": [
+
+									],
+									"grossUnitLoad": 374.0,
+									"rataReferenceValue": 0.26000,
+									"runNumber": 5,
+									"runStatusCode": "RUNUSED"
+								},
+								{
+									"beginDate": "2024-07-09",
+									"beginHour": 15,
+									"beginMinute": 0,
+									"cemValue": 0.26600,
+									"endDate": "2024-07-09",
+									"endHour": 15,
+									"endMinute": 20,
+									"flowRataRunData": [
+
+									],
+									"grossUnitLoad": 374.0,
+									"rataReferenceValue": 0.25800,
+									"runNumber": 6,
+									"runStatusCode": "RUNUSED"
+								},
+								{
+									"beginDate": "2024-07-09",
+									"beginHour": 15,
+									"beginMinute": 35,
+									"cemValue": 0.26400,
+									"endDate": "2024-07-09",
+									"endHour": 15,
+									"endMinute": 55,
+									"flowRataRunData": [
+
+									],
+									"grossUnitLoad": 374.0,
+									"rataReferenceValue": 0.25800,
+									"runNumber": 7,
+									"runStatusCode": "RUNUSED"
+								},
+								{
+									"beginDate": "2024-07-09",
+									"beginHour": 16,
+									"beginMinute": 5,
+									"cemValue": 0.25900,
+									"endDate": "2024-07-09",
+									"endHour": 16,
+									"endMinute": 25,
+									"flowRataRunData": [
+
+									],
+									"grossUnitLoad": 374.0,
+									"rataReferenceValue": 0.25800,
+									"runNumber": 8,
+									"runStatusCode": "RUNUSED"
+								},
+								{
+									"beginDate": "2024-07-09",
+									"beginHour": 16,
+									"beginMinute": 50,
+									"cemValue": 0.25400,
+									"endDate": "2024-07-09",
+									"endHour": 17,
+									"endMinute": 10,
+									"flowRataRunData": [
+
+									],
+									"grossUnitLoad": 374.0,
+									"rataReferenceValue": 0.24800,
+									"runNumber": 9,
+									"runStatusCode": "RUNUSED"
+								},
+								{
+									"beginDate": "2024-07-09",
+									"beginHour": 17,
+									"beginMinute": 20,
+									"cemValue": 0.25200,
+									"endDate": "2024-07-09",
+									"endHour": 17,
+									"endMinute": 40,
+									"flowRataRunData": [
+
+									],
+									"grossUnitLoad": 374.0,
+									"rataReferenceValue": 0.24900,
+									"runNumber": 10,
+									"runStatusCode": "RUNUSED"
+								}
+							],
+							"referenceMethodCode": "7E,3A",
+							"relativeAccuracy": 2.96,
+							"stackArea": null,
+							"stackDiameter": null,
+							"standardDeviationDifference": 0.00300,
+							"tValue": 2.306
+						}
+					],
+					"relativeAccuracy": 2.96
+				}
+			],
+			"spanScaleCode": null,
+			"stackPipeId": null,
+			"testComment": null,
+			"testDescription": null,
+			"testNumber": "N61-Q3-2024-001",
+			"testQualificationData": [
+
+			],
+			"testReasonCode": "QA",
+			"testResultCode": "PASSED",
+			"testTypeCode": "RATA",
+			"transmitterTransducerData": [
+
+			],
+			"unitDefaultTestData": [
+
+			],
+			"unitId": "4",
+			"year": null
+		}
+	],
+	"version": "1.0.0"
+}

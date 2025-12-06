@@ -1,0 +1,581 @@
+/* Facility Selector Styles - Light Theme */
+
+.container {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  color: #1e293b !important;
+}
+
+.container * {
+  color: inherit;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 1.25rem 0;
+  font-size: 1.1rem;
+  color: #1e293b !important;
+}
+
+.icon {
+  font-size: 1.2rem;
+}
+
+/* Steps */
+.step {
+  margin-bottom: 1.25rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.step:last-of-type {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.stepHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.stepNumber {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  background: #3b82f6;
+  color: white;
+  border-radius: 50%;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.stepLabel {
+  font-weight: 600;
+  color: #1e293b;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.hint {
+  font-weight: normal;
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+/* Data Source Options */
+.options {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.option {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.75rem;
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.option:hover {
+  border-color: #3b82f6;
+  background: #f0f9ff;
+}
+
+.option.selected {
+  border-color: #3b82f6;
+  background: #eff6ff;
+}
+
+.optionIcon {
+  font-size: 1.25rem;
+}
+
+.optionLabel {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+/* API Key Row */
+.apiKeyRow {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  align-items: center;
+}
+
+.apiKeyInput {
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  background: #ffffff !important;
+  border: 2px solid #cbd5e1 !important;
+  border-radius: 6px;
+  color: #000000 !important;
+  font-family: monospace;
+  font-size: 0.9rem;
+}
+
+.apiKeyInput::placeholder {
+  color: #94a3b8 !important;
+}
+
+.apiKeyInput:focus {
+  outline: none;
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.toggleBtn {
+  padding: 0.5rem;
+  background: #ffffff !important;
+  border: 2px solid #cbd5e1 !important;
+  border-radius: 6px;
+  color: #000000 !important;
+  cursor: pointer;
+}
+
+.toggleBtn:hover {
+  background: #f1f5f9;
+}
+
+.apiLink {
+  font-size: 0.8rem;
+  color: #3b82f6;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.apiLink:hover {
+  text-decoration: underline;
+}
+
+/* Select Dropdowns */
+.stateSelect,
+.facilitySelect {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  background: #ffffff !important;
+  border: 2px solid #cbd5e1 !important;
+  border-radius: 6px;
+  color: #1e293b !important;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.stateSelect:focus,
+.facilitySelect:focus {
+  outline: none;
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.stateSelect:disabled,
+.facilitySelect:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #f1f5f9 !important;
+}
+
+/* Search Row */
+.searchRow {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.orisInput {
+  flex: 1;
+  max-width: 150px;
+  padding: 0.6rem 0.75rem;
+  background: white;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  color: #1e293b;
+  font-size: 1rem;
+}
+
+.orisInput:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.orisInput:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #f1f5f9;
+}
+
+.searchBtn {
+  padding: 0.6rem 1rem;
+  background: #3b82f6;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.searchBtn:hover:not(:disabled) {
+  background: #2563eb;
+}
+
+.searchBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.warning {
+  margin: 0.5rem 0 0 0;
+  font-size: 0.85rem;
+  color: #d97706;
+}
+
+/* Upload Area */
+.uploadArea {
+  text-align: center;
+  padding: 1rem;
+  background: #f8fafc;
+  border: 2px dashed #cbd5e1;
+  border-radius: 8px;
+  margin-top: 0.5rem;
+}
+
+.uploadArea p {
+  margin: 0 0 0.75rem 0;
+  font-size: 0.9rem;
+  color: #64748b;
+}
+
+.uploadLabel {
+  cursor: pointer;
+}
+
+.fileInput {
+  display: none;
+}
+
+.uploadBtn {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background: #3b82f6;
+  border-radius: 6px;
+  color: white;
+  font-weight: 600;
+}
+
+.uploadBtn:hover {
+  background: #2563eb;
+}
+
+/* Log Panel - Light theme with dark text */
+.logPanel {
+  background: #fefce8;
+  border: 1px solid #fde047;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  overflow: hidden;
+}
+
+.logHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  background: #fef08a;
+  border-bottom: 1px solid #fde047;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #713f12;
+}
+
+.clearLogBtn {
+  padding: 0.2rem 0.5rem;
+  background: white;
+  border: 1px solid #fde047;
+  border-radius: 4px;
+  color: #713f12;
+  font-size: 0.7rem;
+  cursor: pointer;
+}
+
+.clearLogBtn:hover {
+  background: #fef08a;
+}
+
+.startOverBtn {
+  margin-left: auto;
+  padding: 0.25rem 0.5rem;
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
+  border-radius: 4px;
+  color: #991b1b;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.startOverBtn:hover {
+  background: #fecaca;
+  border-color: #f87171;
+}
+
+.logContent {
+  padding: 0.5rem 0.75rem;
+  max-height: 120px;
+  overflow-y: auto;
+  font-family: monospace;
+  font-size: 0.8rem;
+  background: white;
+}
+
+.logEntry {
+  padding: 0.2rem 0;
+  color: #1e293b;
+}
+
+/* Error */
+.error {
+  padding: 0.75rem;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  color: #dc2626;
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+/* Plan List */
+.planList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.planCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.planCard:hover {
+  border-color: #3b82f6;
+  background: #f0f9ff;
+}
+
+.planCard.selected {
+  border-color: #22c55e;
+  background: #f0fdf4;
+}
+
+.planName {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.planLocations {
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+.planMeta {
+  font-size: 0.75rem;
+  color: #64748b;
+  font-family: monospace;
+}
+
+.facilityBadge {
+  margin-left: 0.5rem;
+  padding: 0.2rem 0.5rem;
+  background: #eff6ff;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: normal;
+  color: #3b82f6;
+}
+
+/* Location List */
+.locationList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.locationBtn {
+  padding: 0.5rem 0.75rem;
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #334155;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+}
+
+.locationBtn:hover {
+  border-color: #3b82f6;
+  background: #f0f9ff;
+}
+
+.locationBtn.selected {
+  border-color: #22c55e;
+  background: #f0fdf4;
+  color: #166534;
+}
+
+/* Summary */
+.summary {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  color: #166534;
+  font-size: 0.9rem;
+}
+
+.summaryIcon {
+  font-size: 1.1rem;
+}
+
+.summary strong {
+  color: #1e293b;
+}
+
+.summaryMeta {
+  font-size: 0.75rem;
+  color: #64748b;
+  font-family: monospace;
+}
+
+/* Loading Indicator */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  color: #1e40af;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.spinner {
+  display: inline-block;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Facility Info Panel */
+.facilityInfoPanel {
+  padding: 1rem;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.infoRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.infoRow:last-child {
+  margin-bottom: 0;
+}
+
+.infoLabel {
+  font-size: 0.85rem;
+  color: #475569;
+  font-weight: 500;
+  min-width: 100px;
+  flex-shrink: 0;
+}
+
+.infoBadges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.programBadge,
+.fuelBadge {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 4px;
+  background: #e2e8f0;
+  color: #475569;
+}
+
+.programBadge {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.matsBadge {
+  background: #fef3c7 !important;
+  color: #92400e !important;
+  border: 1px solid #f59e0b;
+}
+
+.fuelBadge {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.coalBadge {
+  background: #374151 !important;
+  color: #f9fafb !important;
+}
+
+.matsWarning {
+  margin-top: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  background: #fef3c7;
+  border: 1px solid #f59e0b;
+  border-radius: 6px;
+  color: #92400e;
+  font-size: 0.85rem;
+  font-weight: 500;
+}

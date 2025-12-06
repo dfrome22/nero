@@ -1,0 +1,206 @@
+﻿{
+  "CSAPR_NOX_ANNUAL": {
+    "id": "CSAPR_NOX_ANNUAL",
+    "title": "CSAPR NOx Annual Program",
+    "cfr": "40 CFR 97 Subpart AAAAA",
+    "description": "Cross-State Air Pollution Rule annual NOx trading program for EGUs",
+    "effectiveDate": "2015-01-01",
+    "affectedStates": [
+      "AL", "GA", "IL", "IN", "IA", "KS", "KY", "LA", "MD", "MI",
+      "MN", "MO", "NE", "NJ", "NY", "NC", "OH", "OK", "PA", "SC",
+      "TN", "TX", "VA", "WV", "WI"
+    ],
+    "applicabilityCriteria": {
+      "minCapacity": 25,
+      "capacityUnits": "MW",
+      "unitTypes": ["Fossil fuel-fired EGU"],
+      "excludedUnits": ["Solid waste incineration units", "Qualifying cogeneration units"]
+    }
+  },
+  "CSAPR_NOX_OZONE_GROUP_1": {
+    "id": "CSAPR_NOX_OZONE_GROUP_1",
+    "title": "CSAPR NOx Ozone Season Group 1",
+    "cfr": "40 CFR 97 Subpart BBBBB",
+    "description": "Cross-State Air Pollution Rule ozone season NOx trading program Group 1",
+    "effectiveDate": "2015-05-01",
+    "affectedStates": [
+      "AL", "AR", "IL", "IN", "IA", "KS", "KY", "LA", "MD", "MI",
+      "MS", "MO", "NE", "NJ", "NY", "NC", "OH", "OK", "PA", "SC",
+      "TN", "TX", "VA", "WV", "WI"
+    ],
+    "applicabilityCriteria": {
+      "minCapacity": 25,
+      "capacityUnits": "MW",
+      "unitTypes": ["Fossil fuel-fired EGU"],
+      "ozoneSeasonDates": {"start": "May 1", "end": "September 30"}
+    }
+  },
+  "CSAPR_NOX_OZONE_GROUP_2": {
+    "id": "CSAPR_NOX_OZONE_GROUP_2",
+    "title": "CSAPR NOx Ozone Season Group 2",
+    "cfr": "40 CFR 97 Subpart EEEEE",
+    "description": "Cross-State Air Pollution Rule ozone season NOx trading program Group 2 (updated)",
+    "effectiveDate": "2017-05-01",
+    "affectedStates": [
+      "AL", "AR", "IN", "KY", "LA", "MD", "MI", "MS", "MO", "NJ",
+      "NY", "OH", "OK", "PA", "TN", "TX", "VA", "WV"
+    ],
+    "applicabilityCriteria": {
+      "minCapacity": 25,
+      "capacityUnits": "MW",
+      "unitTypes": ["Fossil fuel-fired EGU"],
+      "ozoneSeasonDates": {"start": "May 1", "end": "September 30"}
+    },
+    "notes": "Tighter budgets than Group 1 for states with significant ozone transport"
+  },
+  "CSAPR_NOX_OZONE_GROUP_3": {
+    "id": "CSAPR_NOX_OZONE_GROUP_3",
+    "title": "CSAPR NOx Ozone Season Group 3",
+    "cfr": "40 CFR 97 Subpart GGGGG",
+    "description": "Good Neighbor Plan - Revised CSAPR Update for 2015 ozone NAAQS",
+    "effectiveDate": "2023-05-01",
+    "affectedStates": [
+      "CA", "IL", "IN", "LA", "MD", "MI", "MN", "MO", "NV", "NJ",
+      "NY", "OH", "OK", "PA", "TX", "UT", "VA", "WV", "WI"
+    ],
+    "applicabilityCriteria": {
+      "minCapacity": 25,
+      "capacityUnits": "MW",
+      "unitTypes": ["Fossil fuel-fired EGU"],
+      "ozoneSeasonDates": {"start": "May 1", "end": "September 30"}
+    },
+    "notes": "Enhanced trading program with tighter emission rate limits (0.14 lb/MMBtu NOx)"
+  },
+  "CSAPR_SO2_GROUP_1": {
+    "id": "CSAPR_SO2_GROUP_1",
+    "title": "CSAPR SO2 Group 1",
+    "cfr": "40 CFR 97 Subpart CCCCC",
+    "description": "Cross-State Air Pollution Rule SO2 annual trading program Group 1",
+    "effectiveDate": "2015-01-01",
+    "affectedStates": [
+      "IN", "KY", "MO", "OH", "PA", "TN", "WV"
+    ],
+    "applicabilityCriteria": {
+      "minCapacity": 25,
+      "capacityUnits": "MW",
+      "unitTypes": ["Fossil fuel-fired EGU"]
+    },
+    "notes": "States with significant SO2 transport contribution"
+  },
+  "CSAPR_SO2_GROUP_2": {
+    "id": "CSAPR_SO2_GROUP_2",
+    "title": "CSAPR SO2 Group 2",
+    "cfr": "40 CFR 97 Subpart DDDDD",
+    "description": "Cross-State Air Pollution Rule SO2 annual trading program Group 2",
+    "effectiveDate": "2015-01-01",
+    "affectedStates": [
+      "AL", "GA", "IL", "IA", "KS", "MI", "MN", "NE", "NJ", "NY",
+      "NC", "SC", "TX", "VA", "WI"
+    ],
+    "applicabilityCriteria": {
+      "minCapacity": 25,
+      "capacityUnits": "MW",
+      "unitTypes": ["Fossil fuel-fired EGU"]
+    },
+    "notes": "States with moderate SO2 transport contribution"
+  },
+  "MATS": {
+    "id": "MATS",
+    "title": "Mercury and Air Toxics Standards",
+    "cfr": "40 CFR 63 Subpart UUUUU",
+    "description": "National Emission Standards for Hazardous Air Pollutants from coal- and oil-fired EGUs",
+    "effectiveDate": "2015-04-16",
+    "affectedStates": ["ALL"],
+    "applicabilityCriteria": {
+      "minCapacity": 25,
+      "capacityUnits": "MW",
+      "unitTypes": ["Coal-fired EGU", "Oil-fired EGU"],
+      "fuelTypes": ["Coal", "Oil", "Petroleum Coke"]
+    }
+  },
+  "RGGI": {
+    "id": "RGGI",
+    "title": "Regional Greenhouse Gas Initiative",
+    "cfr": "State regulations (not CFR)",
+    "description": "CO2 cap-and-trade program for power plants in participating northeastern states",
+    "effectiveDate": "2009-01-01",
+    "affectedStates": ["CT", "DE", "MA", "MD", "ME", "NH", "NJ", "NY", "PA", "RI", "VA", "VT"],
+    "applicabilityCriteria": {
+      "minCapacity": 25,
+      "capacityUnits": "MW",
+      "unitTypes": ["Fossil fuel-fired EGU"]
+    }
+  },
+  "NSPS_DA": {
+    "id": "NSPS_DA",
+    "title": "NSPS Subpart Da - Electric Utility Steam Generating Units",
+    "cfr": "40 CFR 60 Subpart Da",
+    "description": "Standards of performance for electric utility steam generating units",
+    "effectiveDate": "1979-09-18",
+    "affectedStates": ["ALL"],
+    "applicabilityCriteria": {
+      "minCapacity": 73,
+      "capacityUnits": "MW",
+      "constructionDate": {"after": "1978-09-18"},
+      "unitTypes": ["Electric utility steam generating unit"]
+    }
+  },
+  "NSPS_DB": {
+    "id": "NSPS_DB",
+    "title": "NSPS Subpart Db - Industrial-Commercial Steam Generating Units",
+    "cfr": "40 CFR 60 Subpart Db",
+    "description": "Standards of performance for industrial-commercial-institutional steam generating units",
+    "effectiveDate": "1987-06-19",
+    "affectedStates": ["ALL"],
+    "applicabilityCriteria": {
+      "minCapacity": 100,
+      "maxCapacity": 250,
+      "capacityUnits": "MMBtu/hr",
+      "constructionDate": {"after": "1984-06-19"},
+      "unitTypes": ["Steam generating unit", "ICI boiler"]
+    }
+  },
+  "NSPS_DC": {
+    "id": "NSPS_DC",
+    "title": "NSPS Subpart Dc - Small Industrial-Commercial Steam Generating Units",
+    "cfr": "40 CFR 60 Subpart Dc",
+    "description": "Standards for small industrial-commercial-institutional steam generating units",
+    "effectiveDate": "1989-09-01",
+    "affectedStates": ["ALL"],
+    "applicabilityCriteria": {
+      "minCapacity": 10,
+      "maxCapacity": 100,
+      "capacityUnits": "MMBtu/hr",
+      "constructionDate": {"after": "1989-06-09"},
+      "unitTypes": ["Steam generating unit", "Small ICI boiler"]
+    }
+  },
+  "NSPS_KKKK": {
+    "id": "NSPS_KKKK",
+    "title": "NSPS Subpart KKKK - Stationary Combustion Turbines",
+    "cfr": "40 CFR 60 Subpart KKKK",
+    "description": "Standards of performance for stationary combustion turbines",
+    "effectiveDate": "2006-07-18",
+    "affectedStates": ["ALL"],
+    "applicabilityCriteria": {
+      "minCapacity": 10,
+      "capacityUnits": "MMBtu/hr",
+      "constructionDate": {"after": "2005-02-18"},
+      "unitTypes": ["Combustion turbine", "Gas turbine", "Combined cycle"]
+    }
+  },
+  "ACID_RAIN_PROGRAM": {
+    "id": "ACID_RAIN_PROGRAM",
+    "title": "Acid Rain Program (Title IV)",
+    "cfr": "40 CFR 72-78",
+    "description": "SO2 and NOx allowance trading program for affected utility units",
+    "effectiveDate": "1995-01-01",
+    "affectedStates": ["ALL"],
+    "applicabilityCriteria": {
+      "minCapacity": 25,
+      "capacityUnits": "MW",
+      "unitTypes": ["Fossil fuel-fired EGU", "Utility unit"],
+      "notes": "Phase I covered large coal units; Phase II expanded to all affected units"
+    }
+  }
+}

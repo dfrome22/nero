@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "prebuild": "npm run sync:mcp-data",
     "preview": "vite preview",
     "test": "vitest",
     "test:ui": "vitest --ui",
@@ -19,7 +20,8 @@
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc --noEmit",
     "validate": "npm run typecheck && npm run lint && npm run test:run",
-    "prepare": "husky"
+    "prepare": "husky",
+    "sync:mcp-data": "node scripts/sync-mcp-data.cjs"
   },
   "keywords": [
     "react",

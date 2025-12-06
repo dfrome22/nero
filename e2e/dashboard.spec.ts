@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 
 test.describe('Dashboard', () => {
   test.beforeEach(async ({ page }) => {
@@ -14,14 +14,16 @@ test.describe('Dashboard', () => {
   })
 
   test('shows all agent cards', async ({ page }) => {
-    await expect(page.getByText('RegsBot')).toBeVisible()
-    await expect(page.getByText('RequirementsBot')).toBeVisible()
-    await expect(page.getByText('FigmaBot')).toBeVisible()
-    await expect(page.getByText('TestingBot')).toBeVisible()
+    // Use more specific selectors to avoid matching both sidebar and card
+    await expect(page.getByRole('heading', { name: 'RegsBot' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'RequirementsBot' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'FigmaBot' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'TestingBot' })).toBeVisible()
   })
 
   test('navigates to agent page on card click', async ({ page }) => {
-    await page.getByText('RegsBot').click()
+    // Click the card heading, not just any text matching 'RegsBot'
+    await page.getByRole('heading', { name: 'RegsBot' }).click()
     await expect(page).toHaveURL(/\/agents\/regs/)
     await expect(page.getByRole('heading', { name: /regsbot/i })).toBeVisible()
   })
