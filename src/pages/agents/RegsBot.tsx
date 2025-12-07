@@ -10,17 +10,52 @@ import styles from './AgentPage.module.css'
 // Create a singleton instance
 const regsBot = new RegsBotService()
 
-// Query type options for the dropdown
-const QUERY_TYPES: { value: RegsBotQueryType; label: string }[] = [
-  { value: 'general', label: '💬 General Question' },
-  { value: 'what-to-monitor', label: '📊 What to Monitor' },
-  { value: 'qa-requirements', label: '🧪 QA/QC Requirements' },
-  { value: 'what-to-calculate', label: '🔢 Calculations Required' },
-  { value: 'reporting-requirements', label: '📄 Reporting Requirements' },
-  { value: 'applicable-regulations', label: '📚 Applicable Regulations' },
-  { value: 'emission-limits', label: '⚡ Emission Limits' },
-  { value: 'missing-data', label: '🔄 Missing Data Procedures' },
-  { value: 'what-to-record', label: '📁 Recordkeeping' },
+// Query type options with icons and descriptions
+const QUERY_TYPES: { value: RegsBotQueryType; label: string; icon: string; desc: string }[] = [
+  {
+    value: 'general',
+    label: 'General Question',
+    icon: '💬',
+    desc: 'Ask anything about EPA regulations',
+  },
+  {
+    value: 'what-to-monitor',
+    label: 'What to Monitor',
+    icon: '📊',
+    desc: 'Required CEM parameters & methods',
+  },
+  {
+    value: 'qa-requirements',
+    label: 'QA/QC Requirements',
+    icon: '🧪',
+    desc: 'RATA, linearity, calibration tests',
+  },
+  {
+    value: 'what-to-calculate',
+    label: 'Calculations',
+    icon: '🔢',
+    desc: 'Emission formulas & methods',
+  },
+  {
+    value: 'reporting-requirements',
+    label: 'Reporting',
+    icon: '📄',
+    desc: 'EDR deadlines & submissions',
+  },
+  {
+    value: 'applicable-regulations',
+    label: 'Regulations',
+    icon: '📚',
+    desc: 'Part 60, 75, 63 requirements',
+  },
+  { value: 'emission-limits', label: 'Limits', icon: '⚡', desc: 'SO2, NOx, Hg emission limits' },
+  { value: 'missing-data', label: 'Missing Data', icon: '🔄', desc: 'Substitute data procedures' },
+  {
+    value: 'what-to-record',
+    label: 'Recordkeeping',
+    icon: '📁',
+    desc: 'Required records & retention',
+  },
 ]
 
 function RegsBot(): React.JSX.Element {
@@ -238,15 +273,31 @@ function RegsBot(): React.JSX.Element {
 
   return (
     <div className={styles.agentPage}>
-      <header className={styles.header}>
-        <span className={styles.icon}>📜</span>
-        <div className={styles.headerText}>
-          <h1 className={styles.title}>RegsBot</h1>
-          <p className={styles.subtitle}>EPA Regulatory Knowledge Oracle</p>
+      <header className={styles.heroHeader}>
+        <div className={styles.heroContent}>
+          <div className={styles.heroIcon}>📜</div>
+          <div className={styles.heroText}>
+            <h1 className={styles.heroTitle}>RegsBot</h1>
+            <p className={styles.heroSubtitle}>EPA Regulatory Knowledge Oracle</p>
+          </div>
         </div>
-        <div className={styles.status}>
-          <span className={styles.statusDot} />
-          <span>Online</span>
+        <div className={styles.heroStatus}>
+          <span className={styles.statusPulse} />
+          <span>Online • Ready to assist</span>
+        </div>
+        <div className={styles.heroStats}>
+          <div className={styles.heroStat}>
+            <span className={styles.heroStatValue}>40 CFR</span>
+            <span className={styles.heroStatLabel}>Parts 60, 63, 75</span>
+          </div>
+          <div className={styles.heroStat}>
+            <span className={styles.heroStatValue}>Live</span>
+            <span className={styles.heroStatLabel}>CAMD API</span>
+          </div>
+          <div className={styles.heroStat}>
+            <span className={styles.heroStatValue}>PS 1-19</span>
+            <span className={styles.heroStatLabel}>Perf Specs</span>
+          </div>
         </div>
       </header>
 
@@ -313,19 +364,26 @@ function RegsBot(): React.JSX.Element {
         <section className={styles.card}>
           <h2 className={styles.cardTitle}>Ask a Regulatory Question</h2>
           {hasFacility && facility !== null && (
-            <p className={styles.contextBadge}>
-              📍 Context: {facility.facilityName} ({facility.orisCode})
-              {facility.locationInfo !== null && (
-                <>
-                  {' : '}
-                  {facility.locationInfo.locationType === 'stack' ||
-                  facility.locationInfo.locationType === 'pipe'
-                    ? `Stack/Pipe ${facility.locationInfo.locationId}`
-                    : `Unit ${facility.locationInfo.locationId}`}
-                </>
-              )}{' '}
-              — MP Loaded ✓
-            </p>
+            <div className={styles.facilityContextBar}>
+              <div className={styles.contextIcon}>🏭</div>
+              <div className={styles.contextDetails}>
+                <span className={styles.contextFacility}>{facility.facilityName}</span>
+                <span className={styles.contextMeta}>
+                  ORIS {facility.orisCode}
+                  {facility.stateCode ? ` • ${facility.stateCode}` : ''}
+                  {facility.locationInfo !== null && (
+                    <>
+                      {' • '}
+                      {facility.locationInfo.locationType === 'stack' ||
+                      facility.locationInfo.locationType === 'pipe'
+                        ? `Stack/Pipe ${facility.locationInfo.locationId}`
+                        : `Unit ${facility.locationInfo.locationId}`}
+                    </>
+                  )}
+                </span>
+              </div>
+              <span className={styles.contextLoaded}>✓ MP Loaded</span>
+            </div>
           )}
           <form
             onSubmit={(e) => {
@@ -333,22 +391,22 @@ function RegsBot(): React.JSX.Element {
             }}
             className={styles.queryForm}
           >
-            <div className={styles.formRow}>
-              <label htmlFor="queryType">Query Type:</label>
-              <select
-                id="queryType"
-                value={queryType}
-                onChange={(e) => {
-                  setQueryType(e.target.value as RegsBotQueryType)
-                }}
-                className={styles.select}
-              >
-                {QUERY_TYPES.map((qt) => (
-                  <option key={qt.value} value={qt.value}>
-                    {qt.label}
-                  </option>
-                ))}
-              </select>
+            {/* Query Type Cards */}
+            <div className={styles.queryTypeGrid}>
+              {QUERY_TYPES.map((qt) => (
+                <button
+                  key={qt.value}
+                  type="button"
+                  className={`${styles.queryTypeCard} ${queryType === qt.value ? styles.queryTypeCardActive : ''}`}
+                  onClick={() => {
+                    setQueryType(qt.value)
+                  }}
+                >
+                  <span className={styles.queryTypeIcon}>{qt.icon}</span>
+                  <span className={styles.queryTypeLabel}>{qt.label}</span>
+                  <span className={styles.queryTypeDesc}>{qt.desc}</span>
+                </button>
+              ))}
             </div>
 
             <div className={styles.formRow}>
