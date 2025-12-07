@@ -32,6 +32,7 @@ describe('Sidebar', () => {
     )
 
     expect(screen.getByText('Dashboard')).toBeInTheDocument()
+    expect(screen.getByText('War Council')).toBeInTheDocument()
     expect(screen.getByText('RegsBot')).toBeInTheDocument()
     expect(screen.getByText('RequirementsBot')).toBeInTheDocument()
     expect(screen.getByText('FigmaBot')).toBeInTheDocument()

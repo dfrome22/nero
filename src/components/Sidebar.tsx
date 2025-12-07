@@ -9,6 +9,7 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { path: '/', label: 'Dashboard', icon: '🏠' },
+  { path: '/council', label: 'War Council', icon: '🏛️' },
   { path: '/agents/regs', label: 'RegsBot', icon: '📜' },
   { path: '/agents/requirements', label: 'RequirementsBot', icon: '📋' },
   { path: '/agents/dahs', label: 'DAHSBot', icon: '🖥️' },
