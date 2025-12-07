@@ -60,9 +60,27 @@ nero/
 
 ## Documentation
 
+### Core Documentation
+
 - [VISION.md](./docs/VISION.md) - Project vision and architecture
 - [CHANGELOG.md](./docs/CHANGELOG.md) - Version history
 - [TODO.md](./docs/TODO.md) - Current tasks and roadmap
+
+### Team Updates & Integration
+
+- [TEAM_DAHS_UPDATE.md](./docs/TEAM_DAHS_UPDATE.md) - Comprehensive update for team DAHS (Dec 2024)
+- [DAHS_INTEGRATION_FINDINGS.md](./docs/DAHS_INTEGRATION_FINDINGS.md) - DAHS regulatory domain integration findings
+- [SHARED_MCP_INTEGRATION.md](./docs/SHARED_MCP_INTEGRATION.md) - Model Context Protocol integration plan
+
+### Feature Documentation
+
+- [docs/features/](./docs/features/) - Detailed feature documentation
+  - [agent-collaboration.md](./docs/features/agent-collaboration.md) - Multi-agent collaboration system
+  - [calculation-engine.md](./docs/features/calculation-engine.md) - ECMPS calculation engine
+  - [dahs-domain.md](./docs/features/dahs-domain.md) - DAHS regulatory domain model
+  - [part75-orchestrator.md](./docs/features/part75-orchestrator.md) - Part 75 orchestration
+  - [regsbot.md](./docs/features/regsbot.md) - Regulatory knowledge agent
+  - [requirementsbot.md](./docs/features/requirementsbot.md) - Requirements engineering agent
 
 ## Tech Stack
 
