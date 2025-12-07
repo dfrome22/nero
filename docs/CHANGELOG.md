@@ -9,6 +9,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Enhanced Calculation Engine** (85 new tests, 270 total)
+  - Formula validation with syntax, semantics, units, and regulatory compliance checking
+  - Configuration management with full audit trails and change tracking
+  - Dependency tracking with upstream/downstream analysis and cycle detection
+  - Formula registry with standard ECMPS/Part 75 calculations
+  - Impact analysis for proposed configuration changes
+  - Complete documentation in `docs/features/calculation-engine.md`
+  - Types: `Formula`, `CalculationConfig`, `DependencyGraph`, `AuditTrail`, `ImpactAnalysis`
+  - Components:
+    - `formula-validator.ts`: Validates formulas and inputs
+    - `configuration-service.ts`: CRUD operations with audit trails
+    - `dependency-tracker.ts`: Builds and analyzes dependency graphs
+    - `formula-registry.ts`: Pre-defined standard formulas
+  - Standard formulas:
+    - Heat Input (Appendix F)
+    - SO2/NOx/CO2 Mass Emissions
+    - NOx Emission Rate
+    - LME NOx Rate (Quarterly)
+    - Appendix D SO2 Mass
+  - Addresses requirements for:
+    - Configuration and validation of equations and formulas
+    - Auditing with complete change history
+    - Easy tracking of upstream and downstream calculations
 - Initial project scaffolding with React 19 + TypeScript
 - Vite build configuration with path aliases
 - Left-hand navigation sidebar with agent links

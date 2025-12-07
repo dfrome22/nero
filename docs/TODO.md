@@ -27,6 +27,13 @@ Current development tasks and roadmap for NERO.
 
 ### Recently Completed
 
+- [x] Enhanced Calculation Engine for ECMPS/Title V (85 tests)
+  - [x] Formula validation with syntax, semantics, units, and regulatory checking
+  - [x] Configuration management with full audit trails
+  - [x] Dependency tracking with upstream/downstream analysis
+  - [x] Formula registry with standard ECMPS/Part 75 formulas
+  - [x] Impact analysis for configuration changes
+  - [x] Comprehensive documentation in `docs/features/calculation-engine.md`
 - [x] Define core TypeScript types for orchestration
 - [x] Implement RegsBotService with eCFR/ECMPS API clients (24 tests)
 - [x] Implement RequirementsBotService with gap analysis (27 tests)
