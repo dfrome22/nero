@@ -48,6 +48,15 @@ const agents: Agent[] = [
     status: 'online',
     path: '/agents/testing',
   },
+  {
+    id: 'copilot',
+    title: 'CopilotBot',
+    description:
+      'Scans repository for Copilot-generated comments (TODO, FIXME, HACK, XXX, NOTE) and creates GitHub issues automatically for better task tracking.',
+    icon: '🤖',
+    status: 'online',
+    path: '/agents/copilot',
+  },
 ]
 
 function Dashboard(): React.JSX.Element {
@@ -88,11 +97,11 @@ function Dashboard(): React.JSX.Element {
         <h2 className={styles['sectionTitle']}>System Status</h2>
         <div className={styles['statsGrid']}>
           <div className={styles['statCard']}>
-            <span className={styles['statValue']}>4</span>
+            <span className={styles['statValue']}>5</span>
             <span className={styles['statLabel']}>Total Agents</span>
           </div>
           <div className={styles['statCard']}>
-            <span className={styles['statValue']}>3</span>
+            <span className={styles['statValue']}>4</span>
             <span className={styles['statLabel']}>Online</span>
           </div>
           <div className={styles['statCard']}>

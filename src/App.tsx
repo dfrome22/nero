@@ -1,6 +1,7 @@
 import { Route, Routes } from 'react-router-dom'
 import MainLayout from './layouts/MainLayout'
 import Dashboard from './pages/Dashboard'
+import CopilotBot from './pages/agents/CopilotBot'
 import DAHSBot from './pages/agents/DAHSBot'
 import FigmaBot from './pages/agents/FigmaBot'
 import RegsBot from './pages/agents/RegsBot'
@@ -18,6 +19,7 @@ function App(): React.JSX.Element {
           <Route path="figma" element={<FigmaBot />} />
           <Route path="testing" element={<TestingBot />} />
           <Route path="dahs" element={<DAHSBot />} />
+          <Route path="copilot" element={<CopilotBot />} />
         </Route>
       </Route>
     </Routes>
