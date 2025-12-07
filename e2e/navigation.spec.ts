@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 
 test.describe('Navigation', () => {
   test('sidebar navigation works correctly', async ({ page }) => {
@@ -28,7 +28,7 @@ test.describe('Navigation', () => {
 
   test('NERO branding is visible', async ({ page }) => {
     await page.goto('/')
-    await expect(page.getByText('NERO')).toBeVisible()
+    await expect(page.getByText('NERO', { exact: true })).toBeVisible()
   })
 
   test('system status indicator is shown', async ({ page }) => {

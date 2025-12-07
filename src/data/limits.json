@@ -1,5 +1,5 @@
-{
-"_metadata": {
+﻿{
+  "_metadata": {
     "source": "Extracted from DAHS regulatory-limits.ts",
     "version": "1.0.0",
     "lastUpdated": "2025-06-19",
@@ -15,7 +15,7 @@
       "averagingPeriod": "30-day rolling",
       "unitType": "coal-fired boiler",
       "fuelTypes": ["Coal", "Bituminous Coal", "Subbituminous Coal", "Lignite"],
-      "constructionDate": {"after": "1978-09-18"},
+      "constructionDate": { "after": "1978-09-18" },
       "citation": "40 CFR 60.44Da(d)(1)",
       "effectiveDate": "1979-09-18",
       "notes": "Coal-fired units commenced construction after Sept 18, 1978"
@@ -29,7 +29,7 @@
       "averagingPeriod": "30-day rolling",
       "unitType": "gas-fired boiler",
       "fuelTypes": ["Gas", "Natural Gas", "Fuel Gas"],
-      "constructionDate": {"after": "1978-09-18"},
+      "constructionDate": { "after": "1978-09-18" },
       "citation": "40 CFR 60.44Da(d)(1)",
       "effectiveDate": "1979-09-18",
       "notes": "Gas-fired units commenced construction after Sept 18, 1978"
@@ -43,7 +43,7 @@
       "averagingPeriod": "30-day rolling",
       "unitType": "coal-fired boiler",
       "fuelTypes": ["Coal", "Bituminous Coal", "Subbituminous Coal"],
-      "constructionDate": {"after": "1978-09-18"},
+      "constructionDate": { "after": "1978-09-18" },
       "citation": "40 CFR 60.42Da(b)(1)",
       "effectiveDate": "1979-09-18",
       "notes": "95% reduction OR 1.2 lb/MMBtu, whichever is less stringent"
@@ -57,7 +57,7 @@
       "averagingPeriod": "30-day rolling",
       "unitType": "coal-fired boiler",
       "fuelTypes": ["Coal"],
-      "constructionDate": {"after": "1978-09-18"},
+      "constructionDate": { "after": "1978-09-18" },
       "citation": "40 CFR 60.42Da(a)",
       "effectiveDate": "1979-09-18"
     },
@@ -83,7 +83,7 @@
       "averagingPeriod": "30-day rolling",
       "unitType": "new_coal",
       "fuelTypes": ["Coal"],
-      "constructionDate": {"after": "2012-05-01"},
+      "constructionDate": { "after": "2012-05-01" },
       "citation": "40 CFR 63.10005(a)(1)",
       "effectiveDate": "2016-04-16",
       "notes": "New coal-fired EGU limit (output-based)"
@@ -121,7 +121,7 @@
       "units": "ppmvd",
       "averagingPeriod": "3-hour rolling",
       "unitType": "combustion turbine",
-      "constructionDate": {"after": "2005-02-18"},
+      "constructionDate": { "after": "2005-02-18" },
       "citation": "40 CFR 60.4320(a)",
       "effectiveDate": "2006-07-18",
       "notes": "Stationary combustion turbines > 10 MMBtu/hr"
@@ -135,7 +135,7 @@
       "averagingPeriod": "30-day rolling",
       "unitType": "coal-fired boiler",
       "fuelTypes": ["Coal"],
-      "constructionDate": {"after": "1971-08-17", "before": "1978-09-18"},
+      "constructionDate": { "after": "1971-08-17", "before": "1978-09-18" },
       "citation": "40 CFR 60.44(a)(3)",
       "effectiveDate": "1971-08-17",
       "notes": "Legacy standard for units built 1971-1978"
@@ -149,7 +149,7 @@
       "averagingPeriod": "30-day rolling",
       "unitType": "small boiler",
       "fuelTypes": ["Gas", "Natural Gas"],
-      "capacity": {"min": 10, "max": 100, "units": "MMBtu/hr"},
+      "capacity": { "min": 10, "max": 100, "units": "MMBtu/hr" },
       "citation": "40 CFR 60.42c(c)",
       "effectiveDate": "1987-06-19"
     },
@@ -161,7 +161,7 @@
       "units": "ppmvd",
       "averagingPeriod": "3-hour rolling",
       "unitType": "gas turbine",
-      "constructionDate": {"after": "1977-10-03", "before": "2005-02-18"},
+      "constructionDate": { "after": "1977-10-03", "before": "2005-02-18" },
       "citation": "40 CFR 60.332(a)",
       "effectiveDate": "1977-10-03",
       "notes": "Legacy standard for gas turbines built before 2005"
@@ -175,7 +175,7 @@
       "averagingPeriod": "30-day rolling",
       "unitType": "boiler",
       "states": ["TX"],
-      "capacity": {"min": 25, "units": "MW"},
+      "capacity": { "min": 25, "units": "MW" },
       "citation": "30 TAC 117.110(a)(1)(B)",
       "effectiveDate": "2021-01-01",
       "notes": "EGUs in DFW/HGB Ozone Non-Attainment Areas"
@@ -189,7 +189,7 @@
       "averagingPeriod": "30-day rolling",
       "unitType": "boiler",
       "states": ["PA"],
-      "capacity": {"min": 25, "units": "MW"},
+      "capacity": { "min": 25, "units": "MW" },
       "citation": "25 Pa. Code Section 129.97",
       "effectiveDate": "2017-05-01",
       "notes": "PA RACT II for large EGUs"
@@ -211,7 +211,7 @@
       "id": "OH_SIP_NOX_COAL",
       "regulation": "OH_SIP",
       "pollutant": "NOx",
-      "limitValue": 0.30,
+      "limitValue": 0.3,
       "units": "lb/MMBtu",
       "averagingPeriod": "30-day rolling",
       "unitType": "coal-fired boiler",

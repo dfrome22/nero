@@ -1,11 +1,4 @@
-import {
-  analyzeMonitoringPlan,
-  getApplicableLimits,
-  getCSAPRProgramsForState,
-  getSeverityColor,
-  isRGGIApplicable,
-  type EmissionLimit,
-} from '@/services/compliance-data'
+import { analyzeMonitoringPlan, getSeverityColor } from '@/services/compliance-data'
 import type {
   ComplianceGap,
   QARequirement as MCPQARequirement,
@@ -122,158 +115,6 @@ function StatCard({ value, label }: { value: number | string; label: string }): 
 }
 
 /**
- * Enhanced state-specific program display using MCP data
- */
-function StateSpecificProgramsSection({
-  stateCode,
-  fuelTypes,
-}: {
-  stateCode: string
-  fuelTypes: string[]
-}): React.ReactElement {
-  const csaprPrograms = getCSAPRProgramsForState(stateCode)
-  const hasRGGI = isRGGIApplicable(stateCode)
-  const applicableLimits = getApplicableLimits({ fuelTypes })
-
-  // Group CSAPR programs by type
-  const noxAnnual = csaprPrograms.filter((p) => p.includes('NOX_ANNUAL'))
-  const noxOzone = csaprPrograms.filter((p) => p.includes('OZONE'))
-  const so2 = csaprPrograms.filter((p) => p.includes('SO2'))
-
-  return (
-    <div className="space-y-4">
-      <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
-        <h4 className="mb-2 font-semibold text-blue-900">State: {stateCode}</h4>
-
-        {/* CSAPR Programs */}
-        {csaprPrograms.length > 0 && (
-          <div className="mb-3">
-            <span className="text-sm font-medium text-blue-800">CSAPR Trading Programs:</span>
-            <div className="mt-1 flex flex-wrap gap-2">
-              {noxAnnual.length > 0 && (
-                <span className="rounded bg-orange-100 px-2 py-1 text-xs text-orange-800">
-                  NOx Annual ({noxAnnual.length})
-                </span>
-              )}
-              {noxOzone.length > 0 && (
-                <span className="rounded bg-yellow-100 px-2 py-1 text-xs text-yellow-800">
-                  NOx Ozone Season ({noxOzone.length} groups)
-                </span>
-              )}
-              {so2.length > 0 && (
-                <span className="rounded bg-purple-100 px-2 py-1 text-xs text-purple-800">
-                  SO2 ({so2.length} groups)
-                </span>
-              )}
-            </div>
-            <p className="mt-1 text-xs text-blue-600">Programs: {csaprPrograms.join(', ')}</p>
-          </div>
-        )}
-
-        {csaprPrograms.length === 0 && (
-          <p className="text-sm text-gray-600">State not subject to CSAPR trading programs</p>
-        )}
-
-        {/* RGGI */}
-        {hasRGGI && (
-          <div className="mt-2 rounded bg-teal-100 px-2 py-1">
-            <span className="text-sm font-medium text-teal-800">
-              ✓ RGGI Participating State - CO2 cap-and-trade applies
-            </span>
-          </div>
-        )}
-
-        {/* Applicable Limits Count */}
-        <div className="mt-3 text-sm text-gray-700">
-          <strong>{applicableLimits.length}</strong> emission limits matched based on fuel type
-          {fuelTypes.length > 0 && ` (${fuelTypes.join(', ')})`}
-        </div>
-      </div>
-    </div>
-  )
-}
-
-/**
- * Enhanced emission limits with MCP data matching
- */
-function EnhancedEmissionLimitsSection({
-  fuelTypes,
-  pollutants,
-}: {
-  fuelTypes: string[]
-  pollutants?: string[] | undefined
-}): React.ReactElement {
-  // Only pass pollutants if defined
-  const limits =
-    pollutants !== undefined
-      ? getApplicableLimits({ fuelTypes, pollutants })
-      : getApplicableLimits({ fuelTypes })
-
-  if (limits.length === 0) {
-    return <p className="text-gray-500 italic">No matching emission limits for this fuel type</p>
-  }
-
-  // Group by regulation
-  const byRegulation = limits.reduce(
-    (acc, limit) => {
-      const reg = limit.regulation
-      if (acc[reg] === undefined) {
-        acc[reg] = []
-      }
-      acc[reg].push(limit)
-      return acc
-    },
-    {} as Record<string, EmissionLimit[]>
-  )
-
-  return (
-    <div className="space-y-4">
-      {Object.entries(byRegulation).map(([regulation, regLimits]) => (
-        <div key={regulation} className="rounded-lg border border-gray-200 p-4">
-          <h4 className="mb-2 font-semibold text-gray-900">{regulation}</h4>
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200 text-sm">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-3 py-2 text-left text-xs font-medium uppercase text-gray-500">
-                    Pollutant
-                  </th>
-                  <th className="px-3 py-2 text-left text-xs font-medium uppercase text-gray-500">
-                    Limit
-                  </th>
-                  <th className="px-3 py-2 text-left text-xs font-medium uppercase text-gray-500">
-                    Averaging
-                  </th>
-                  <th className="px-3 py-2 text-left text-xs font-medium uppercase text-gray-500">
-                    Unit Type
-                  </th>
-                  <th className="px-3 py-2 text-left text-xs font-medium uppercase text-gray-500">
-                    Citation
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {regLimits.map((limit) => (
-                  <tr key={limit.id}>
-                    <td className="whitespace-nowrap px-3 py-2 font-medium">{limit.pollutant}</td>
-                    <td className="whitespace-nowrap px-3 py-2 font-mono text-blue-700">
-                      {limit.limitValue} {limit.units}
-                    </td>
-                    <td className="px-3 py-2 text-gray-600">{limit.averagingPeriod ?? '-'}</td>
-                    <td className="px-3 py-2 text-gray-600">{limit.unitType}</td>
-                    <td className="px-3 py-2 text-xs text-gray-500">{limit.citation ?? '-'}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      ))}
-    </div>
-  )
-}
-
-/**
  * Compliance Gaps Section - Shows issues identified by MCP analysis
  */
 function ComplianceGapsSection({ gaps }: { gaps: ComplianceGap[] }): React.ReactElement {
@@ -285,17 +126,12 @@ function ComplianceGapsSection({ gaps }: { gaps: ComplianceGap[] }): React.React
     )
   }
 
-  const byCategory = gaps.reduce(
-    (acc, gap) => {
-      const category = gap.category
-      if (acc[category] === undefined) {
-        acc[category] = []
-      }
-      acc[category]!.push(gap)
-      return acc
-    },
-    {} as Record<string, ComplianceGap[]>
-  )
+  const byCategory = gaps.reduce<Record<string, ComplianceGap[]>>((acc, gap) => {
+    const category = gap.category
+    acc[category] ??= []
+    acc[category].push(gap)
+    return acc
+  }, {})
 
   return (
     <div className="space-y-4">
@@ -648,7 +484,7 @@ function QATestMatrixSection({ tests }: { tests: QATestMatrixItem[] }): React.Re
               <td>
                 <div className={styles.cellPrimary}>{test.testType}</div>
                 <div className={styles.cellSecondary}>{test.testCode}</div>
-                {test.performanceSpec && (
+                {Boolean(test.performanceSpec) && (
                   <div className={styles.cellBlue}>{test.performanceSpec}</div>
                 )}
               </td>

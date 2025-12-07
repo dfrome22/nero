@@ -10,7 +10,7 @@ test.describe('Dashboard', () => {
   })
 
   test('displays dashboard heading', async ({ page }) => {
-    await expect(page.getByRole('heading', { name: /dashboard/i })).toBeVisible()
+    await expect(page.getByRole('heading', { name: /NERO Agent Ecosystem/i })).toBeVisible()
   })
 
   test('shows all agent cards', async ({ page }) => {

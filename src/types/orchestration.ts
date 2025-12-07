@@ -615,7 +615,7 @@ export interface EmissionLimit {
   limitValue: number
   units: string
   averagingPeriod: string // "hourly", "30-day rolling", "annual"
-  limitType: 'emission_rate' | 'mass' | 'concentration' | 'opacity'
+  limitType: 'emission_rate' | 'mass' | 'concentration' | 'opacity' | 'data_quality'
   regulatoryBasis: string
   applicablePrograms: string[]
   notes: string[]

@@ -1,14 +1,36 @@
-{
-"CSAPR_NOX_ANNUAL": {
+﻿{
+  "CSAPR_NOX_ANNUAL": {
     "id": "CSAPR_NOX_ANNUAL",
     "title": "CSAPR NOx Annual Program",
     "cfr": "40 CFR 97 Subpart AAAAA",
     "description": "Cross-State Air Pollution Rule annual NOx trading program for EGUs",
     "effectiveDate": "2015-01-01",
     "affectedStates": [
-      "AL", "GA", "IL", "IN", "IA", "KS", "KY", "LA", "MD", "MI",
-      "MN", "MO", "NE", "NJ", "NY", "NC", "OH", "OK", "PA", "SC",
-      "TN", "TX", "VA", "WV", "WI"
+      "AL",
+      "GA",
+      "IL",
+      "IN",
+      "IA",
+      "KS",
+      "KY",
+      "LA",
+      "MD",
+      "MI",
+      "MN",
+      "MO",
+      "NE",
+      "NJ",
+      "NY",
+      "NC",
+      "OH",
+      "OK",
+      "PA",
+      "SC",
+      "TN",
+      "TX",
+      "VA",
+      "WV",
+      "WI"
     ],
     "applicabilityCriteria": {
       "minCapacity": 25,
@@ -24,15 +46,37 @@
     "description": "Cross-State Air Pollution Rule ozone season NOx trading program Group 1",
     "effectiveDate": "2015-05-01",
     "affectedStates": [
-      "AL", "AR", "IL", "IN", "IA", "KS", "KY", "LA", "MD", "MI",
-      "MS", "MO", "NE", "NJ", "NY", "NC", "OH", "OK", "PA", "SC",
-      "TN", "TX", "VA", "WV", "WI"
+      "AL",
+      "AR",
+      "IL",
+      "IN",
+      "IA",
+      "KS",
+      "KY",
+      "LA",
+      "MD",
+      "MI",
+      "MS",
+      "MO",
+      "NE",
+      "NJ",
+      "NY",
+      "NC",
+      "OH",
+      "OK",
+      "PA",
+      "SC",
+      "TN",
+      "TX",
+      "VA",
+      "WV",
+      "WI"
     ],
     "applicabilityCriteria": {
       "minCapacity": 25,
       "capacityUnits": "MW",
       "unitTypes": ["Fossil fuel-fired EGU"],
-      "ozoneSeasonDates": {"start": "May 1", "end": "September 30"}
+      "ozoneSeasonDates": { "start": "May 1", "end": "September 30" }
     }
   },
   "CSAPR_NOX_OZONE_GROUP_2": {
@@ -42,14 +86,30 @@
     "description": "Cross-State Air Pollution Rule ozone season NOx trading program Group 2 (updated)",
     "effectiveDate": "2017-05-01",
     "affectedStates": [
-      "AL", "AR", "IN", "KY", "LA", "MD", "MI", "MS", "MO", "NJ",
-      "NY", "OH", "OK", "PA", "TN", "TX", "VA", "WV"
+      "AL",
+      "AR",
+      "IN",
+      "KY",
+      "LA",
+      "MD",
+      "MI",
+      "MS",
+      "MO",
+      "NJ",
+      "NY",
+      "OH",
+      "OK",
+      "PA",
+      "TN",
+      "TX",
+      "VA",
+      "WV"
     ],
     "applicabilityCriteria": {
       "minCapacity": 25,
       "capacityUnits": "MW",
       "unitTypes": ["Fossil fuel-fired EGU"],
-      "ozoneSeasonDates": {"start": "May 1", "end": "September 30"}
+      "ozoneSeasonDates": { "start": "May 1", "end": "September 30" }
     },
     "notes": "Tighter budgets than Group 1 for states with significant ozone transport"
   },
@@ -60,14 +120,31 @@
     "description": "Good Neighbor Plan - Revised CSAPR Update for 2015 ozone NAAQS",
     "effectiveDate": "2023-05-01",
     "affectedStates": [
-      "CA", "IL", "IN", "LA", "MD", "MI", "MN", "MO", "NV", "NJ",
-      "NY", "OH", "OK", "PA", "TX", "UT", "VA", "WV", "WI"
+      "CA",
+      "IL",
+      "IN",
+      "LA",
+      "MD",
+      "MI",
+      "MN",
+      "MO",
+      "NV",
+      "NJ",
+      "NY",
+      "OH",
+      "OK",
+      "PA",
+      "TX",
+      "UT",
+      "VA",
+      "WV",
+      "WI"
     ],
     "applicabilityCriteria": {
       "minCapacity": 25,
       "capacityUnits": "MW",
       "unitTypes": ["Fossil fuel-fired EGU"],
-      "ozoneSeasonDates": {"start": "May 1", "end": "September 30"}
+      "ozoneSeasonDates": { "start": "May 1", "end": "September 30" }
     },
     "notes": "Enhanced trading program with tighter emission rate limits (0.14 lb/MMBtu NOx)"
   },
@@ -77,9 +154,7 @@
     "cfr": "40 CFR 97 Subpart CCCCC",
     "description": "Cross-State Air Pollution Rule SO2 annual trading program Group 1",
     "effectiveDate": "2015-01-01",
-    "affectedStates": [
-      "IN", "KY", "MO", "OH", "PA", "TN", "WV"
-    ],
+    "affectedStates": ["IN", "KY", "MO", "OH", "PA", "TN", "WV"],
     "applicabilityCriteria": {
       "minCapacity": 25,
       "capacityUnits": "MW",
@@ -94,8 +169,21 @@
     "description": "Cross-State Air Pollution Rule SO2 annual trading program Group 2",
     "effectiveDate": "2015-01-01",
     "affectedStates": [
-      "AL", "GA", "IL", "IA", "KS", "MI", "MN", "NE", "NJ", "NY",
-      "NC", "SC", "TX", "VA", "WI"
+      "AL",
+      "GA",
+      "IL",
+      "IA",
+      "KS",
+      "MI",
+      "MN",
+      "NE",
+      "NJ",
+      "NY",
+      "NC",
+      "SC",
+      "TX",
+      "VA",
+      "WI"
     ],
     "applicabilityCriteria": {
       "minCapacity": 25,
@@ -141,7 +229,7 @@
     "applicabilityCriteria": {
       "minCapacity": 73,
       "capacityUnits": "MW",
-      "constructionDate": {"after": "1978-09-18"},
+      "constructionDate": { "after": "1978-09-18" },
       "unitTypes": ["Electric utility steam generating unit"]
     }
   },
@@ -156,7 +244,7 @@
       "minCapacity": 100,
       "maxCapacity": 250,
       "capacityUnits": "MMBtu/hr",
-      "constructionDate": {"after": "1984-06-19"},
+      "constructionDate": { "after": "1984-06-19" },
       "unitTypes": ["Steam generating unit", "ICI boiler"]
     }
   },
@@ -171,7 +259,7 @@
       "minCapacity": 10,
       "maxCapacity": 100,
       "capacityUnits": "MMBtu/hr",
-      "constructionDate": {"after": "1989-06-09"},
+      "constructionDate": { "after": "1989-06-09" },
       "unitTypes": ["Steam generating unit", "Small ICI boiler"]
     }
   },
@@ -185,7 +273,7 @@
     "applicabilityCriteria": {
       "minCapacity": 10,
       "capacityUnits": "MMBtu/hr",
-      "constructionDate": {"after": "2005-02-18"},
+      "constructionDate": { "after": "2005-02-18" },
       "unitTypes": ["Combustion turbine", "Gas turbine", "Combined cycle"]
     }
   },

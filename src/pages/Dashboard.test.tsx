@@ -1,7 +1,7 @@
-import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { BrowserRouter } from 'react-router-dom'
+import { describe, expect, it, vi } from 'vitest'
 import Dashboard from './Dashboard'
 
 const mockNavigate = vi.fn()
@@ -26,7 +26,7 @@ describe('Dashboard', () => {
       </BrowserRouter>
     )
 
-    expect(screen.getByRole('heading', { name: /dashboard/i })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /nero agent ecosystem/i })).toBeInTheDocument()
   })
 
   it('displays all agent cards', () => {
@@ -36,10 +36,13 @@ describe('Dashboard', () => {
       </BrowserRouter>
     )
 
-    expect(screen.getByText('RegsBot')).toBeInTheDocument()
-    expect(screen.getByText('RequirementsBot')).toBeInTheDocument()
-    expect(screen.getByText('FigmaBot')).toBeInTheDocument()
-    expect(screen.getByText('TestingBot')).toBeInTheDocument()
+    // Use getByRole with heading to get specific agent card headings
+    expect(screen.getByRole('heading', { name: 'RegsBot' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'DAHSBot' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'RequirementsBot' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'FigmaBot' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'TestingBot' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'CopilotBot' })).toBeInTheDocument()
   })
 
   it('navigates to agent page on card click', async () => {
@@ -49,8 +52,10 @@ describe('Dashboard', () => {
       </BrowserRouter>
     )
 
-    const regsBotCard = screen.getByText('RegsBot').closest('button')
-    if (regsBotCard !== null) {
+    // Find the RegsBot card by its heading and click
+    const regsBotHeading = screen.getByRole('heading', { name: 'RegsBot' })
+    const regsBotCard = regsBotHeading.closest('[class*="agentWrapper"]')?.querySelector('button')
+    if (regsBotCard !== null && regsBotCard !== undefined) {
       await userEvent.click(regsBotCard)
       expect(mockNavigate).toHaveBeenCalledWith('/agents/regs')
     }
@@ -65,5 +70,6 @@ describe('Dashboard', () => {
 
     expect(screen.getByText('System Status')).toBeInTheDocument()
     expect(screen.getByText('Total Agents')).toBeInTheDocument()
+    expect(screen.getByText('MCP Tools')).toBeInTheDocument()
   })
 })
