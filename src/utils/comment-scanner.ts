@@ -11,6 +11,8 @@ export interface CommentMarker {
   line: number
   content: string
   context?: string // surrounding code context
+  implementationStatus?: 'implemented' | 'not-implemented' | 'partial' | 'unknown'
+  verificationNote?: string
 }
 
 export interface ScanResult {
@@ -147,4 +149,80 @@ export function filterMarkersByType(
   types: CommentMarker['type'][]
 ): CommentMarker[] {
   return markers.filter((marker) => types.includes(marker.type))
+}
+
+/**
+ * Analyzes a marker to determine if it might already be implemented
+ * Looks for common patterns that suggest implementation
+ */
+export function verifyImplementationStatus(
+  marker: CommentMarker,
+  fileContent: string
+): CommentMarker {
+  const lines = fileContent.split('\n')
+  const markerLineIndex = marker.line - 1
+  const contextRange = 20 // lines to check before and after
+
+  // Get surrounding code for analysis
+  const startLine = Math.max(0, markerLineIndex - contextRange)
+  const endLine = Math.min(lines.length, markerLineIndex + contextRange)
+  const surroundingCode = lines.slice(startLine, endLine).join('\n')
+
+  // Patterns that suggest the TODO might be implemented
+  const implementedPatterns = [
+    /implements?.*\w+/i,
+    /function\s+\w+/,
+    /class\s+\w+/,
+    /export\s+(const|function|class|interface)/,
+    /async\s+\w+/,
+  ]
+
+  // Patterns that suggest it's NOT implemented (excluding the TODO comment itself)
+  const notImplementedPatterns = [
+    /console\.(warn|error|log)\(['"].*not.*implement/i,
+    /throw\s+new\s+Error\(['"].*not.*implement/i,
+    /\/\/\s*placeholder/i,
+    /\/\/\s*stub/i,
+    /return\s+['"']?mock/i,
+  ]
+
+  // Count matches
+  const implementedMatches = implementedPatterns.filter((pattern) =>
+    pattern.test(surroundingCode)
+  ).length
+
+  const notImplementedMatches = notImplementedPatterns.filter((pattern) =>
+    pattern.test(surroundingCode)
+  ).length
+
+  // Determine status based on evidence
+  let status: CommentMarker['implementationStatus'] = 'unknown'
+  let note = ''
+
+  // Strong evidence it's NOT implemented
+  if (notImplementedMatches > 0) {
+    status = 'not-implemented'
+    note = 'Found placeholder/stub code or "not implemented" error'
+  }
+  // Strong evidence of implementation (multiple patterns)
+  else if (implementedMatches >= 3) {
+    status = 'partial'
+    note = 'Found substantial implementation code, but TODO comment still present'
+  }
+  // Some evidence of implementation
+  else if (implementedMatches >= 1) {
+    status = 'unknown'
+    note = 'Found some implementation code - manual verification recommended'
+  }
+  // No clear evidence either way
+  else {
+    status = 'not-implemented'
+    note = 'No implementation code detected nearby'
+  }
+
+  return {
+    ...marker,
+    implementationStatus: status,
+    verificationNote: note,
+  }
 }

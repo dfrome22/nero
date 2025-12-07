@@ -22,15 +22,24 @@ function CopilotBot(): React.JSX.Element {
   ])
   const [issues, setIssues] = useState<GitHubIssue[]>([])
   const [showSummary, setShowSummary] = useState(false)
+  const [verifyImplementation, setVerifyImplementation] = useState(true)
 
   const handleScan = async (): Promise<void> => {
     setLoading(true)
     try {
       const result = await copilotBot.scanRepository({
         includeTypes: selectedTypes,
+        verifyImplementation,
       })
-      setScanResult(result)
-      setIssues(copilotBot.generateGitHubIssues(result.markers))
+
+      // Verify implementation status if enabled
+      let finalMarkers = result.markers
+      if (verifyImplementation) {
+        finalMarkers = await copilotBot.verifyMarkers(result.markers)
+      }
+
+      setScanResult({ ...result, markers: finalMarkers })
+      setIssues(copilotBot.generateGitHubIssues(finalMarkers))
       setShowSummary(false)
     } catch (err) {
       console.error('Scan failed:', err)
@@ -121,52 +130,103 @@ function CopilotBot(): React.JSX.Element {
         )}
 
         <div className={styles.dataGrid}>
-          {issues.map((issue, index) => (
-            <div key={index} className={styles.dataItem}>
-              <strong>{issue.title}</strong>
-              <p style={{ fontSize: '0.875rem', marginTop: 'var(--space-xs)' }}>
-                📁 {issue.marker.file}:{issue.marker.line}
-              </p>
-              <div
-                style={{
-                  display: 'flex',
-                  gap: 'var(--space-xs)',
-                  marginTop: 'var(--space-sm)',
-                  flexWrap: 'wrap',
-                }}
-              >
-                {issue.labels.map((label) => (
-                  <span
-                    key={label}
-                    style={{
-                      padding: '2px 8px',
-                      background: '#e5e7eb',
-                      borderRadius: '4px',
-                      fontSize: '0.75rem',
-                    }}
+          {issues.map((issue, index) => {
+            const marker = issue.marker
+            const statusIcons: Record<string, string> = {
+              'not-implemented': '⚠️',
+              partial: '⚡',
+              implemented: '✅',
+              unknown: '❓',
+            }
+            const statusColors: Record<string, string> = {
+              'not-implemented': '#fef3c7',
+              partial: '#dbeafe',
+              implemented: '#dcfce7',
+              unknown: '#f3f4f6',
+            }
+
+            return (
+              <div key={index} className={styles.dataItem}>
+                <strong>{issue.title}</strong>
+                <p style={{ fontSize: '0.875rem', marginTop: 'var(--space-xs)' }}>
+                  📁 {marker.file}:{marker.line}
+                </p>
+
+                {/* Implementation Status Badge */}
+                {marker.implementationStatus !== undefined &&
+                  marker.implementationStatus !== 'unknown' && (
+                    <div
+                      style={{
+                        padding: '4px 8px',
+                        background: statusColors[marker.implementationStatus] ?? '#f3f4f6',
+                        borderRadius: '4px',
+                        fontSize: '0.75rem',
+                        marginTop: 'var(--space-xs)',
+                        display: 'inline-block',
+                      }}
+                    >
+                      {statusIcons[marker.implementationStatus]}{' '}
+                      {marker.implementationStatus === 'not-implemented'
+                        ? 'Not Implemented'
+                        : marker.implementationStatus === 'partial'
+                          ? 'Partially Implemented'
+                          : 'Implemented'}
+                    </div>
+                  )}
+
+                {marker.verificationNote !== undefined && (
+                  <p
+                    style={{ fontSize: '0.75rem', marginTop: 'var(--space-xs)', color: '#6b7280' }}
                   >
-                    {label}
-                  </span>
-                ))}
-              </div>
-              <details style={{ marginTop: 'var(--space-sm)' }}>
-                <summary
-                  style={{ cursor: 'pointer', fontSize: '0.875rem', color: 'var(--color-accent)' }}
-                >
-                  View Issue Body
-                </summary>
-                <pre
+                    {marker.verificationNote}
+                  </p>
+                )}
+
+                <div
                   style={{
-                    whiteSpace: 'pre-wrap',
-                    fontSize: '0.75rem',
-                    marginTop: 'var(--space-xs)',
+                    display: 'flex',
+                    gap: 'var(--space-xs)',
+                    marginTop: 'var(--space-sm)',
+                    flexWrap: 'wrap',
                   }}
                 >
-                  {issue.body}
-                </pre>
-              </details>
-            </div>
-          ))}
+                  {issue.labels.map((label) => (
+                    <span
+                      key={label}
+                      style={{
+                        padding: '2px 8px',
+                        background: '#e5e7eb',
+                        borderRadius: '4px',
+                        fontSize: '0.75rem',
+                      }}
+                    >
+                      {label}
+                    </span>
+                  ))}
+                </div>
+                <details style={{ marginTop: 'var(--space-sm)' }}>
+                  <summary
+                    style={{
+                      cursor: 'pointer',
+                      fontSize: '0.875rem',
+                      color: 'var(--color-accent)',
+                    }}
+                  >
+                    View Issue Body
+                  </summary>
+                  <pre
+                    style={{
+                      whiteSpace: 'pre-wrap',
+                      fontSize: '0.75rem',
+                      marginTop: 'var(--space-xs)',
+                    }}
+                  >
+                    {issue.body}
+                  </pre>
+                </details>
+              </div>
+            )
+          })}
         </div>
       </div>
     )
@@ -214,6 +274,49 @@ function CopilotBot(): React.JSX.Element {
             renderMarkerTypeCard(type as CommentMarker['type'])
           )}
         </div>
+
+        <div
+          style={{
+            marginTop: 'var(--space-md)',
+            padding: 'var(--space-md)',
+            background: '#f9fafb',
+            borderRadius: 'var(--radius-md)',
+          }}
+        >
+          <label
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 'var(--space-sm)',
+              cursor: 'pointer',
+            }}
+          >
+            <input
+              type="checkbox"
+              checked={verifyImplementation}
+              onChange={(e) => {
+                setVerifyImplementation(e.target.checked)
+              }}
+              style={{ width: '16px', height: '16px' }}
+            />
+            <span style={{ fontSize: '0.875rem' }}>
+              <strong>Verify Implementation Status</strong> - Check if TODOs are actually
+              implemented
+            </span>
+          </label>
+          <p
+            style={{
+              fontSize: '0.75rem',
+              color: '#6b7280',
+              marginTop: 'var(--space-xs)',
+              marginLeft: '24px',
+            }}
+          >
+            Analyzes surrounding code to detect if the TODO comment is still valid or already
+            implemented
+          </p>
+        </div>
+
         <button
           type="button"
           onClick={() => {

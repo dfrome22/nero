@@ -12,6 +12,7 @@ import {
   groupMarkersByFile,
   generateIssueTitle,
   generateIssueBody,
+  verifyImplementationStatus,
   type CommentMarker,
   type ScanResult,
 } from '../../utils/comment-scanner'
@@ -20,6 +21,7 @@ export interface ScanOptions {
   includeTypes?: CommentMarker['type'][]
   excludePatterns?: string[] // file patterns to exclude
   rootPath?: string // root path to scan (defaults to src/)
+  verifyImplementation?: boolean // verify if TODOs are actually implemented
 }
 
 export interface GitHubIssue {
@@ -84,15 +86,85 @@ export class CopilotBotService {
   }
 
   /**
+   * Reads file content for verification
+   * This is a placeholder - in a real implementation would use fs.readFile
+   */
+  private async readFileContent(_filePath: string): Promise<string> {
+    // In production, this would read the actual file:
+    // return fs.promises.readFile(filePath, 'utf-8')
+
+    // For now, return empty string
+    console.warn('readFileContent is not fully implemented - verification unavailable')
+    return Promise.resolve('')
+  }
+
+  /**
+   * Verifies implementation status for all markers
+   */
+  async verifyMarkers(markers: CommentMarker[]): Promise<CommentMarker[]> {
+    const verifiedMarkers: CommentMarker[] = []
+
+    for (const marker of markers) {
+      try {
+        const fileContent = await this.readFileContent(marker.file)
+        if (fileContent) {
+          verifiedMarkers.push(verifyImplementationStatus(marker, fileContent))
+        } else {
+          // If we can't read the file, keep the marker as-is
+          verifiedMarkers.push({
+            ...marker,
+            implementationStatus: 'unknown',
+            verificationNote: 'Unable to verify - file reading not implemented',
+          })
+        }
+      } catch {
+        verifiedMarkers.push({
+          ...marker,
+          implementationStatus: 'unknown',
+          verificationNote: 'Error reading file',
+        })
+      }
+    }
+
+    return verifiedMarkers
+  }
+
+  /**
    * Converts markers to GitHub issue payloads
    */
   generateGitHubIssues(markers: CommentMarker[]): GitHubIssue[] {
     return markers.map((marker) => ({
       title: generateIssueTitle(marker),
-      body: generateIssueBody(marker),
+      body: this.generateEnhancedIssueBody(marker),
       labels: this.getLabelsForMarker(marker),
       marker,
     }))
+  }
+
+  /**
+   * Generates enhanced issue body with implementation status
+   */
+  private generateEnhancedIssueBody(marker: CommentMarker): string {
+    let body = generateIssueBody(marker)
+
+    // Add implementation status if available
+    if (marker.implementationStatus !== undefined && marker.implementationStatus !== 'unknown') {
+      body += `\n\n### Implementation Status\n`
+      body += `**Status:** ${marker.implementationStatus}\n`
+
+      if (marker.verificationNote !== undefined) {
+        body += `**Note:** ${marker.verificationNote}\n`
+      }
+
+      // Add guidance based on status
+      if (marker.implementationStatus === 'not-implemented') {
+        body += `\n⚠️ This TODO appears to be **not yet implemented**. Creating an issue is recommended.\n`
+      } else if (marker.implementationStatus === 'partial') {
+        body += `\n⚡ This TODO has **some implementation** but may need completion. Review before creating an issue.\n`
+      }
+    }
+
+    return body
   }
 
   /**

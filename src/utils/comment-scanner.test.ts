@@ -7,6 +7,7 @@ import {
   generateIssueBody,
   prioritizeMarkers,
   filterMarkersByType,
+  verifyImplementationStatus,
   type CommentMarker,
 } from './comment-scanner'
 
@@ -295,6 +296,99 @@ describe('comment-scanner', () => {
       const filtered = filterMarkersByType(markers, ['TODO'])
 
       expect(filtered).toHaveLength(0)
+    })
+  })
+
+  describe('verifyImplementationStatus', () => {
+    it('should detect not-implemented with error throw', () => {
+      const marker: CommentMarker = {
+        type: 'TODO',
+        file: 'src/test.ts',
+        line: 5,
+        content: 'Implement feature',
+        context: '// TODO: Implement feature',
+      }
+
+      const fileContent = `function test() {
+  if (!implemented) {
+    // TODO: Implement feature
+    throw new Error('Feature not implemented')
+  }
+  return true
+}`
+
+      const result = verifyImplementationStatus(marker, fileContent)
+
+      expect(result.implementationStatus).toBe('not-implemented')
+      expect(result.verificationNote).toContain('not implemented')
+    })
+
+    it('should detect partial implementation', () => {
+      const marker: CommentMarker = {
+        type: 'TODO',
+        file: 'src/test.ts',
+        line: 5,
+        content: 'Add more features',
+        context: '// TODO: Add more features',
+      }
+
+      const fileContent = `export class MyClass {
+  constructor() {}
+  
+  // TODO: Add more features
+  public async myMethod() {
+    return this.doSomething()
+  }
+  
+  private doSomething() {
+    return 'implemented'
+  }
+}`
+
+      const result = verifyImplementationStatus(marker, fileContent)
+
+      expect(result.implementationStatus).toBe('partial')
+      expect(result.verificationNote).toContain('implementation code')
+    })
+
+    it('should detect console.warn for not implemented', () => {
+      const marker: CommentMarker = {
+        type: 'TODO',
+        file: 'src/test.ts',
+        line: 3,
+        content: 'Handle file upload',
+        context: '// TODO: Handle file upload',
+      }
+
+      const fileContent = `function handleUpload(file) {
+  // TODO: Handle file upload
+  console.warn('File upload handler not implemented')
+}`
+
+      const result = verifyImplementationStatus(marker, fileContent)
+
+      expect(result.implementationStatus).toBe('not-implemented')
+      expect(result.verificationNote).toContain('placeholder')
+    })
+
+    it('should mark as unknown when unclear', () => {
+      const marker: CommentMarker = {
+        type: 'TODO',
+        file: 'src/test.ts',
+        line: 2,
+        content: 'Optimize algorithm',
+        context: '// TODO: Optimize algorithm',
+      }
+
+      const fileContent = `// TODO: Optimize algorithm
+function calculate(x) {
+  return x * 2
+}`
+
+      const result = verifyImplementationStatus(marker, fileContent)
+
+      expect(result.implementationStatus).toBe('unknown')
+      expect(result.verificationNote).toContain('manual verification')
     })
   })
 })
