@@ -30,6 +30,12 @@ Current development tasks and roadmap for NERO.
 - [x] Define core TypeScript types for orchestration
 - [x] Implement RegsBotService with eCFR/ECMPS API clients (24 tests)
 - [x] Implement RequirementsBotService with gap analysis (27 tests)
+- [x] Implement Part 75/ECMPS Regulatory Orchestrator (50 tests)
+  - [x] RegBrainAgent - Infers regulatory requirements from monitoring plans
+  - [x] CalcPlannerAgent - Generates calculation plans with dependency resolution
+  - [x] PQAMirrorAgent - Creates compliance check rules mirroring EPA validation
+  - [x] ExplainerAgent - Provides human-readable explanations of requirements
+  - [x] Part75Orchestrator - Coordinates all four agents in unified workflow
 
 ---
 
@@ -69,10 +75,11 @@ Current development tasks and roadmap for NERO.
 - [x] Regulatory language scanning
 - [x] Citation extraction with location anchors
 - [x] Obligation extraction and classification
+- [x] Part 75/ECMPS Regulatory Orchestrator (multi-agent system)
 - [ ] Evidence Library builder (eCFR, EPA docs, permits)
 - [ ] OCR ingestion with confidence tracking
 - [ ] Evidence scoping (project-wide vs node-scoped)
-- **Feature Doc**: `docs/features/regsbot.md`
+- **Feature Doc**: `docs/features/regsbot.md`, `docs/features/part75-orchestrator.md`
 
 ### RequirementsBot
 
