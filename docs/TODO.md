@@ -32,6 +32,31 @@ Current development tasks and roadmap for NERO.
 
 ### Recently Completed
 
+- [x] **Integration Testing & Documentation** (December 7, 2025)
+  - [x] Fixed TypeScript compilation errors in collaboration system
+  - [x] Ran comprehensive integration tests (729 tests passing)
+  - [x] Created Shared MCP integration plan (`docs/SHARED_MCP_INTEGRATION.md`)
+  - [x] Created team DAHS update document (`docs/TEAM_DAHS_UPDATE.md`)
+  - [x] Verified all recent changes work correctly together
+  - [x] Zero security vulnerabilities confirmed
+- [x] Enhanced Calculation Engine for ECMPS/Title V (85 tests)
+  - [x] Formula validation with syntax, semantics, units, and regulatory checking
+  - [x] Configuration management with full audit trails
+  - [x] Dependency tracking with upstream/downstream analysis
+  - [x] Formula registry with standard ECMPS/Part 75 formulas
+  - [x] Impact analysis for configuration changes
+  - [x] Comprehensive documentation in `docs/features/calculation-engine.md`
+- [x] Part 75/ECMPS Regulatory Orchestrator (50 tests)
+  - [x] RegBrainAgent - Infers regulatory requirements from monitoring plans
+  - [x] CalcPlannerAgent - Generates calculation plans with dependency resolution
+  - [x] PQAMirrorAgent - Creates compliance check rules mirroring EPA validation
+  - [x] ExplainerAgent - Provides human-readable explanations of requirements
+  - [x] Part75Orchestrator - Coordinates all four agents in unified workflow
+- [x] Agent Collaboration System (25 tests)
+  - [x] Agent Registry and capability discovery
+  - [x] Intent-based routing to appropriate agents
+  - [x] Collaboration orchestrator with approval gates
+  - [x] Dynamic workflow creation
 - [x] MCP Integration with ComplianceReport
   - `getFacilityContext()` in ECMPSClient consolidates 4 CAMD API calls
   - ComplianceGapsSection shows gaps by category with severity colors
@@ -134,6 +159,7 @@ This allows the BA to explore requirements naturally before formalizing them.
 - [x] MCP-enhanced sections (gaps, methods, QA, formulas)
 - [x] getFacilityContext() with MCP enrichment
 - [x] Q&A context improvements (facility name, location, EPA codes)
+- [x] Part 75/ECMPS Regulatory Orchestrator (multi-agent system)
 - [x] **Part 60 NSPS Expansion Phase 1** (see regulatory-coverage-matrix.md)
   - [x] Part 60 knowledge base types (Part60SubpartKnowledge, standards, monitoring specs)
   - [x] Priority subparts indexed: Da, TTTT, GG, KKKK, J (68 TDD tests)
@@ -212,7 +238,7 @@ This allows the BA to explore requirements naturally before formalizing them.
   - [x] Cross-reference to Part 60 KKKK and GG
   - [x] hasPart60Overlap() function for Part 63→Part 60 detection
   - [x] Work practices: fuel specifications, startup/shutdown, catalyst maintenance
-  - [x] 707 total tests passing
+  - [x] 729 total tests passing
 - [x] **NSPS Applicability Engine** _(December 2025)_
   - [x] `determineApplicableNSPS()` function in `part60-knowledge.ts`
   - [x] Automatic Part 60 subpart determination based on MP data
@@ -227,7 +253,8 @@ This allows the BA to explore requirements naturally before formalizing them.
 - [ ] eCFR API fallback for unknown questions
 - [ ] Evidence Library builder (eCFR, EPA docs, permits)
 - [ ] OCR ingestion with confidence tracking
-- **Feature Doc**: `docs/features/regsbot.md`
+- [ ] Evidence scoping (project-wide vs node-scoped)
+- **Feature Doc**: `docs/features/regsbot.md`, `docs/features/part75-orchestrator.md`
 - **Regulatory Roadmap**: `docs/features/regulatory-coverage-matrix.md`
 
 ### RequirementsBot
@@ -270,6 +297,29 @@ This allows the BA to explore requirements naturally before formalizing them.
 ---
 
 ## P1 Features
+
+### MCP (Model Context Protocol) Integration
+
+**Status**: Planned  
+**Documentation**: `docs/SHARED_MCP_INTEGRATION.md`
+
+- [ ] **Phase 1: MCP Server Setup**
+  - [ ] Create eCFR MCP server
+  - [ ] Create ECMPS MCP server
+  - [ ] Create DAHS configuration MCP server
+- [ ] **Phase 2: Agent Integration**
+  - [ ] Update RegsBot to use MCP client
+  - [ ] Update RequirementsBot for MCP
+  - [ ] Standardize artifact sharing through MCP
+- [ ] **Phase 3: Shared Context**
+  - [ ] Implement session management via MCP
+  - [ ] Centralized artifact registry
+  - [ ] Shared evidence library
+  - [ ] Complete audit trail through MCP logs
+- [ ] **Phase 4: DAHS Integration**
+  - [ ] Coordinate with DAHS team on MCP interface
+  - [ ] Implement DAHS MCP client in NERO
+  - [ ] End-to-end testing with DAHS
 
 ### Integrations
 

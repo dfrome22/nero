@@ -23,10 +23,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Work practices: fuel specifications, startup/shutdown procedures, catalyst maintenance
   - Cross-references to Part 60 KKKK (new turbines) and GG (older turbines)
   - `hasPart60Overlap()` function for Part 63→Part 60 cross-reference detection
+- **Enhanced Calculation Engine** (85 new tests, 270 total)
+  - Formula validation with syntax, semantics, units, and regulatory compliance checking
+  - Configuration management with full audit trails and change tracking
+  - Dependency tracking with upstream/downstream analysis and cycle detection
+  - Formula registry with standard ECMPS/Part 75 calculations
+  - Impact analysis for proposed configuration changes
+  - Complete documentation in `docs/features/calculation-engine.md`
+  - Types: `Formula`, `CalculationConfig`, `DependencyGraph`, `AuditTrail`, `ImpactAnalysis`
+  - Components:
+    - `formula-validator.ts`: Validates formulas and inputs
+    - `configuration-service.ts`: CRUD operations with audit trails
+    - `dependency-tracker.ts`: Builds and analyzes dependency graphs
+    - `formula-registry.ts`: Pre-defined standard formulas
+  - Standard formulas:
+    - Heat Input (Appendix F)
+    - SO2/NOx/CO2 Mass Emissions
+    - NOx Emission Rate
+    - LME NOx Rate (Quarterly)
+    - Appendix D SO2 Mass
 - **Regulatory Coverage Matrix Updates**
   - 17 Part 60 subparts now indexed (up from 14)
   - 4 Part 63 subparts now indexed (up from 3)
-  - 707 total TDD tests passing
+  - 729 total TDD tests passing
 
 ### Previous Additions (Phase 1-4)
 
@@ -52,7 +71,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Technical Notes
 
-- 122 RegsBot tests now passing (68 Part 60 + 54 existing)
+- 729 RegsBot tests now passing (Part 60, Part 63, EPA Codes, Calculation Engine)
 - TypeScript compiles clean with strict mode
 - Part 60 knowledge base supports future eCFR fallback integration
 
