@@ -509,9 +509,10 @@ For large calculation systems (>1000 configs), consider:
 All formulas and calculations are based on:
 
 - **40 CFR Part 75**: Acid Rain Program monitoring requirements
-- **40 CFR 75 Appendix F**: Heat input and mass emission calculations
-- **40 CFR 75 Appendix E**: Low Mass Emissions methodology
+- **40 CFR 75 Appendix B**: QA/QC procedures and validation requirements
 - **40 CFR 75 Appendix D**: Fuel-based calculation methodologies
+- **40 CFR 75 Appendix E**: Low Mass Emissions methodology
+- **40 CFR 75 Appendix F**: Heat input and mass emission calculations
 - **ECMPS**: EPA's Emissions Collection and Monitoring Plan System
 
 ## Future Enhancements

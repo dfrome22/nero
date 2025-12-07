@@ -234,24 +234,19 @@ export function analyzeImpact(
 
   // Check if formula is changing
   if (proposedChanges.formulaId !== undefined && proposedChanges.formulaId !== config.formulaId) {
-    for (const nodeId of config.locationId !== undefined ? [config.locationId] : []) {
-      const impactedConfig = allConfigs.find((c) => c.locationId === nodeId)
-      if (impactedConfig) {
-        directImpacts.push({
-          id: impactedConfig.id,
-          name: impactedConfig.name,
-          impactType: 'formula-change',
-          description: `Formula change from ${config.formulaId} to ${proposedChanges.formulaId}`,
-          severity: 'high',
-          affectedPrograms: impactedConfig.programs,
-          requiredActions: [
-            'Revalidate calculation',
-            'Update test cases',
-            'Review regulatory compliance',
-          ],
-        })
-      }
-    }
+    directImpacts.push({
+      id: config.id,
+      name: config.name,
+      impactType: 'formula-change',
+      description: `Formula change from ${config.formulaId} to ${proposedChanges.formulaId}`,
+      severity: 'high',
+      affectedPrograms: config.programs,
+      requiredActions: [
+        'Revalidate calculation',
+        'Update test cases',
+        'Review regulatory compliance',
+      ],
+    })
   }
 
   // Check if parameter mappings are changing

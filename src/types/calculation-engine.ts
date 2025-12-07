@@ -27,7 +27,7 @@ export type Unit =
   | 'MMBtu/hr' // million BTU per hour
   | 'tons' // tons
   | 'tons/hr' // tons per hour
-  | 'µg/scm' // micrograms per standard cubic meter
+  | 'µg/dscm' // micrograms per dry standard cubic meter (EPA standard)
   | 'dimensionless' // no units
 
 /** Formula parameter definition */

@@ -140,6 +140,7 @@ function calculateExecutionLevels(nodes: DependencyNode[], edges: CalculationDep
 
 /**
  * Topological sort to determine execution order
+ * Note: Uses node.upstreamDependencies rather than edges parameter for traversal
  */
 function topologicalSort(nodes: DependencyNode[], _edges: CalculationDependency[]): string[] {
   const sorted: string[] = []
@@ -178,6 +179,7 @@ function topologicalSort(nodes: DependencyNode[], _edges: CalculationDependency[
 
 /**
  * Detect circular dependencies
+ * Note: Uses node.upstreamDependencies rather than edges parameter for traversal
  */
 function detectCycles(nodes: DependencyNode[], _edges: CalculationDependency[]): string[][] {
   const cycles: string[][] = []

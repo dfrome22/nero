@@ -15,7 +15,7 @@ export const standardFormulas: Formula[] = [
     id: 'heat-input-appendix-f',
     name: 'Heat Input (Appendix F)',
     version: '1.0.0',
-    expression: 'Qh * Fd * (20.9 / (20.9 - O2)) * 1e-6',
+    expression: 'Qh * Fd * (20.9 / (20.9 - O2)) * 1e-6', // 1e-6 converts scf to MMscf
     syntax: 'algebraic',
     inputParameters: [
       {
