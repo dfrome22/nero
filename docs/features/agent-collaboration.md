@@ -165,15 +165,12 @@ The orchestrator can also create workflows dynamically based on natural language
 
 ```typescript
 // Create a dynamic workflow from intent
-const workflow = await orchestrator.createDynamicWorkflow(
-  'Analyze permit and generate DAHS proposal',
-  {
-    sessionId: 'session-456',
-    artifacts: {
-      'permit-document': permitDoc,
-    },
-  }
-)
+const workflow = orchestrator.createDynamicWorkflow('Analyze permit and generate DAHS proposal', {
+  sessionId: 'session-456',
+  artifacts: {
+    'permit-document': permitDoc,
+  },
+})
 
 // The orchestrator automatically:
 // 1. Routes to RegsBot for permit analysis
@@ -376,19 +373,13 @@ class CollaborationOrchestrator {
     workflow: CollaborationWorkflow,
     context: Partial<CollaborationContext>
   ): CollaborationExecution
-  executeNextStep(
-    executionId: string,
-    workflow: CollaborationWorkflow
-  ): Promise<CollaborationExecution>
+  executeNextStep(executionId: string, workflow: CollaborationWorkflow): CollaborationExecution
   approveStep(executionId: string, comment: string): CollaborationExecution
   createDynamicWorkflow(
     intent: string,
     context: Partial<CollaborationContext>
-  ): Promise<CollaborationWorkflow>
-  handleHandoff(
-    executionId: string,
-    handoffMessage: HandoffMessage
-  ): Promise<CollaborationExecution>
+  ): CollaborationWorkflow
+  handleHandoff(executionId: string, handoffMessage: HandoffMessage): CollaborationExecution
   getResult(executionId: string): CollaborationResult
 }
 ```
