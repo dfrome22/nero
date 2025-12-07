@@ -26,12 +26,10 @@ import { AgentRouter } from './agent-router'
  * Collaboration Orchestrator - manages agent workflows
  */
 export class CollaborationOrchestrator {
-  private registry: AgentRegistry
   private router: AgentRouter
   private executions = new Map<string, CollaborationExecution>()
 
-  constructor(registry: AgentRegistry, router: AgentRouter) {
-    this.registry = registry
+  constructor(_registry: AgentRegistry, router: AgentRouter) {
     this.router = router
   }
 
@@ -47,10 +45,10 @@ export class CollaborationOrchestrator {
     const context: CollaborationContext = {
       sessionId: initialContext.sessionId ?? this.generateId(),
       workflowId: workflow.id,
-      projectId: initialContext.projectId,
-      userId: initialContext.userId,
+      ...(initialContext.projectId !== undefined && { projectId: initialContext.projectId }),
+      ...(initialContext.userId !== undefined && { userId: initialContext.userId }),
       artifacts: initialContext.artifacts ?? {},
-      evidence: initialContext.evidence,
+      ...(initialContext.evidence !== undefined && { evidence: initialContext.evidence }),
       currentPhase: 'initialization',
       completedSteps: [],
       pendingActions: workflow.steps.map((s) => s.id),
@@ -59,12 +57,13 @@ export class CollaborationOrchestrator {
       updatedAt: new Date().toISOString(),
     }
 
+    const firstStep = workflow.steps[0]
     const execution: CollaborationExecution = {
       id: executionId,
       workflowId: workflow.id,
       context,
       status: 'running',
-      currentStep: workflow.steps[0]?.id,
+      ...(firstStep && { currentStep: firstStep.id }),
       startedAt: new Date().toISOString(),
       results: {},
       messages: [],
@@ -132,7 +131,9 @@ export class CollaborationOrchestrator {
         event.status = 'completed'
       } else {
         event.status = 'failed'
-        event.details = response.payload.error
+        if (response.payload.error !== undefined) {
+          event.details = response.payload.error
+        }
         if (!currentStep.continueOnFailure) {
           execution.status = 'failed'
         }
@@ -182,7 +183,7 @@ export class CollaborationOrchestrator {
 
     execution.status = 'running'
     execution.context.requiresApproval = false
-    execution.context.approvalGate = undefined
+    delete execution.context.approvalGate
     execution.context.updatedAt = new Date().toISOString()
 
     // Add approval event
@@ -211,10 +212,10 @@ export class CollaborationOrchestrator {
     const fullContext: CollaborationContext = {
       sessionId: context.sessionId ?? this.generateId(),
       workflowId,
-      projectId: context.projectId,
-      userId: context.userId,
+      ...(context.projectId !== undefined && { projectId: context.projectId }),
+      ...(context.userId !== undefined && { userId: context.userId }),
       artifacts: context.artifacts ?? {},
-      evidence: context.evidence,
+      ...(context.evidence !== undefined && { evidence: context.evidence }),
       currentPhase: 'initialization',
       completedSteps: [],
       pendingActions: [],
@@ -335,14 +336,19 @@ export class CollaborationOrchestrator {
       details: JSON.stringify(msg.payload),
     }))
 
-    return {
+    const result: CollaborationResult = {
       executionId: execution.id,
       success: execution.status === 'completed',
       artifacts: execution.context.artifacts,
       timeline,
       summary: this.generateSummary(execution),
-      error: execution.status === 'failed' ? 'Workflow failed' : undefined,
     }
+
+    if (execution.status === 'failed') {
+      result.error = 'Workflow failed'
+    }
+
+    return result
   }
 
   // ============================================================================

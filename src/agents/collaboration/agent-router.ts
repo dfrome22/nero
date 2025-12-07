@@ -28,13 +28,6 @@ export class AgentRouter {
   }
 
   /**
-   * Helper to check if agent is not excluded
-   */
-  private isAgentAllowed(agent: AgentType, excludeAgents?: AgentType[]): boolean {
-    return !excludeAgents?.includes(agent)
-  }
-
-  /**
    * Route a query to the appropriate agent
    */
   route(query: RoutingQuery): RoutingDecision {
@@ -175,7 +168,7 @@ export class AgentRouter {
       capability,
       reason: `Agent has ${best.capabilities.length} matching capability/capabilities, priority ${best.priority}`,
       confidence,
-      alternatives: alternatives.length > 0 ? alternatives : undefined,
+      ...(alternatives.length > 0 && { alternatives }),
     }
   }
 
@@ -268,7 +261,8 @@ export class AgentRouter {
     }
 
     // Return first capability as fallback
-    return agentInfo.capabilities[0].capability
+    const firstCap = agentInfo.capabilities[0]
+    return firstCap !== undefined ? firstCap.capability : 'regulatory-lookup'
   }
 
   /**
@@ -398,9 +392,10 @@ export class AgentRouter {
       if (!excludeAgents?.includes(agent)) {
         const agentInfo = this.registry.getAgent(agent)
         if (agentInfo !== undefined && agentInfo.capabilities.length > 0) {
+          const firstCap = agentInfo.capabilities[0]
           return {
             selectedAgent: agent,
-            capability: agentInfo.capabilities[0].capability,
+            capability: firstCap !== undefined ? firstCap.capability : 'regulatory-lookup',
             reason: `Fallback to ${agent}`,
             confidence: 0.3,
           }
