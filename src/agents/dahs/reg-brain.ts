@@ -105,18 +105,18 @@ export function inferRegulatoryRequirements(mp: MonitoringPlan): RegBrainOutput 
 function addProgramNotes(program: ProgramCode, notes: string[]): void {
   switch (program) {
     case 'ARP':
-      notes.push('ARP program: SO2M, NOXM/NOXR, CO2M, HI, OPTIME, OPHOURS summaries required.')
+      notes.push('ARP program: SO2M, NOXM/NOXR, CO2M, HIT, OPTIME, OPHOURS summaries required.')
       break
     case 'CSAPR_NOX_OS':
       notes.push(
-        'CSAPR NOx Ozone Season: NOXM, NOXR, HI, OPTIME, OPHOURS required; consider DAILY_BACKSTOP for Group 3 units.'
+        'CSAPR NOx Ozone Season: NOXM, NOXR, HIT, OPTIME, OPHOURS required; consider DAILY_BACKSTOP for Group 3 units.'
       )
       break
     case 'CSAPR_NOX_ANN':
-      notes.push('CSAPR NOx Annual: NOXM, NOXR, HI, OPTIME required.')
+      notes.push('CSAPR NOx Annual: NOXM, NOXR, HIT, OPTIME required.')
       break
     case 'CSAPR_SO2':
-      notes.push('CSAPR SO2: SO2M, HI, OPTIME required.')
+      notes.push('CSAPR SO2: SO2M, HIT, OPTIME required.')
       break
     case 'MATS':
       notes.push('MATS program: Mercury and acid gas monitoring required.')

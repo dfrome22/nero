@@ -38,7 +38,7 @@ describe('RegBrainAgent', () => {
       const result = inferRegulatoryRequirements(plan)
 
       expect(result.notes).toContain(
-        'ARP program: SO2M, NOXM/NOXR, CO2M, HI, OPTIME, OPHOURS summaries required.'
+        'ARP program: SO2M, NOXM/NOXR, CO2M, HIT, OPTIME, OPHOURS summaries required.'
       )
     })
 

@@ -136,11 +136,11 @@ export interface MethodPlan {
   notes: string[]
 }
 
-export interface TestCase {
+export interface TestCase<TInputs = Record<string, unknown>, TExpected = Record<string, unknown>> {
   name: string
   description: string
-  inputs: unknown
-  expected: unknown
+  inputs: TInputs
+  expected: TExpected
 }
 
 export interface CalculationPlan {

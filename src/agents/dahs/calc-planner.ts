@@ -75,7 +75,9 @@ function generateTestCases(mp: MonitoringPlan, required: RequiredParameter[]): T
         fFactor: 1040, // Fd for natural gas
       },
       expected: {
+        // Placeholder for expected value - to be calculated using Appendix F formula
         heatInput: 'calculated per 40 CFR 75 Appendix F',
+        note: 'Actual implementation would use: HI = Qh × Fd × (20.9/(20.9 - %O2)) × 10^-6',
       },
     })
   }
@@ -128,7 +130,9 @@ function generateTestCases(mp: MonitoringPlan, required: RequiredParameter[]): T
         fuelFactor: 'K factor for fuel type',
       },
       expected: {
+        // Placeholder for expected value - actual calculation depends on fuel type
         so2Mass: 'calculated per Appendix D equations',
+        note: 'Actual calculation: Mass = Fuel × Sulfur Content × K-factor',
       },
     })
   }
