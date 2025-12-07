@@ -5,15 +5,14 @@
  * and provides tools to create GitHub issues from them.
  */
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { CopilotBotService } from '@agents/copilotbot/index'
 import type { CommentMarker, ScanResult } from '@/utils/comment-scanner'
 import type { GitHubIssue } from '@agents/copilotbot/index'
 import styles from './AgentPage.module.css'
 
-const copilotBot = new CopilotBotService()
-
 function CopilotBot(): React.JSX.Element {
+  const copilotBot = useMemo(() => new CopilotBotService(), [])
   const [scanResult, setScanResult] = useState<ScanResult | null>(null)
   const [loading, setLoading] = useState(false)
   const [selectedTypes, setSelectedTypes] = useState<CommentMarker['type'][]>([

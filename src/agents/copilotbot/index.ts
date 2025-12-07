@@ -64,6 +64,7 @@ export class CopilotBotService {
   /**
    * Executes grep to find comment markers
    * This is a placeholder - in a real implementation would use fs/exec
+   * @throws {Error} Not implemented - this is a mock for demonstration
    */
   private executeGrep(
     _types: string[],
@@ -72,7 +73,13 @@ export class CopilotBotService {
   ): Promise<string> {
     // This is a mock implementation
     // In production, this would execute:
-    // grep -rn "TODO|FIXME|HACK|XXX|NOTE" --include="*.ts" --include="*.tsx" rootPath
+    // const pattern = _types.join('|')
+    // const excludeArgs = _excludePatterns.map(p => `--exclude-dir=${p}`).join(' ')
+    // grep -rn "${pattern}" --include="*.ts" --include="*.tsx" ${_excludeArgs} ${_rootPath}
+
+    // For now, return empty string to allow basic functionality
+    // Future: implement actual file system scanning
+    console.warn('executeGrep is not fully implemented - using mock data')
     return Promise.resolve('')
   }
 
