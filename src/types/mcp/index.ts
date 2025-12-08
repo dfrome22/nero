@@ -309,34 +309,34 @@ export interface FacilityContext {
   monitoringPlan: {
     planId: string
     status: string
-    locations: Array<{
+    locations: {
       locationId: string
       locationType: 'unit' | 'stack' | 'pipe' | 'multiple'
       unitId?: string
       stackPipeId?: string
-    }>
-    methods: Array<{
+    }[]
+    methods: {
       locationId: string
       parameter: string
       methodCode: string
       substituteDataCode?: string
       beginDate: string
-    }>
-    systems: Array<{
+    }[]
+    systems: {
       locationId: string
       systemId: string
       systemType: string
       fuelCode?: string
-    }>
-    formulas: Array<{
+    }[]
+    formulas: {
       locationId: string
       formulaId: string
       formulaCode: string
       parameter: string
-    }>
+    }[]
   }
 
-  units: Array<{
+  units: {
     unitId: string
     unitType: string
     fuelTypes: string[]
@@ -348,23 +348,23 @@ export interface FacilityContext {
       pm?: string
       hg?: string
     }
-  }>
+  }[]
 
-  applicableRegulations: Array<{
+  applicableRegulations: {
     id: string
     title: string
     cfr: string
-  }>
+  }[]
 
   csaprPrograms: string[]
 
-  applicableLimits: Array<{
+  applicableLimits: {
     regulation: string
     pollutant: string
     limitValue: number
     units: string
     citation: string
-  }>
+  }[]
 
   hasMATS: boolean
   hasRGGI: boolean

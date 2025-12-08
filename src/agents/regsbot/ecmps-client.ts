@@ -118,13 +118,13 @@ export class ECMPSClient {
    * Uses /monitor-plan-mgmt/configurations endpoint with orisCodes parameter.
    */
   async getMonitoringPlanConfigurations(orisCode: number): Promise<
-    Array<{
+    {
       id: string
       name?: string
       active?: boolean
       unitIds?: string[]
       stackPipeIds?: string[]
-    }>
+    }[]
   > {
     // Use the correct endpoint: /monitor-plan-mgmt/configurations with orisCodes (plural)
     const response = await fetch(`${MONITOR_PLANS_API}/configurations?orisCodes=${orisCode}`, {
@@ -141,11 +141,11 @@ export class ECMPSClient {
     }
 
     const rawData = (await response.json()) as
-      | Array<{ id?: string; name?: string | null; active?: boolean }>
-      | { items?: Array<{ id?: string; name?: string | null; active?: boolean }> }
+      | { id?: string; name?: string | null; active?: boolean }[]
+      | { items?: { id?: string; name?: string | null; active?: boolean }[] }
 
     // Handle different response structures
-    let configs: Array<{ id?: string; name?: string | null; active?: boolean }> = []
+    let configs: { id?: string; name?: string | null; active?: boolean }[] = []
     if (Array.isArray(rawData)) {
       configs = rawData
     } else if (rawData.items !== undefined) {
@@ -221,7 +221,7 @@ export class ECMPSClient {
     // If unitId specified, try to find matching plan
     let planId = firstConfig.id
     if (query.unitId !== undefined) {
-      const match = configs.find((c) => c.unitIds?.includes(query.unitId as string))
+      const match = configs.find((c) => c.unitIds?.includes(query.unitId!))
       if (match !== undefined) {
         planId = match.id
       }

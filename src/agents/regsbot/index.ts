@@ -2075,7 +2075,7 @@ The DAHS must calculate and report monitor operating time and data availability.
     massEmissionFormulas: string[]
     appendixDFormulas: string[]
     appendixFFormulas: string[]
-    cfrReferences: Array<{ code: string; section: string; description: string }>
+    cfrReferences: { code: string; section: string; description: string }[]
   } {
     const formulaCodes = formulas.map((f) => f.formulaCode)
     const uniqueCodes = [...new Set(formulaCodes)]

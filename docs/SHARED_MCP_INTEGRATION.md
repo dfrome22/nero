@@ -1,12 +1,21 @@
 # Shared MCP Integration
 
-**Status**: Planned  
-**Last Updated**: December 7, 2024  
+**Status**: In Progress  
+**Last Updated**: December 8, 2024  
 **Author**: NERO Development Team
 
 ## Overview
 
-This document outlines the planned integration with Model Context Protocol (MCP) for NERO's multi-agent system. MCP provides a standardized way for AI agents to communicate with external data sources and services.
+This document outlines the integration with Model Context Protocol (MCP) for NERO's multi-agent system. MCP provides a standardized way for AI agents to communicate with external data sources and services.
+
+**Recent Progress** (December 8, 2024):
+- ✅ Implemented MCP client infrastructure with retry logic and error handling
+- ✅ Created MCP-enhanced collaboration orchestrator
+- ✅ Added multi-turn discussion support between agents
+- ✅ Implemented shared session management and artifact storage
+- ✅ Added context merging capabilities across agents
+- ✅ Built monitoring and metrics collection
+- ✅ All tests passing (34 new tests)
 
 ## What is MCP?
 
@@ -19,9 +28,18 @@ Model Context Protocol (MCP) is an open protocol that enables AI applications to
 
 ## Current State
 
-**Status**: Not yet implemented
+**Status**: Core Infrastructure Implemented
 
-NERO currently uses direct API integrations for:
+NERO now has:
+
+- ✅ **MCP Client Service**: Connection management, retry logic, error handling, metrics
+- ✅ **MCP-Enhanced Orchestrator**: Multi-turn discussions, shared sessions, artifact management
+- ✅ **Agent MCP Registry**: Defines which MCP servers each agent uses
+- ✅ **Session Management**: Persistent sessions with shared context across agents
+- ✅ **Discussion Framework**: Multi-agent conversations with resolution tracking
+- ⚠️ **MCP Servers**: epa-compliance-mcp exists, others are placeholders
+
+NERO uses direct API integrations for:
 
 - eCFR (Electronic Code of Federal Regulations)
 - ECMPS (EPA's Emissions Collection and Monitoring Plan System)
@@ -242,12 +260,147 @@ NERO currently uses direct API integrations for:
 3. **Coordinate Timeline**: Align DAHS MCP server development with NERO
 4. **Testing**: Plan joint integration testing
 
+## Implemented Features (December 8, 2024)
+
+### MCP Client Infrastructure
+
+**Location**: `src/services/mcp-client.ts`
+
+- **MCPClient**: Connection to individual MCP servers
+  - Configurable retry logic with exponential backoff
+  - Request/response timeout handling
+  - Error classification and logging
+  - Performance metrics collection (latency, error rate, tool usage)
+  - Health check capabilities
+
+- **MCPClientManager**: Central manager for all MCP connections
+  - Server registration and retrieval
+  - Unified tool invocation interface
+  - Aggregate metrics across all servers
+  - Health monitoring for all connections
+
+**Tests**: 12 tests covering client behavior, metrics, health checks
+
+### MCP-Enhanced Collaboration
+
+**Location**: `src/agents/collaboration/mcp-orchestrator.ts`
+
+- **MCPCollaborationOrchestrator**: Extends base orchestrator with MCP features
+  - **Session Management**: Create, retrieve, update persistent sessions
+  - **Artifact Storage**: Store and version artifacts produced by agents
+  - **Multi-Turn Discussions**: Start discussions, add messages, resolve with consensus
+  - **Context Merging**: Merge contexts from multiple agents with conflict resolution
+  - **MCP Integration**: Automatic MCP tool invocation for agent queries
+  - **Logging & Monitoring**: Discussion event logs and MCP metrics
+
+**Discussion Features**:
+- Message types: statement, question, challenge, response, proposal, agreement, disagreement
+- Confidence scores and reasoning for agent responses
+- Citation tracking from MCP servers
+- Resolution types: consensus, majority, expert-decision, human-override
+- Action item generation from discussions
+
+**Tests**: 22 tests covering sessions, artifacts, discussions, context merging
+
+### Agent MCP Registry
+
+**Location**: `src/types/mcp-collaboration.ts`
+
+Defines which MCP servers and tools each agent uses:
+
+| Agent | Primary Server | Common Tools | Enhanced Capabilities |
+|-------|---------------|--------------|---------------------|
+| RegsBot | epa-compliance | getRegulation, getFormulaMapping, matchEmissionLimits | regulatory-lookup, permit-analysis |
+| RequirementsBot | requirements-engine | analyzeGaps, queryCapabilities | gap-analysis, dahs-proposal |
+| FigmaBot | requirements-engine | generateWireframes | wireframe-generation |
+| TestingBot | testing-automation | generateTestPlan, generateAcceptanceCriteria | test-plan-generation |
+| DAHS | dahs-product | queryCapabilities, validateConfiguration | capability-query, feasibility-check |
+
+### Usage Example
+
+```typescript
+import { mcpOrchestrator } from '@/agents/collaboration'
+
+// Create a session for agent collaboration
+const session = mcpOrchestrator.createSession('permit-analysis-workflow', {
+  artifacts: { 'permit-document': permitData }
+}, { userId: 'user-123', projectId: 'project-456' })
+
+// Start a discussion between agents
+const discussion = mcpOrchestrator.startDiscussion(
+  session.sessionId,
+  'Analyze permit requirements',
+  ['RegsBot', 'RequirementsBot']
+)
+
+// Add messages (automatically enhanced with MCP calls)
+await mcpOrchestrator.addDiscussionMessage(
+  session.sessionId,
+  discussion.id,
+  'RegsBot',
+  'statement',
+  'I found 15 regulatory obligations requiring CEMS',
+  { 
+    citations: ['40 CFR 75.10', '40 CFR 75.11'],
+    confidence: 0.95,
+    useMCP: true  // Enhances response with MCP server data
+  }
+)
+
+await mcpOrchestrator.addDiscussionMessage(
+  session.sessionId,
+  discussion.id,
+  'RequirementsBot',
+  'response',
+  'Gap analysis shows DAHS supports 12 of 15 obligations',
+  { confidence: 0.88, useMCP: true }
+)
+
+// Resolve the discussion
+mcpOrchestrator.resolveDiscussion(session.sessionId, discussion.id, {
+  type: 'consensus',
+  summary: 'Agreement on gaps requiring development',
+  agreedBy: ['RegsBot', 'RequirementsBot'],
+  finalDecision: 'Create development backlog for 3 unsupported obligations',
+  reasoning: 'Both agents concur on capability analysis',
+  actionItems: [
+    {
+      id: 'action-1',
+      title: 'Implement substitute data handling',
+      description: 'Add 40 CFR 75.33 substitute data logic',
+      assignedTo: 'human',
+      priority: 'high',
+      status: 'pending'
+    }
+  ]
+})
+
+// Store artifacts from the discussion
+mcpOrchestrator.storeArtifact(session.sessionId, {
+  type: 'gap-analysis',
+  name: 'CEMS Gap Analysis',
+  content: gapAnalysisResults,
+  producedBy: 'RequirementsBot',
+  citations: ['40 CFR 75.10', '40 CFR 75.33']
+})
+
+// Get all artifacts from the session
+const artifacts = mcpOrchestrator.getSessionArtifacts(session.sessionId)
+
+// Monitor MCP performance
+const metrics = mcpOrchestrator.getMCPMetrics()
+console.log('EPA Compliance MCP latency:', metrics['epa-compliance'].averageLatency)
+```
+
 ## Resources
 
 - [MCP Specification](https://spec.modelcontextprotocol.io/)
 - [MCP SDK Documentation](https://github.com/modelcontextprotocol)
 - NERO Architecture: `docs/VISION.md`
 - Agent Documentation: `docs/features/`
+- **NEW**: MCP Types: `src/types/mcp-collaboration.ts`
+- **NEW**: MCP Client: `src/services/mcp-client.ts`
+- **NEW**: MCP Orchestrator: `src/agents/collaboration/mcp-orchestrator.ts`
 
 ## Questions & Discussion
 
