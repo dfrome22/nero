@@ -6,19 +6,20 @@
  * and can be called upon to speak, debate, or validate findings.
  */
 
-import type { ReactNode } from 'react'
-import { useState, useRef, useEffect } from 'react'
-import { Link } from 'react-router-dom'
-import styles from './Council.module.css'
 import type {
-  CouncilSession,
+  CouncilAgentType,
+  CouncilCommand,
+  CouncilMember,
   CouncilMessage,
   CouncilPreset,
-  CouncilMember,
-  CouncilCommand,
-  CouncilAgentType,
+  CouncilSession,
 } from '@/types/council'
 import { COUNCIL_MEMBERS, COUNCIL_PRESETS, MOCK_COUNCIL_SESSION } from '@/types/council'
+import { createDebateEngine } from '@/agents/council/DebateEngine'
+import type { ReactNode } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
+import styles from './Council.module.css'
 
 // =============================================================================
 // AGENT AVATAR COMPONENT
@@ -199,6 +200,7 @@ function CommandPalette({ participants, onCommand }: CommandPaletteProps): React
         <select
           className={styles['commandTarget']}
           value={targetAgent}
+          aria-label="Select agent to address"
           onChange={(e) => {
             setTargetAgent(e.target.value as CouncilAgentType | 'all')
           }}
@@ -335,26 +337,23 @@ export function Council(): ReactNode {
   const handleCommand = (command: CouncilCommand): void => {
     if (!session) return
 
-    // TODO: IMPLEMENT - Real command handling
-    // For now, add a mock response based on command type
+    // Use DebateEngine for rich, personality-driven responses
+    const engine = createDebateEngine(session)
+    const responses = engine.processCommand(command)
 
-    const mockResponse: CouncilMessage = {
-      id: `msg-${Date.now()}`,
-      timestamp: new Date(),
-      speaker: command.type === 'summon' ? command.agent : 'regsbot',
-      type: command.type === 'challenge' ? 'challenge' : 'statement',
-      content: getMockResponse(command),
-      confidence: 0.85,
+    // Show speaking animation for the first responder
+    const firstResponse = responses[0]
+    if (firstResponse !== undefined) {
+      setSpeakingAgent(firstResponse.speaker)
+      setTimeout(() => {
+        setSpeakingAgent(undefined)
+      }, 2000)
     }
 
-    setSpeakingAgent(mockResponse.speaker)
-    setTimeout(() => {
-      setSpeakingAgent(undefined)
-    }, 2000)
-
+    // Add all responses to transcript
     setSession({
       ...session,
-      transcript: [...session.transcript, mockResponse],
+      transcript: [...session.transcript, ...responses],
       updatedAt: new Date(),
     })
   }
@@ -486,42 +485,6 @@ export function Council(): ReactNode {
       )}
     </div>
   )
-}
-
-// =============================================================================
-// MOCK RESPONSE GENERATOR
-// =============================================================================
-
-function getMockResponse(command: CouncilCommand): string {
-  /**
-   * TODO: IMPLEMENT - Real LLM/MCP Integration
-   *
-   * This is a placeholder that generates mock responses.
-   * In production, this would:
-   * 1. Route to the appropriate agent's MCP server
-   * 2. Include full conversation context
-   * 3. Stream the response back
-   */
-
-  switch (command.type) {
-    case 'summon':
-      return `[${COUNCIL_MEMBERS[command.agent].name}] I have been summoned. "${command.prompt}" — Let me analyze this from my perspective as ${COUNCIL_MEMBERS[command.agent].title}. Based on my expertise in ${COUNCIL_MEMBERS[command.agent].expertise.join(', ')}, I would recommend...`
-
-    case 'ask-all':
-      return `[Council] The question "${command.prompt}" has been posed to all members. Each agent is formulating their response based on their specialized knowledge...`
-
-    case 'challenge':
-      return `[${COUNCIL_MEMBERS[command.challenger].name}] I challenge ${COUNCIL_MEMBERS[command.target].name} on the topic of "${command.topic}". Please defend your position with citations.`
-
-    case 'conclude':
-      return `[Council Secretary] The council session is being concluded. Compiling final findings and recommendations...`
-
-    case 'defer':
-      return `[Council Secretary] Session deferred. Reason: ${command.reason}. All findings have been preserved.`
-
-    default:
-      return `[Council] Command received and processed.`
-  }
 }
 
 export default Council
